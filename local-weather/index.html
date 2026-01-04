@@ -265,11 +265,15 @@
             // Check if we need to prompt for API key
             const apiKey = getStoredApiKey();
 
-            appDiv.innerHTML = '<div class="loading">Getting your location...</div>';
-
             try {
-                // Get user's coordinates using browser Geolocation API
-                const position = await getCurrentPosition();
+                // IMPORTANT: Call geolocation API immediately and synchronously
+                // Safari requires this to happen directly in response to user gesture
+                const positionPromise = getCurrentPosition();
+
+                appDiv.innerHTML = '<div class="loading">Getting your location...</div>';
+
+                // Now await the position
+                const position = await positionPromise;
                 const { latitude, longitude } = position.coords;
 
                 appDiv.innerHTML = '<div class="loading">Found your location! Getting address details...</div>';
