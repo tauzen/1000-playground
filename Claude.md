@@ -90,14 +90,6 @@ uv venv                     # Create .venv in current directory
 uv venv --python 3.12       # Create with specific Python version
 ```
 
-### Migration from pip/requirements.txt
-
-If you have an existing project with `requirements.txt`:
-```bash
-uv init                     # Initialize uv project
-uv add -r requirements.txt  # Import from requirements.txt
-```
-
 ### Best Practices
 
 1. **Use `uv run`** instead of activating virtual environments
