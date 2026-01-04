@@ -259,73 +259,69 @@
             setTimeout(() => getLocationAndWeather(), 500);
         }
 
-        async function getLocationAndWeather() {
+        function getLocationAndWeather() {
             button.disabled = true;
 
             // Check if we need to prompt for API key
             const apiKey = getStoredApiKey();
 
-            try {
-                // IMPORTANT: Call geolocation API immediately and synchronously
-                // Safari requires this to happen directly in response to user gesture
-                const positionPromise = getCurrentPosition();
-
-                appDiv.innerHTML = '<div class="loading">Getting your location...</div>';
-
-                // Now await the position
-                const position = await positionPromise;
-                const { latitude, longitude } = position.coords;
-
-                appDiv.innerHTML = '<div class="loading">Found your location! Getting address details...</div>';
-
-                // Get location details from Nominatim
-                const locationDetails = await getLocationDetails(latitude, longitude);
-
-                // Get weather if API key is available
-                let weatherData = null;
-                if (apiKey) {
-                    appDiv.innerHTML = '<div class="loading">Getting weather information...</div>';
-                    try {
-                        weatherData = await getWeather(latitude, longitude, apiKey);
-                    } catch (error) {
-                        console.error('Weather fetch failed:', error);
-                        // Continue without weather data
-                    }
-                }
-
-                // Display results
-                displayResults(locationDetails, weatherData);
-
-            } catch (error) {
-                displayError(error.message);
-            } finally {
+            // IMPORTANT: Call geolocation API synchronously (not async function)
+            // Safari requires this to happen directly in response to user gesture
+            if (!navigator.geolocation) {
+                displayError('Geolocation is not supported by your browser');
                 button.disabled = false;
+                return;
             }
-        }
 
-        function getCurrentPosition() {
-            return new Promise((resolve, reject) => {
-                if (!navigator.geolocation) {
-                    reject(new Error('Geolocation is not supported by your browser'));
-                    return;
-                }
+            appDiv.innerHTML = '<div class="loading">Getting your location...</div>';
 
-                navigator.geolocation.getCurrentPosition(resolve, (error) => {
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    try {
+                        const { latitude, longitude } = position.coords;
+
+                        appDiv.innerHTML = '<div class="loading">Found your location! Getting address details...</div>';
+
+                        // Get location details from Nominatim
+                        const locationDetails = await getLocationDetails(latitude, longitude);
+
+                        // Get weather if API key is available
+                        let weatherData = null;
+                        if (apiKey) {
+                            appDiv.innerHTML = '<div class="loading">Getting weather information...</div>';
+                            try {
+                                weatherData = await getWeather(latitude, longitude, apiKey);
+                            } catch (error) {
+                                console.error('Weather fetch failed:', error);
+                                // Continue without weather data
+                            }
+                        }
+
+                        // Display results
+                        displayResults(locationDetails, weatherData);
+                    } catch (error) {
+                        displayError(error.message);
+                    } finally {
+                        button.disabled = false;
+                    }
+                },
+                (error) => {
                     switch(error.code) {
                         case error.PERMISSION_DENIED:
-                            reject(new Error('Location permission denied. Please allow location access.'));
+                            displayError('Location permission denied. Please allow location access.');
                             break;
                         case error.POSITION_UNAVAILABLE:
-                            reject(new Error('Location information unavailable.'));
+                            displayError('Location information unavailable.');
                             break;
                         case error.TIMEOUT:
-                            reject(new Error('Location request timed out.'));
+                            displayError('Location request timed out.');
                             break;
                         default:
-                            reject(new Error('An unknown error occurred.'));
+                            displayError('An unknown error occurred.');
                     }
-                });
-            });
+                    button.disabled = false;
+                }
+            );
         }
 
         async function getLocationDetails(lat, lon) {
