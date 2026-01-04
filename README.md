@@ -19,13 +19,13 @@ Each experiment lives in its own folder at the root level:
 All projects are automatically published to GitHub Pages and can be viewed at:
 
 ```
-https://[username].github.io/1000-playground/
+https://tauzen.github.io/1000-playground/
 ```
 
 Individual projects can be accessed at:
 
 ```
-https://[username].github.io/1000-playground/[project-folder]/
+https://tauzen.github.io/1000-playground/[project-folder]/
 ```
 
 ## Adding a New Experiment
