@@ -123,6 +123,73 @@
             background: #ccc;
             cursor: not-allowed;
         }
+
+        .api-key-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .api-key-form h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .api-key-form p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .api-key-form input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .api-key-form input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .api-key-form button {
+            margin-top: 5px;
+        }
+
+        .api-key-form a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .api-key-form a:hover {
+            text-decoration: underline;
+        }
+
+        .skip-link {
+            text-align: center;
+            margin-top: 10px;
+            color: #666;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .skip-link:hover {
+            color: #667eea;
+        }
+
+        .info-message {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -136,14 +203,68 @@
     </div>
 
     <script>
-        // OpenWeatherMap API key - You'll need to sign up for a free API key at https://openweathermap.org/api
-        const OPENWEATHER_API_KEY = 'YOUR_API_KEY_HERE'; // Replace with your actual API key
-
+        const STORAGE_KEY = 'openweather_api_key';
         const appDiv = document.getElementById('app');
         const button = document.getElementById('getWeatherBtn');
 
+        // Check if API key exists on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const apiKey = getStoredApiKey();
+            if (apiKey) {
+                appDiv.innerHTML = `
+                    <div class="info-message">✓ API key found! You'll get weather data.</div>
+                    <div class="loading">Click the button to get your location and weather</div>
+                `;
+            }
+        });
+
+        function getStoredApiKey() {
+            return localStorage.getItem(STORAGE_KEY);
+        }
+
+        function saveApiKey(key) {
+            if (key && key.trim()) {
+                localStorage.setItem(STORAGE_KEY, key.trim());
+            }
+        }
+
+        function showApiKeyPrompt(onSkip) {
+            appDiv.innerHTML = `
+                <div class="api-key-form">
+                    <h3>🔑 OpenWeatherMap API Key</h3>
+                    <p>Enter your API key to see weather data, or skip to see location only.</p>
+                    <p>Get a free key at <a href="https://openweathermap.org/api" target="_blank">openweathermap.org/api</a></p>
+                    <input type="text" id="apiKeyInput" placeholder="Enter your API key">
+                    <button onclick="saveApiKeyFromInput()">Save & Continue</button>
+                    <div class="skip-link" onclick="skipApiKey()">Skip - Show location only</div>
+                </div>
+            `;
+        }
+
+        function saveApiKeyFromInput() {
+            const input = document.getElementById('apiKeyInput');
+            const key = input.value.trim();
+
+            if (key) {
+                saveApiKey(key);
+                appDiv.innerHTML = '<div class="info-message">✓ API key saved! Continuing...</div>';
+                setTimeout(() => getLocationAndWeather(), 500);
+            } else {
+                alert('Please enter a valid API key or click Skip');
+            }
+        }
+
+        function skipApiKey() {
+            appDiv.innerHTML = '<div class="info-message">Skipping weather data - showing location only</div>';
+            setTimeout(() => getLocationAndWeather(), 500);
+        }
+
         async function getLocationAndWeather() {
             button.disabled = true;
+
+            // Check if we need to prompt for API key
+            const apiKey = getStoredApiKey();
+
             appDiv.innerHTML = '<div class="loading">Getting your location...</div>';
 
             try {
@@ -156,12 +277,19 @@
                 // Get location details from Nominatim
                 const locationDetails = await getLocationDetails(latitude, longitude);
 
-                appDiv.innerHTML = '<div class="loading">Getting weather information...</div>';
+                // Get weather if API key is available
+                let weatherData = null;
+                if (apiKey) {
+                    appDiv.innerHTML = '<div class="loading">Getting weather information...</div>';
+                    try {
+                        weatherData = await getWeather(latitude, longitude, apiKey);
+                    } catch (error) {
+                        console.error('Weather fetch failed:', error);
+                        // Continue without weather data
+                    }
+                }
 
-                // Get weather from OpenWeatherMap
-                const weatherData = await getWeather(latitude, longitude);
-
-                // Display everything
+                // Display results
                 displayResults(locationDetails, weatherData);
 
             } catch (error) {
@@ -212,12 +340,8 @@
             return await response.json();
         }
 
-        async function getWeather(lat, lon) {
-            if (OPENWEATHER_API_KEY === 'YOUR_API_KEY_HERE') {
-                throw new Error('Please set your OpenWeatherMap API key in the code. Get one free at https://openweathermap.org/api');
-            }
-
-            const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=metric`;
+        async function getWeather(lat, lon, apiKey) {
+            const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
 
             const response = await fetch(url);
 
@@ -231,7 +355,7 @@
         function displayResults(location, weather) {
             const address = location.address || {};
 
-            appDiv.innerHTML = `
+            let html = `
                 <div class="section">
                     <h2>📍 Your Location</h2>
                     <div class="info-row">
@@ -255,31 +379,47 @@
                         <span class="value">${address.postcode || 'N/A'}</span>
                     </div>
                 </div>
-
-                <div class="section">
-                    <h2>☁️ Current Weather</h2>
-                    <div class="weather-main">
-                        <div class="temperature">${Math.round(weather.main.temp)}°C</div>
-                        <div class="weather-description">${weather.weather[0].description}</div>
-                    </div>
-                    <div class="info-row">
-                        <span class="label">Feels Like:</span>
-                        <span class="value">${Math.round(weather.main.feels_like)}°C</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="label">Humidity:</span>
-                        <span class="value">${weather.main.humidity}%</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="label">Wind Speed:</span>
-                        <span class="value">${weather.wind.speed} m/s</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="label">Pressure:</span>
-                        <span class="value">${weather.main.pressure} hPa</span>
-                    </div>
-                </div>
             `;
+
+            if (weather) {
+                html += `
+                    <div class="section">
+                        <h2>☁️ Current Weather</h2>
+                        <div class="weather-main">
+                            <div class="temperature">${Math.round(weather.main.temp)}°C</div>
+                            <div class="weather-description">${weather.weather[0].description}</div>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Feels Like:</span>
+                            <span class="value">${Math.round(weather.main.feels_like)}°C</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Humidity:</span>
+                            <span class="value">${weather.main.humidity}%</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Wind Speed:</span>
+                            <span class="value">${weather.wind.speed} m/s</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Pressure:</span>
+                            <span class="value">${weather.main.pressure} hPa</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="info-message">
+                        ℹ️ No weather data available. <span class="skip-link" style="display:inline" onclick="promptForApiKey()">Add API key</span> to see weather.
+                    </div>
+                `;
+            }
+
+            appDiv.innerHTML = html;
+        }
+
+        function promptForApiKey() {
+            showApiKeyPrompt();
         }
 
         function displayError(message) {
