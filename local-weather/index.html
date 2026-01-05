@@ -211,10 +211,13 @@
         window.addEventListener('DOMContentLoaded', () => {
             const apiKey = getStoredApiKey();
             if (apiKey) {
-                appDiv.innerHTML = `
-                    <div class="info-message">✓ API key found! You'll get weather data.</div>
-                    <div class="loading">Click the button to get your location and weather</div>
-                `;
+                // Update status message but keep the button
+                const loadingDiv = appDiv.querySelector('.loading');
+                if (loadingDiv) {
+                    loadingDiv.insertAdjacentHTML('beforebegin',
+                        '<div class="info-message">✓ API key found! You\'ll get weather data.</div>'
+                    );
+                }
             }
         });
 
@@ -260,23 +263,24 @@
         }
 
         function getLocationAndWeather() {
-            button.disabled = true;
+            // CRITICAL FOR MOBILE SAFARI: Call geolocation API IMMEDIATELY
+            // as the VERY FIRST operation in the click handler. Mobile Safari
+            // requires getCurrentPosition() to be called in the immediate
+            // synchronous call stack of a user gesture, with NO other operations
+            // before it. Any DOM operations, localStorage reads, or other code
+            // before this call may break the user gesture chain and Safari
+            // won't show the permission prompt.
 
-            // Check if we need to prompt for API key
-            const apiKey = getStoredApiKey();
-
-            // IMPORTANT: Call geolocation API synchronously (not async function)
-            // Safari requires this to happen directly in response to user gesture
             if (!navigator.geolocation) {
                 displayError('Geolocation is not supported by your browser');
-                button.disabled = false;
                 return;
             }
 
-            appDiv.innerHTML = '<div class="loading">Getting your location...</div>';
-
             navigator.geolocation.getCurrentPosition(
                 async (position) => {
+                    // NOW we can safely do DOM manipulations - we're in the callback
+                    button.disabled = true;
+
                     try {
                         const { latitude, longitude } = position.coords;
 
@@ -285,7 +289,8 @@
                         // Get location details from Nominatim
                         const locationDetails = await getLocationDetails(latitude, longitude);
 
-                        // Get weather if API key is available
+                        // Get weather if API key is available (safe to read localStorage here)
+                        const apiKey = getStoredApiKey();
                         let weatherData = null;
                         if (apiKey) {
                             appDiv.innerHTML = '<div class="loading">Getting weather information...</div>';
@@ -319,9 +324,13 @@
                         default:
                             displayError('An unknown error occurred.');
                     }
-                    button.disabled = false;
                 }
             );
+
+            // Show loading state AFTER geolocation call has been initiated
+            // This ensures the permission prompt appears on mobile Safari
+            button.disabled = true;
+            appDiv.innerHTML = '<div class="loading">Getting your location...</div>';
         }
 
         async function getLocationDetails(lat, lon) {
