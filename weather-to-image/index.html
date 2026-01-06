@@ -266,6 +266,7 @@
             justify-content: space-between;
             align-items: center;
             user-select: none;
+            flex-wrap: wrap;
         }
 
         .collapsible-header:hover {
@@ -344,6 +345,7 @@
             font-size: 13px;
             font-weight: 600;
             color: #555;
+            flex-wrap: wrap;
         }
 
         .image-info-header:hover {
@@ -456,6 +458,42 @@
             font-size: 12px;
             color: #888;
             margin-top: 8px;
+        }
+
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 10px;
+            min-height: auto;
+            width: auto;
+        }
+
+        .copy-btn:hover {
+            background: #5568d3;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .copy-btn.copied {
+            background: #4caf50;
+        }
+
+        .copy-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .header-with-button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
     </style>
 </head>
@@ -617,7 +655,10 @@
         <div class="result-section" id="resultSection">
             <div class="collapsible-section">
                 <div class="collapsible-header" onclick="toggleCollapsible(this)">
-                    <h3>Generated Scene Description</h3>
+                    <div class="header-with-button">
+                        <h3>Generated Scene Description</h3>
+                        <button class="copy-btn" onclick="event.stopPropagation(); copyToClipboard('sceneText', this)">Copy</button>
+                    </div>
                     <span class="collapsible-toggle">&#9660;</span>
                 </div>
                 <div class="collapsible-content">
@@ -632,7 +673,10 @@
                 <img id="generatedImage" class="generated-image" alt="Generated image">
                 <div class="image-info-section" id="imageInfoSection" style="display: none;">
                     <div class="image-info-header" onclick="toggleImageInfo(this)">
-                        <span>DALL-E's Interpretation</span>
+                        <div class="header-with-button">
+                            <span>DALL-E's Interpretation</span>
+                            <button class="copy-btn" onclick="event.stopPropagation(); copyToClipboard('imageInfo', this)">Copy</button>
+                        </div>
                         <span class="collapsible-toggle">&#9660;</span>
                     </div>
                     <div class="image-info-content">
@@ -1136,6 +1180,29 @@ Respond ONLY with the scene description, no additional commentary or labels.`;
                 step.className = 'progress-step';
                 step.querySelector('.step-icon').textContent = i;
                 document.getElementById(`step${i}Detail`).textContent = '';
+            }
+        }
+
+        async function copyToClipboard(elementId, button) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+
+            try {
+                await navigator.clipboard.writeText(text);
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy text:', err);
+                button.textContent = 'Failed';
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                }, 2000);
             }
         }
     </script>
