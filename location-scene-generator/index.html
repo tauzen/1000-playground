@@ -226,19 +226,7 @@
 
                 <div class="form-group">
                     <label for="weather">Weather Conditions</label>
-                    <select id="weather" required>
-                        <option value="">Select weather...</option>
-                        <option value="sunny clear sky">Sunny with clear sky</option>
-                        <option value="partly cloudy">Partly cloudy</option>
-                        <option value="overcast cloudy">Overcast/Cloudy</option>
-                        <option value="light rain">Light rain</option>
-                        <option value="heavy rain storm">Heavy rain/Storm</option>
-                        <option value="snow">Snow</option>
-                        <option value="fog mist">Fog/Mist</option>
-                        <option value="sunset golden hour">Sunset/Golden hour</option>
-                        <option value="sunrise dawn">Sunrise/Dawn</option>
-                        <option value="night starry">Night/Starry sky</option>
-                    </select>
+                    <input type="text" id="weather" placeholder="e.g., light rain, sunny, overcast clouds" required>
                 </div>
 
                 <button type="submit" id="generateBtn">Generate Scene Description</button>
@@ -268,7 +256,7 @@
         async function generateScene() {
             const apiKey = document.getElementById('apiKeyInput').value.trim();
             const location = document.getElementById('location').value.trim();
-            const weather = document.getElementById('weather').value;
+            const weather = document.getElementById('weather').value.trim();
             const resultDiv = document.getElementById('result');
             const generateBtn = document.getElementById('generateBtn');
 
