@@ -391,6 +391,36 @@
             return await response.json();
         }
 
+        function generatePrecipitationHTML(weather) {
+            let precipHTML = '';
+            const hasRain = weather.rain && (weather.rain['1h'] || weather.rain['3h']);
+            const hasSnow = weather.snow && (weather.snow['1h'] || weather.snow['3h']);
+
+            if (hasRain || hasSnow) {
+                precipHTML = '<div class="info-row" style="margin-top: 10px; padding-top: 10px; border-top: 2px solid #667eea;"><span class="label" style="color: #667eea; font-weight: bold;">Precipitation:</span><span class="value"></span></div>';
+
+                if (hasRain) {
+                    if (weather.rain['1h']) {
+                        precipHTML += `<div class="info-row"><span class="label">🌧️ Rain (last hour):</span><span class="value">${weather.rain['1h']} mm</span></div>`;
+                    }
+                    if (weather.rain['3h']) {
+                        precipHTML += `<div class="info-row"><span class="label">🌧️ Rain (last 3 hours):</span><span class="value">${weather.rain['3h']} mm</span></div>`;
+                    }
+                }
+
+                if (hasSnow) {
+                    if (weather.snow['1h']) {
+                        precipHTML += `<div class="info-row"><span class="label">❄️ Snow (last hour):</span><span class="value">${weather.snow['1h']} mm</span></div>`;
+                    }
+                    if (weather.snow['3h']) {
+                        precipHTML += `<div class="info-row"><span class="label">❄️ Snow (last 3 hours):</span><span class="value">${weather.snow['3h']} mm</span></div>`;
+                    }
+                }
+            }
+
+            return precipHTML;
+        }
+
         function displayResults(location, weather, weatherError) {
             const address = location.address || {};
 
@@ -444,6 +474,7 @@
                             <span class="label">Pressure:</span>
                             <span class="value">${weather.main.pressure} hPa</span>
                         </div>
+                        ${generatePrecipitationHTML(weather)}
                     </div>
                 `;
             } else if (weatherError) {
