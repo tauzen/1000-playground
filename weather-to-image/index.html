@@ -658,14 +658,49 @@ Respond ONLY with the scene description, no additional commentary or labels.`;
                         setStepActive(2);
 
                         let weatherDescription = 'clear sky';
+                        let fullWeatherDescription = 'clear sky, mild temperature';
                         let temperature = null;
 
                         if (weatherKey) {
                             try {
                                 const weatherData = await getWeather(latitude, longitude, weatherKey);
-                                weatherDescription = weatherData.weather[0].description;
+                                const conditions = weatherData.weather[0].description;
                                 temperature = Math.round(weatherData.main.temp);
-                                setStepCompleted(2, `${weatherDescription}, ${temperature}°C`);
+                                const feelsLike = Math.round(weatherData.main.feels_like);
+                                const humidity = weatherData.main.humidity;
+                                const windSpeed = weatherData.wind.speed;
+                                const pressure = weatherData.main.pressure;
+                                const visibility = weatherData.visibility ? Math.round(weatherData.visibility / 1000) : null;
+                                const clouds = weatherData.clouds?.all;
+
+                                // Build detailed weather description for scene generation
+                                const weatherParts = [
+                                    conditions,
+                                    `${temperature}°C (feels like ${feelsLike}°C)`,
+                                    `humidity ${humidity}%`,
+                                    `wind ${windSpeed} m/s`
+                                ];
+
+                                if (visibility !== null) {
+                                    weatherParts.push(`visibility ${visibility} km`);
+                                }
+                                if (clouds !== undefined) {
+                                    weatherParts.push(`cloud cover ${clouds}%`);
+                                }
+
+                                // Add precipitation info if present
+                                if (weatherData.rain) {
+                                    const rainAmount = weatherData.rain['1h'] || weatherData.rain['3h'];
+                                    if (rainAmount) weatherParts.push(`rain ${rainAmount} mm`);
+                                }
+                                if (weatherData.snow) {
+                                    const snowAmount = weatherData.snow['1h'] || weatherData.snow['3h'];
+                                    if (snowAmount) weatherParts.push(`snow ${snowAmount} mm`);
+                                }
+
+                                weatherDescription = conditions;
+                                fullWeatherDescription = weatherParts.join(', ');
+                                setStepCompleted(2, `${conditions}, ${temperature}°C`);
                             } catch (err) {
                                 console.warn('Weather fetch failed, using defaults:', err);
                                 setStepCompleted(2, 'Using default (no API key)');
@@ -694,7 +729,7 @@ Respond ONLY with the scene description, no additional commentary or labels.`;
                         const sceneDescription = await generateSceneDescription(
                             openaiKey,
                             fullLocation,
-                            weatherDescription,
+                            fullWeatherDescription,
                             timeOfDay,
                             season,
                             currentDate
