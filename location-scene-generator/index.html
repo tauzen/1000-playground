@@ -240,6 +240,31 @@
         const STORAGE_KEY = 'openai_api_key';
         const API_URL = 'https://api.openai.com/v1/chat/completions';
 
+        function getTimeOfDay() {
+            const hour = new Date().getHours();
+            if (hour >= 5 && hour < 12) return 'morning';
+            if (hour >= 12 && hour < 17) return 'afternoon';
+            if (hour >= 17 && hour < 21) return 'evening';
+            return 'night';
+        }
+
+        function getSeason() {
+            const month = new Date().getMonth();
+            if (month >= 2 && month <= 4) return 'spring';
+            if (month >= 5 && month <= 7) return 'summer';
+            if (month >= 8 && month <= 10) return 'autumn';
+            return 'winter';
+        }
+
+        function getFormattedDate() {
+            return new Date().toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
         // Load saved API key on page load
         document.addEventListener('DOMContentLoaded', () => {
             const savedKey = localStorage.getItem(STORAGE_KEY);
@@ -277,16 +302,25 @@
             generateBtn.disabled = true;
             resultDiv.innerHTML = '<div class="loading">Generating scene description</div>';
 
+            const timeOfDay = getTimeOfDay();
+            const season = getSeason();
+            const currentDate = getFormattedDate();
+
             const prompt = `Generate a detailed scene description for an image that depicts:
 - Location: ${location}
 - Weather: ${weather}
+- Time of day: ${timeOfDay}
+- Season: ${season}
+- Current date: ${currentDate}
 
 Your description should:
 1. Include characteristic landmarks, architecture, or natural features specific to this location
 2. Describe the weather conditions and how they affect the scene (lighting, atmosphere, reflections, etc.)
-3. Include details about colors, textures, and mood
-4. Be suitable as a prompt for an image generation model like Midjourney or DALL-E
-5. Be 2-3 paragraphs long
+3. Reflect the time of day with appropriate lighting (${timeOfDay} light, shadows, sky colors)
+4. Incorporate seasonal elements typical for ${season} (vegetation, colors, atmosphere)
+5. Include details about colors, textures, and mood
+6. Be suitable as a prompt for an image generation model like Midjourney or DALL-E
+7. Be 2-3 paragraphs long
 
 Respond ONLY with the scene description, no additional commentary or labels.`;
 
