@@ -1059,6 +1059,12 @@ Respond ONLY with the scene description, no additional commentary or labels.`;
 
                 setStepCompleted(3, 'Scene ready');
 
+                // Display scene description immediately
+                document.getElementById('sceneText').textContent = sceneDescription;
+                document.getElementById('resultSection').style.display = 'block';
+                // Keep image box hidden until image is ready
+                document.querySelector('.image-box').style.display = 'none';
+
                 // Step 4: Generate image
                 setStepActive(4);
 
@@ -1066,8 +1072,7 @@ Respond ONLY with the scene description, no additional commentary or labels.`;
 
                 setStepCompleted(4, 'Image created!');
 
-                // Display results
-                document.getElementById('sceneText').textContent = sceneDescription;
+                // Display image results
                 document.getElementById('generatedImage').src = imageResult.url;
 
                 if (imageResult.revisedPrompt) {
@@ -1077,7 +1082,8 @@ Respond ONLY with the scene description, no additional commentary or labels.`;
                     document.getElementById('imageInfoSection').style.display = 'none';
                 }
 
-                document.getElementById('resultSection').style.display = 'block';
+                // Show image box now that image is ready
+                document.querySelector('.image-box').style.display = 'block';
 
             } catch (error) {
                 console.error('Error:', error);
@@ -1115,6 +1121,9 @@ Respond ONLY with the scene description, no additional commentary or labels.`;
             document.getElementById('contextSection').style.display = 'none';
             document.getElementById('resultSection').style.display = 'none';
             document.getElementById('errorContainer').innerHTML = '';
+
+            // Reset image box display
+            document.querySelector('.image-box').style.display = 'block';
 
             // Reset collapsible sections
             document.querySelectorAll('.collapsible-content').forEach(el => el.classList.remove('expanded'));
