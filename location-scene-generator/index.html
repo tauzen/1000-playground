@@ -213,9 +213,9 @@
 
         <div id="app">
             <div class="api-section">
-                <h3>Anthropic API Key</h3>
-                <p>Enter your Claude API key to generate scenes. Get one at <a href="https://console.anthropic.com/" target="_blank">console.anthropic.com</a></p>
-                <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-...">
+                <h3>OpenAI API Key</h3>
+                <p>Enter your OpenAI API key to generate scenes. Get one at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a></p>
+                <input type="password" id="apiKeyInput" placeholder="sk-...">
             </div>
 
             <form id="sceneForm">
@@ -237,8 +237,8 @@
     </div>
 
     <script>
-        const STORAGE_KEY = 'anthropic_api_key';
-        const API_URL = 'https://api.anthropic.com/v1/messages';
+        const STORAGE_KEY = 'openai_api_key';
+        const API_URL = 'https://api.openai.com/v1/chat/completions';
 
         // Load saved API key on page load
         document.addEventListener('DOMContentLoaded', () => {
@@ -261,7 +261,7 @@
             const generateBtn = document.getElementById('generateBtn');
 
             if (!apiKey) {
-                resultDiv.innerHTML = '<div class="error">Please enter your Anthropic API key.</div>';
+                resultDiv.innerHTML = '<div class="error">Please enter your OpenAI API key.</div>';
                 return;
             }
 
@@ -277,9 +277,7 @@
             generateBtn.disabled = true;
             resultDiv.innerHTML = '<div class="loading">Generating scene description</div>';
 
-            const prompt = `You are an expert at creating detailed, vivid scene descriptions for image generation AI models.
-
-Generate a detailed scene description for an image that depicts:
+            const prompt = `Generate a detailed scene description for an image that depicts:
 - Location: ${location}
 - Weather: ${weather}
 
@@ -297,14 +295,16 @@ Respond ONLY with the scene description, no additional commentary or labels.`;
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'x-api-key': apiKey,
-                        'anthropic-version': '2023-06-01',
-                        'anthropic-dangerous-direct-browser-access': 'true'
+                        'Authorization': `Bearer ${apiKey}`
                     },
                     body: JSON.stringify({
-                        model: 'claude-sonnet-4-20250514',
+                        model: 'gpt-4o',
                         max_tokens: 1024,
                         messages: [
+                            {
+                                role: 'system',
+                                content: 'You are an expert at creating detailed, vivid scene descriptions for image generation AI models.'
+                            },
                             {
                                 role: 'user',
                                 content: prompt
@@ -319,7 +319,7 @@ Respond ONLY with the scene description, no additional commentary or labels.`;
                 }
 
                 const data = await response.json();
-                const sceneDescription = data.content[0].text;
+                const sceneDescription = data.choices[0].message.content;
 
                 resultDiv.innerHTML = `
                     <div class="result-section">
