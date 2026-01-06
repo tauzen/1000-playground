@@ -190,6 +190,35 @@
             margin: 10px 0;
             font-size: 14px;
         }
+
+        .add-api-key-btn {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+            transition: all 0.3s ease;
+            /* Ensure good touch target size for mobile */
+            min-height: 48px;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .add-api-key-btn:hover {
+            background: #45a049;
+            box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .add-api-key-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+        }
     </style>
 </head>
 <body>
@@ -419,8 +448,9 @@
             } else {
                 html += `
                     <div class="info-message">
-                        ℹ️ No weather data available. <span class="skip-link" style="display:inline" onclick="promptForApiKey()">Add API key</span> to see weather.
+                        ℹ️ No weather data available. Add your API key to see weather information.
                     </div>
+                    <button class="add-api-key-btn" onclick="promptForApiKey()">🔑 Add API Key</button>
                 `;
             }
 
