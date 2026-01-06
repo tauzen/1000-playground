@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Scene Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        input::placeholder {
+            color: #aaa;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-size: 16px;
+            padding: 20px;
+        }
+
+        .loading::after {
+            content: '';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .result-section {
+            margin-top: 25px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result-section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .scene-description {
+            color: #333;
+            line-height: 1.8;
+            font-size: 15px;
+            white-space: pre-wrap;
+        }
+
+        .copy-btn {
+            background: #4caf50;
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+
+        .copy-btn:hover {
+            background: #45a049;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        .api-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .api-section h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .api-section p {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .api-section a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .api-section a:hover {
+            text-decoration: underline;
+        }
+
+        .info-message {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        .new-btn {
+            background: #9c27b0;
+            margin-top: 10px;
+        }
+
+        .new-btn:hover {
+            background: #7b1fa2;
+            box-shadow: 0 4px 12px rgba(156, 39, 176, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Location Scene Generator</h1>
+        <p class="subtitle">Generate detailed scene descriptions for image prompts</p>
+
+        <div id="app">
+            <div class="api-section">
+                <h3>Anthropic API Key</h3>
+                <p>Enter your Claude API key to generate scenes. Get one at <a href="https://console.anthropic.com/" target="_blank">console.anthropic.com</a></p>
+                <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-...">
+            </div>
+
+            <form id="sceneForm">
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" placeholder="e.g., Tokyo, Paris, Grand Canyon, Venice" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="weather">Weather Conditions</label>
+                    <input type="text" id="weather" placeholder="e.g., light rain, sunny, overcast clouds" required>
+                </div>
+
+                <button type="submit" id="generateBtn">Generate Scene Description</button>
+            </form>
+        </div>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'anthropic_api_key';
+        const API_URL = 'https://api.anthropic.com/v1/messages';
+
+        // Load saved API key on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedKey = localStorage.getItem(STORAGE_KEY);
+            if (savedKey) {
+                document.getElementById('apiKeyInput').value = savedKey;
+            }
+        });
+
+        document.getElementById('sceneForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await generateScene();
+        });
+
+        async function generateScene() {
+            const apiKey = document.getElementById('apiKeyInput').value.trim();
+            const location = document.getElementById('location').value.trim();
+            const weather = document.getElementById('weather').value.trim();
+            const resultDiv = document.getElementById('result');
+            const generateBtn = document.getElementById('generateBtn');
+
+            if (!apiKey) {
+                resultDiv.innerHTML = '<div class="error">Please enter your Anthropic API key.</div>';
+                return;
+            }
+
+            if (!location || !weather) {
+                resultDiv.innerHTML = '<div class="error">Please fill in both location and weather fields.</div>';
+                return;
+            }
+
+            // Save API key
+            localStorage.setItem(STORAGE_KEY, apiKey);
+
+            // Show loading state
+            generateBtn.disabled = true;
+            resultDiv.innerHTML = '<div class="loading">Generating scene description</div>';
+
+            const prompt = `You are an expert at creating detailed, vivid scene descriptions for image generation AI models.
+
+Generate a detailed scene description for an image that depicts:
+- Location: ${location}
+- Weather: ${weather}
+
+Your description should:
+1. Include characteristic landmarks, architecture, or natural features specific to this location
+2. Describe the weather conditions and how they affect the scene (lighting, atmosphere, reflections, etc.)
+3. Include details about colors, textures, and mood
+4. Be suitable as a prompt for an image generation model like Midjourney or DALL-E
+5. Be 2-3 paragraphs long
+
+Respond ONLY with the scene description, no additional commentary or labels.`;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': apiKey,
+                        'anthropic-version': '2023-06-01',
+                        'anthropic-dangerous-direct-browser-access': 'true'
+                    },
+                    body: JSON.stringify({
+                        model: 'claude-sonnet-4-20250514',
+                        max_tokens: 1024,
+                        messages: [
+                            {
+                                role: 'user',
+                                content: prompt
+                            }
+                        ]
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error?.message || `API request failed with status ${response.status}`);
+                }
+
+                const data = await response.json();
+                const sceneDescription = data.content[0].text;
+
+                resultDiv.innerHTML = `
+                    <div class="result-section">
+                        <h2>Generated Scene Description</h2>
+                        <div class="scene-description" id="sceneText">${escapeHtml(sceneDescription)}</div>
+                        <button class="copy-btn" onclick="copyToClipboard()">Copy to Clipboard</button>
+                        <button class="new-btn" onclick="resetForm()">Generate Another</button>
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `<div class="error">Error: ${escapeHtml(error.message)}</div>`;
+            } finally {
+                generateBtn.disabled = false;
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function copyToClipboard() {
+            const sceneText = document.getElementById('sceneText').textContent;
+            navigator.clipboard.writeText(sceneText).then(() => {
+                const copyBtn = document.querySelector('.copy-btn');
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = 'Copied!';
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                alert('Failed to copy to clipboard');
+            });
+        }
+
+        function resetForm() {
+            document.getElementById('location').value = '';
+            document.getElementById('weather').value = '';
+            document.getElementById('result').innerHTML = '';
+            document.getElementById('location').focus();
+        }
+    </script>
+</body>
+</html>
