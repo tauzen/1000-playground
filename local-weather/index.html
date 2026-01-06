@@ -321,18 +321,19 @@
                         // Get weather if API key is available (safe to read localStorage here)
                         const apiKey = getStoredApiKey();
                         let weatherData = null;
+                        let weatherError = null;
                         if (apiKey) {
                             appDiv.innerHTML = '<div class="loading">Getting weather information...</div>';
                             try {
                                 weatherData = await getWeather(latitude, longitude, apiKey);
                             } catch (error) {
                                 console.error('Weather fetch failed:', error);
-                                // Continue without weather data
+                                weatherError = error.message;
                             }
                         }
 
                         // Display results
-                        displayResults(locationDetails, weatherData);
+                        displayResults(locationDetails, weatherData, weatherError);
                     } catch (error) {
                         displayError(error.message);
                     } finally {
@@ -390,7 +391,7 @@
             return await response.json();
         }
 
-        function displayResults(location, weather) {
+        function displayResults(location, weather, weatherError) {
             const address = location.address || {};
 
             let html = `
@@ -444,6 +445,13 @@
                             <span class="value">${weather.main.pressure} hPa</span>
                         </div>
                     </div>
+                `;
+            } else if (weatherError) {
+                html += `
+                    <div class="error">
+                        ❌ Weather Error: ${weatherError}
+                    </div>
+                    <button class="add-api-key-btn" onclick="promptForApiKey()">🔑 Update API Key</button>
                 `;
             } else {
                 html += `
