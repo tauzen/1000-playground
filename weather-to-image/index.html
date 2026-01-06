@@ -638,11 +638,21 @@ Respond ONLY with the scene description, no additional commentary or labels.`;
                         // Get location details from Nominatim
                         const locationData = await getLocationDetails(latitude, longitude);
                         const address = locationData.address || {};
-                        const locationName = address.city || address.town || address.village || address.county || 'Unknown location';
-                        const country = address.country || '';
-                        const fullLocation = country ? `${locationName}, ${country}` : locationName;
 
-                        setStepCompleted(1, fullLocation);
+                        // Build precise location with street, neighborhood, and city
+                        const street = address.road || address.street || '';
+                        const neighborhood = address.neighbourhood || address.suburb || address.quarter || '';
+                        const city = address.city || address.town || address.village || address.county || '';
+                        const country = address.country || '';
+
+                        // Build full location string with all available details
+                        const locationParts = [street, neighborhood, city, country].filter(part => part);
+                        const fullLocation = locationParts.length > 0 ? locationParts.join(', ') : 'Unknown location';
+
+                        // Short version for UI display
+                        const shortLocation = city ? (country ? `${city}, ${country}` : city) : fullLocation;
+
+                        setStepCompleted(1, shortLocation);
 
                         // Step 2: Get weather
                         setStepActive(2);
