@@ -4,6 +4,7 @@ const CANVAS_HEIGHT = 400;
 const TILE_SIZE = 32;
 const GRAVITY = 0.6;
 const JUMP_FORCE = -14;
+const JUMP_CUT_MULTIPLIER = 0.4; // Velocity multiplier when releasing jump early
 
 // Speed settings
 const START_SPEED = 2;
@@ -39,7 +40,8 @@ const player = {
     height: TILE_SIZE - 4,
     velY: 0,
     onGround: false,
-    jumpHeld: false
+    isJumping: false,      // Currently in a jump
+    jumpKeyHeld: false     // Jump key is being held down
 };
 
 // Starting chunk - extra long flat platform for warmup (48 tiles = 1536px)
@@ -159,7 +161,8 @@ function init() {
     // Event listeners
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keyup', handleKeyUp);
-    canvas.addEventListener('touchstart', handleTouch);
+    canvas.addEventListener('touchstart', handleTouchStart);
+    canvas.addEventListener('touchend', handleTouchEnd);
     canvas.addEventListener('click', handleClick);
 
     // Start game loop
@@ -212,6 +215,7 @@ function generateNextChunk() {
 function handleKeyDown(e) {
     if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
         e.preventDefault();
+        player.jumpKeyHeld = true;
 
         if (gameState === 'start') {
             startGame();
@@ -225,17 +229,37 @@ function handleKeyDown(e) {
 
 function handleKeyUp(e) {
     if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
-        player.jumpHeld = false;
+        player.jumpKeyHeld = false;
+
+        // Cut jump short if released while rising
+        if (player.isJumping && player.velY < 0) {
+            player.velY *= JUMP_CUT_MULTIPLIER;
+        }
     }
 }
 
-function handleTouch(e) {
+function handleTouchStart(e) {
     e.preventDefault();
+    player.jumpKeyHeld = true;
     handleInput();
 }
 
+function handleTouchEnd(e) {
+    e.preventDefault();
+    player.jumpKeyHeld = false;
+
+    // Cut jump short if released while rising
+    if (player.isJumping && player.velY < 0) {
+        player.velY *= JUMP_CUT_MULTIPLIER;
+    }
+}
+
 function handleClick(e) {
+    // Click is instant, so just do a full jump
+    player.jumpKeyHeld = true;
     handleInput();
+    // Small delay then release for full jump on click
+    setTimeout(() => { player.jumpKeyHeld = false; }, 150);
 }
 
 function handleInput() {
@@ -263,6 +287,8 @@ function restartGame() {
     player.y = 200;
     player.velY = 0;
     player.onGround = false;
+    player.isJumping = false;
+    player.jumpKeyHeld = false;
 
     generateInitialWorld();
 
@@ -271,10 +297,10 @@ function restartGame() {
 }
 
 function jump() {
-    if (player.onGround && !player.jumpHeld) {
+    if (player.onGround && !player.isJumping) {
         player.velY = JUMP_FORCE;
         player.onGround = false;
-        player.jumpHeld = true;
+        player.isJumping = true;
     }
 }
 
@@ -328,6 +354,7 @@ function update() {
                 player.y = tile.y - player.height;
                 player.velY = 0;
                 player.onGround = true;
+                player.isJumping = false;
             }
             // Collision from below (hitting head)
             else if (player.velY < 0 && player.y - player.velY >= tile.y + TILE_SIZE - 5) {
