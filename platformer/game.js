@@ -216,8 +216,9 @@ function drawBackground() {
 
     // Draw stars with twinkle
     for (const star of background.stars) {
-        const screenX = (star.x - scrollOffset * 0.02) % (CANVAS_WIDTH * 3);
-        if (screenX > -10 && screenX < CANVAS_WIDTH + 10) {
+        let screenX = (star.x - scrollOffset * 0.02) % (CANVAS_WIDTH * 3);
+        if (screenX < 0) screenX += CANVAS_WIDTH * 3;
+        if (screenX < CANVAS_WIDTH + 10) {
             const alpha = 0.5 + 0.5 * Math.sin(star.twinkle + scrollOffset * 0.01);
             ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
             ctx.fillRect(screenX, star.y, star.size, star.size);
@@ -229,10 +230,11 @@ function drawBackground() {
 
     // Draw far mountains (slowest parallax - 0.1)
     const farParallax = 0.1;
-    ctx.fillStyle = '#1a3050';
     for (const mountain of background.farMountains) {
         const screenX = mountain.x - scrollOffset * farParallax;
-        const wrappedX = ((screenX % (CANVAS_WIDTH * 3)) + CANVAS_WIDTH * 3) % (CANVAS_WIDTH * 3) - CANVAS_WIDTH;
+        // Wrap around for infinite scrolling
+        let wrappedX = screenX % (CANVAS_WIDTH * 3);
+        if (wrappedX < -mountain.width) wrappedX += CANVAS_WIDTH * 3;
         if (wrappedX > -mountain.width && wrappedX < CANVAS_WIDTH + mountain.width) {
             drawMountain(wrappedX, 200, mountain.width, mountain.height, '#1a3050', '#2a4060');
         }
@@ -242,7 +244,9 @@ function drawBackground() {
     const nearParallax = 0.25;
     for (const mountain of background.nearMountains) {
         const screenX = mountain.x - scrollOffset * nearParallax;
-        const wrappedX = ((screenX % (CANVAS_WIDTH * 3)) + CANVAS_WIDTH * 3) % (CANVAS_WIDTH * 3) - CANVAS_WIDTH;
+        // Wrap around for infinite scrolling
+        let wrappedX = screenX % (CANVAS_WIDTH * 3);
+        if (wrappedX < -mountain.width) wrappedX += CANVAS_WIDTH * 3;
         if (wrappedX > -mountain.width && wrappedX < CANVAS_WIDTH + mountain.width) {
             drawMountain(wrappedX, 220, mountain.width, mountain.height, '#2a4a6a', '#3a5a7a');
         }
