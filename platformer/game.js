@@ -42,20 +42,20 @@ const player = {
     jumpHeld: false
 };
 
-// Starting chunk - long flat platform for warmup
+// Starting chunk - extra long flat platform for warmup (48 tiles = 1536px)
 const startingChunk = [
-    "................................",
-    "................................",
-    "................................",
-    "................................",
-    "................................",
-    "................................",
-    "................................",
-    "................................",
-    "................................",
-    "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
-    "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
-    "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG"
+    "................................................",
+    "................................................",
+    "................................................",
+    "................................................",
+    "................................................",
+    "................................................",
+    "................................................",
+    "................................................",
+    "................................................",
+    "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+    "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+    "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG"
 ];
 
 // Map chunks that repeat
@@ -184,7 +184,7 @@ function generateNextChunk() {
     // First chunk is the long starting platform
     if (chunksGenerated === 0) {
         chunk = startingChunk;
-        chunkWidth = 32; // Starting chunk is 32 tiles wide
+        chunkWidth = 48; // Starting chunk is 48 tiles wide
     } else {
         // Pick a random chunk from the regular ones
         const chunkIndex = Math.floor(Math.random() * mapChunks.length);
@@ -465,6 +465,54 @@ function draw() {
     // Highlight
     ctx.fillStyle = 'rgba(255,255,255,0.3)';
     ctx.fillRect(px + 2, py + 2, pw - 4, 4);
+
+    // Draw speed meter
+    drawSpeedMeter();
+}
+
+function drawSpeedMeter() {
+    const meterX = CANVAS_WIDTH - 120;
+    const meterY = 16;
+    const meterWidth = 100;
+    const meterHeight = 16;
+
+    // Speed label
+    ctx.fillStyle = '#33ff33';
+    ctx.font = 'bold 14px "Courier New", monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText('SPEED', meterX - 8, meterY + 12);
+
+    // Meter background
+    ctx.fillStyle = '#1a1a2e';
+    ctx.fillRect(meterX, meterY, meterWidth, meterHeight);
+
+    // Meter border
+    ctx.strokeStyle = '#33ff33';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(meterX, meterY, meterWidth, meterHeight);
+
+    // Speed fill
+    const speedPercent = (currentSpeed - START_SPEED) / (MAX_SPEED - START_SPEED);
+    const fillWidth = Math.max(0, Math.min(1, speedPercent)) * (meterWidth - 4);
+
+    // Color gradient based on speed (green -> yellow -> red)
+    let fillColor;
+    if (speedPercent < 0.5) {
+        fillColor = '#33ff33'; // Green
+    } else if (speedPercent < 0.8) {
+        fillColor = '#ffff33'; // Yellow
+    } else {
+        fillColor = '#ff3333'; // Red
+    }
+
+    ctx.fillStyle = fillColor;
+    ctx.fillRect(meterX + 2, meterY + 2, fillWidth, meterHeight - 4);
+
+    // Speed value text
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 10px "Courier New", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(currentSpeed.toFixed(1), meterX + meterWidth / 2, meterY + 12);
 }
 
 function gameLoop() {
