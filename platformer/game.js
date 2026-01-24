@@ -145,6 +145,241 @@ let scrollOffset = 0;
 let nextChunkX = 0;
 let chunksGenerated = 0;
 
+// Background layers for arctic landscape
+const background = {
+    farMountains: [],
+    nearMountains: [],
+    clouds: [],
+    stars: []
+};
+
+function initBackground() {
+    // Generate stars
+    for (let i = 0; i < 30; i++) {
+        background.stars.push({
+            x: Math.random() * CANVAS_WIDTH * 3,
+            y: Math.random() * 120,
+            size: Math.random() * 2 + 1,
+            twinkle: Math.random() * Math.PI
+        });
+    }
+
+    // Generate far mountains (slower parallax)
+    let farX = 0;
+    while (farX < CANVAS_WIDTH * 3) {
+        const width = 150 + Math.random() * 200;
+        const height = 80 + Math.random() * 100;
+        background.farMountains.push({
+            x: farX,
+            width: width,
+            height: height,
+            peaks: Math.floor(Math.random() * 2) + 1
+        });
+        farX += width * 0.7;
+    }
+
+    // Generate near mountains (faster parallax)
+    let nearX = 0;
+    while (nearX < CANVAS_WIDTH * 3) {
+        const width = 100 + Math.random() * 150;
+        const height = 60 + Math.random() * 80;
+        background.nearMountains.push({
+            x: nearX,
+            width: width,
+            height: height,
+            peaks: Math.floor(Math.random() * 2) + 1
+        });
+        nearX += width * 0.6;
+    }
+
+    // Generate clouds
+    for (let i = 0; i < 8; i++) {
+        background.clouds.push({
+            x: Math.random() * CANVAS_WIDTH * 2,
+            y: 20 + Math.random() * 80,
+            width: 60 + Math.random() * 80,
+            height: 20 + Math.random() * 20,
+            speed: 0.1 + Math.random() * 0.2
+        });
+    }
+}
+
+function drawBackground() {
+    // Sky gradient
+    const gradient = ctx.createLinearGradient(0, 0, 0, CANVAS_HEIGHT);
+    gradient.addColorStop(0, '#0a0f1a');
+    gradient.addColorStop(0.3, '#0c1929');
+    gradient.addColorStop(0.7, '#1a3a5c');
+    gradient.addColorStop(1, '#2a5a7c');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+    // Draw stars with twinkle
+    for (const star of background.stars) {
+        const screenX = (star.x - scrollOffset * 0.02) % (CANVAS_WIDTH * 3);
+        if (screenX > -10 && screenX < CANVAS_WIDTH + 10) {
+            const alpha = 0.5 + 0.5 * Math.sin(star.twinkle + scrollOffset * 0.01);
+            ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+            ctx.fillRect(screenX, star.y, star.size, star.size);
+        }
+    }
+
+    // Aurora borealis effect
+    drawAurora();
+
+    // Draw far mountains (slowest parallax - 0.1)
+    const farParallax = 0.1;
+    ctx.fillStyle = '#1a3050';
+    for (const mountain of background.farMountains) {
+        const screenX = mountain.x - scrollOffset * farParallax;
+        const wrappedX = ((screenX % (CANVAS_WIDTH * 3)) + CANVAS_WIDTH * 3) % (CANVAS_WIDTH * 3) - CANVAS_WIDTH;
+        if (wrappedX > -mountain.width && wrappedX < CANVAS_WIDTH + mountain.width) {
+            drawMountain(wrappedX, 200, mountain.width, mountain.height, '#1a3050', '#2a4060');
+        }
+    }
+
+    // Draw near mountains (medium parallax - 0.25)
+    const nearParallax = 0.25;
+    for (const mountain of background.nearMountains) {
+        const screenX = mountain.x - scrollOffset * nearParallax;
+        const wrappedX = ((screenX % (CANVAS_WIDTH * 3)) + CANVAS_WIDTH * 3) % (CANVAS_WIDTH * 3) - CANVAS_WIDTH;
+        if (wrappedX > -mountain.width && wrappedX < CANVAS_WIDTH + mountain.width) {
+            drawMountain(wrappedX, 220, mountain.width, mountain.height, '#2a4a6a', '#3a5a7a');
+        }
+    }
+
+    // Draw frozen ocean/ice
+    drawFrozenOcean();
+
+    // Draw clouds (slow drift)
+    ctx.fillStyle = 'rgba(200, 220, 240, 0.3)';
+    for (const cloud of background.clouds) {
+        const screenX = (cloud.x - scrollOffset * 0.15) % (CANVAS_WIDTH * 2);
+        const wrappedX = screenX < -cloud.width ? screenX + CANVAS_WIDTH * 2 : screenX;
+        if (wrappedX > -cloud.width && wrappedX < CANVAS_WIDTH + cloud.width) {
+            drawCloud(wrappedX, cloud.y, cloud.width, cloud.height);
+        }
+    }
+}
+
+function drawMountain(x, baseY, width, height, colorDark, colorLight) {
+    // Main mountain body
+    ctx.fillStyle = colorDark;
+    ctx.beginPath();
+    ctx.moveTo(x, baseY);
+    ctx.lineTo(x + width * 0.5, baseY - height);
+    ctx.lineTo(x + width, baseY);
+    ctx.closePath();
+    ctx.fill();
+
+    // Snow cap
+    ctx.fillStyle = '#e8f0f8';
+    ctx.beginPath();
+    ctx.moveTo(x + width * 0.35, baseY - height * 0.6);
+    ctx.lineTo(x + width * 0.5, baseY - height);
+    ctx.lineTo(x + width * 0.65, baseY - height * 0.6);
+    ctx.closePath();
+    ctx.fill();
+
+    // Light side highlight
+    ctx.fillStyle = colorLight;
+    ctx.beginPath();
+    ctx.moveTo(x + width * 0.5, baseY - height);
+    ctx.lineTo(x + width * 0.75, baseY - height * 0.3);
+    ctx.lineTo(x + width, baseY);
+    ctx.lineTo(x + width * 0.5, baseY);
+    ctx.closePath();
+    ctx.fill();
+}
+
+function drawCloud(x, y, width, height) {
+    ctx.fillStyle = 'rgba(200, 220, 240, 0.4)';
+    // Pixelated cloud shape
+    const blockSize = 8;
+    const pattern = [
+        [0, 1, 1, 1, 0],
+        [1, 1, 1, 1, 1],
+        [0, 1, 1, 1, 0]
+    ];
+    const scaleX = width / (pattern[0].length * blockSize);
+    const scaleY = height / (pattern.length * blockSize);
+
+    for (let row = 0; row < pattern.length; row++) {
+        for (let col = 0; col < pattern[row].length; col++) {
+            if (pattern[row][col]) {
+                ctx.fillRect(
+                    x + col * blockSize * scaleX,
+                    y + row * blockSize * scaleY,
+                    blockSize * scaleX,
+                    blockSize * scaleY
+                );
+            }
+        }
+    }
+}
+
+function drawAurora() {
+    // Northern lights effect
+    const time = scrollOffset * 0.005;
+    ctx.globalAlpha = 0.15;
+
+    for (let i = 0; i < 3; i++) {
+        const gradient = ctx.createLinearGradient(0, 30 + i * 20, 0, 100 + i * 30);
+        gradient.addColorStop(0, 'transparent');
+        gradient.addColorStop(0.5, i % 2 === 0 ? '#00ff88' : '#00aaff');
+        gradient.addColorStop(1, 'transparent');
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.moveTo(0, 60 + i * 15);
+
+        for (let x = 0; x <= CANVAS_WIDTH; x += 20) {
+            const wave = Math.sin((x + scrollOffset * 0.5 + i * 100) * 0.01) * 20;
+            const wave2 = Math.sin((x + scrollOffset * 0.3 + i * 50) * 0.02) * 10;
+            ctx.lineTo(x, 60 + i * 15 + wave + wave2);
+        }
+
+        ctx.lineTo(CANVAS_WIDTH, 150);
+        ctx.lineTo(0, 150);
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    ctx.globalAlpha = 1;
+}
+
+function drawFrozenOcean() {
+    // Ocean base
+    const oceanY = 280;
+    const gradient = ctx.createLinearGradient(0, oceanY, 0, CANVAS_HEIGHT);
+    gradient.addColorStop(0, '#1a4a6a');
+    gradient.addColorStop(0.5, '#0a3050');
+    gradient.addColorStop(1, '#082840');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, oceanY, CANVAS_WIDTH, CANVAS_HEIGHT - oceanY);
+
+    // Ice floes on water
+    ctx.fillStyle = '#a0d0e8';
+    for (let i = 0; i < 5; i++) {
+        const floeX = ((i * 200 + 50) - scrollOffset * 0.4) % (CANVAS_WIDTH + 200) - 100;
+        const floeY = oceanY + 5 + Math.sin(scrollOffset * 0.02 + i) * 3;
+        const floeWidth = 40 + (i % 3) * 20;
+
+        ctx.fillRect(floeX, floeY, floeWidth, 6);
+        ctx.fillStyle = '#c8e8f8';
+        ctx.fillRect(floeX + 2, floeY, floeWidth - 4, 2);
+        ctx.fillStyle = '#a0d0e8';
+    }
+
+    // Water reflection lines
+    ctx.fillStyle = 'rgba(100, 180, 220, 0.2)';
+    for (let i = 0; i < 8; i++) {
+        const lineX = ((i * 120) - scrollOffset * 0.5) % (CANVAS_WIDTH + 100) - 50;
+        const lineY = oceanY + 20 + i * 10;
+        ctx.fillRect(lineX, lineY, 30 + i * 5, 2);
+    }
+}
+
 // Snowflakes for arctic atmosphere
 const snowflakes = [];
 const NUM_SNOWFLAKES = 50;
@@ -194,6 +429,9 @@ function init() {
 
     // Generate initial chunks
     generateInitialWorld();
+
+    // Initialize background
+    initBackground();
 
     // Initialize snowflakes
     initSnowflakes();
@@ -442,25 +680,8 @@ function gameOver() {
 }
 
 function draw() {
-    // Clear canvas
-    ctx.fillStyle = COLORS.sky;
-    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-
-    // Draw background grid (subtle arctic blue)
-    ctx.strokeStyle = '#1a3050';
-    ctx.lineWidth = 1;
-    for (let x = -(scrollOffset % TILE_SIZE); x < CANVAS_WIDTH; x += TILE_SIZE) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, CANVAS_HEIGHT);
-        ctx.stroke();
-    }
-    for (let y = 0; y < CANVAS_HEIGHT; y += TILE_SIZE) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(CANVAS_WIDTH, y);
-        ctx.stroke();
-    }
+    // Draw procedural arctic background
+    drawBackground();
 
     // Draw snowflakes
     drawSnowflakes();
