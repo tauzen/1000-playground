@@ -14,14 +14,14 @@ let currentSpeed = START_SPEED;
 
 // Colors - arctic palette
 const COLORS = {
-    sky: '#0a1628',
+    sky: '#0c1929',
     player: '#ff6b6b',
     playerOutline: '#cc4444',
-    ground: '#4a6fa5',
-    groundTop: '#e8f4f8',
-    groundDark: '#2d4a6a',
-    platform: '#5c8db8',
-    platformTop: '#a8d4e6',
+    ground: '#3a5f8a',
+    groundTop: '#ffffff',
+    groundDark: '#1e3a5c',
+    platform: '#4a7faa',
+    platformTop: '#c8e8ff',
     coin: '#ffd700',
     coinShine: '#ffec8b'
 };
@@ -145,6 +145,43 @@ let scrollOffset = 0;
 let nextChunkX = 0;
 let chunksGenerated = 0;
 
+// Snowflakes for arctic atmosphere
+const snowflakes = [];
+const NUM_SNOWFLAKES = 50;
+
+function initSnowflakes() {
+    for (let i = 0; i < NUM_SNOWFLAKES; i++) {
+        snowflakes.push({
+            x: Math.random() * CANVAS_WIDTH,
+            y: Math.random() * CANVAS_HEIGHT,
+            size: Math.random() * 3 + 1,
+            speed: Math.random() * 1 + 0.5,
+            drift: Math.random() * 0.5 - 0.25
+        });
+    }
+}
+
+function updateSnowflakes() {
+    for (const flake of snowflakes) {
+        flake.y += flake.speed;
+        flake.x += flake.drift - currentSpeed * 0.3;
+
+        if (flake.y > CANVAS_HEIGHT) {
+            flake.y = -5;
+            flake.x = Math.random() * CANVAS_WIDTH;
+        }
+        if (flake.x < 0) flake.x = CANVAS_WIDTH;
+        if (flake.x > CANVAS_WIDTH) flake.x = 0;
+    }
+}
+
+function drawSnowflakes() {
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+    for (const flake of snowflakes) {
+        ctx.fillRect(Math.floor(flake.x), Math.floor(flake.y), flake.size, flake.size);
+    }
+}
+
 // Initialize
 function init() {
     canvas = document.getElementById('game');
@@ -157,6 +194,9 @@ function init() {
 
     // Generate initial chunks
     generateInitialWorld();
+
+    // Initialize snowflakes
+    initSnowflakes();
 
     // Event listeners
     document.addEventListener('keydown', handleKeyDown);
@@ -383,6 +423,9 @@ function update() {
     if (player.x < 50) {
         gameOver();
     }
+
+    // Update snowflakes
+    updateSnowflakes();
 }
 
 function checkCollision(rect1, rect2) {
@@ -418,6 +461,9 @@ function draw() {
         ctx.lineTo(CANVAS_WIDTH, y);
         ctx.stroke();
     }
+
+    // Draw snowflakes
+    drawSnowflakes();
 
     // Draw tiles
     for (const tile of worldTiles) {
