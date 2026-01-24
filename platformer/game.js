@@ -4,7 +4,12 @@ const CANVAS_HEIGHT = 400;
 const TILE_SIZE = 32;
 const GRAVITY = 0.6;
 const JUMP_FORCE = -14;
-const SCROLL_SPEED = 4;
+
+// Speed settings
+const START_SPEED = 2;
+const MAX_SPEED = 8;
+const SPEED_INCREMENT = 0.001; // Speed increase per frame
+let currentSpeed = START_SPEED;
 
 // Colors - oldschool palette
 const COLORS = {
@@ -36,6 +41,22 @@ const player = {
     onGround: false,
     jumpHeld: false
 };
+
+// Starting chunk - long flat platform for warmup
+const startingChunk = [
+    "................................",
+    "................................",
+    "................................",
+    "................................",
+    "................................",
+    "................................",
+    "................................",
+    "................................",
+    "................................",
+    "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+    "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+    "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG"
+];
 
 // Map chunks that repeat
 const mapChunks = [
@@ -157,15 +178,19 @@ function generateInitialWorld() {
 }
 
 function generateNextChunk() {
-    // Pick a random chunk (or first chunk if just starting)
-    let chunkIndex;
-    if (chunksGenerated === 0) {
-        chunkIndex = 0; // Start with flat ground
-    } else {
-        chunkIndex = Math.floor(Math.random() * mapChunks.length);
-    }
+    let chunk;
+    let chunkWidth;
 
-    const chunk = mapChunks[chunkIndex];
+    // First chunk is the long starting platform
+    if (chunksGenerated === 0) {
+        chunk = startingChunk;
+        chunkWidth = 32; // Starting chunk is 32 tiles wide
+    } else {
+        // Pick a random chunk from the regular ones
+        const chunkIndex = Math.floor(Math.random() * mapChunks.length);
+        chunk = mapChunks[chunkIndex];
+        chunkWidth = 16; // Regular chunks are 16 tiles wide
+    }
 
     for (let row = 0; row < chunk.length; row++) {
         for (let col = 0; col < chunk[row].length; col++) {
@@ -180,7 +205,7 @@ function generateNextChunk() {
         }
     }
 
-    nextChunkX += 16 * TILE_SIZE;
+    nextChunkX += chunkWidth * TILE_SIZE;
     chunksGenerated++;
 }
 
@@ -233,6 +258,7 @@ function restartGame() {
     score = 0;
     distance = 0;
     scrollOffset = 0;
+    currentSpeed = START_SPEED;
     player.x = 150;
     player.y = 200;
     player.velY = 0;
@@ -264,9 +290,14 @@ function update() {
     // Move player vertically
     player.y += player.velY;
 
+    // Gradually increase speed
+    if (currentSpeed < MAX_SPEED) {
+        currentSpeed += SPEED_INCREMENT;
+    }
+
     // Scroll the world
-    scrollOffset += SCROLL_SPEED;
-    distance += SCROLL_SPEED;
+    scrollOffset += currentSpeed;
+    distance += currentSpeed;
 
     // Update score based on distance
     score = Math.floor(distance / 10);
