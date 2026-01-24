@@ -12,16 +12,16 @@ const MAX_SPEED = 8;
 const SPEED_INCREMENT = 0.001; // Speed increase per frame
 let currentSpeed = START_SPEED;
 
-// Colors - oldschool palette
+// Colors - arctic palette
 const COLORS = {
-    sky: '#1a1a2e',
+    sky: '#0a1628',
     player: '#ff6b6b',
     playerOutline: '#cc4444',
-    ground: '#4a7c59',
-    groundTop: '#6ab04c',
-    groundDark: '#2d4a35',
-    platform: '#8b7355',
-    platformTop: '#a0826d',
+    ground: '#4a6fa5',
+    groundTop: '#e8f4f8',
+    groundDark: '#2d4a6a',
+    platform: '#5c8db8',
+    platformTop: '#a8d4e6',
     coin: '#ffd700',
     coinShine: '#ffec8b'
 };
@@ -403,8 +403,8 @@ function draw() {
     ctx.fillStyle = COLORS.sky;
     ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-    // Draw background grid (subtle)
-    ctx.strokeStyle = '#252540';
+    // Draw background grid (subtle arctic blue)
+    ctx.strokeStyle = '#1a3050';
     ctx.lineWidth = 1;
     for (let x = -(scrollOffset % TILE_SIZE); x < CANVAS_WIDTH; x += TILE_SIZE) {
         ctx.beginPath();
@@ -453,8 +453,8 @@ function draw() {
             ctx.fillStyle = COLORS.platformTop;
             ctx.fillRect(screenX, tile.y, TILE_SIZE, 6);
 
-            // Brick pattern
-            ctx.fillStyle = '#6b5344';
+            // Ice crack pattern
+            ctx.fillStyle = '#3a6a8a';
             ctx.fillRect(screenX + TILE_SIZE/2 - 1, tile.y, 2, TILE_SIZE);
             ctx.fillRect(screenX, tile.y + TILE_SIZE/2 - 1, TILE_SIZE, 2);
         }
@@ -504,17 +504,17 @@ function drawSpeedMeter() {
     const meterHeight = 16;
 
     // Speed label
-    ctx.fillStyle = '#33ff33';
+    ctx.fillStyle = '#66ccff';
     ctx.font = 'bold 14px "Courier New", monospace';
     ctx.textAlign = 'right';
     ctx.fillText('SPEED', meterX - 8, meterY + 12);
 
     // Meter background
-    ctx.fillStyle = '#1a1a2e';
+    ctx.fillStyle = '#0a1628';
     ctx.fillRect(meterX, meterY, meterWidth, meterHeight);
 
     // Meter border
-    ctx.strokeStyle = '#33ff33';
+    ctx.strokeStyle = '#66ccff';
     ctx.lineWidth = 2;
     ctx.strokeRect(meterX, meterY, meterWidth, meterHeight);
 
@@ -522,14 +522,14 @@ function drawSpeedMeter() {
     const speedPercent = (currentSpeed - START_SPEED) / (MAX_SPEED - START_SPEED);
     const fillWidth = Math.max(0, Math.min(1, speedPercent)) * (meterWidth - 4);
 
-    // Color gradient based on speed (green -> yellow -> red)
+    // Color gradient based on speed (arctic: light blue -> cyan -> white)
     let fillColor;
     if (speedPercent < 0.5) {
-        fillColor = '#33ff33'; // Green
+        fillColor = '#66ccff'; // Light blue
     } else if (speedPercent < 0.8) {
-        fillColor = '#ffff33'; // Yellow
+        fillColor = '#00ffff'; // Cyan
     } else {
-        fillColor = '#ff3333'; // Red
+        fillColor = '#ffffff'; // White (freezing fast!)
     }
 
     ctx.fillStyle = fillColor;
