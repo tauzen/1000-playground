@@ -435,13 +435,35 @@ function drawSnowflakes() {
 // Resize canvas to fit screen
 function resizeCanvas() {
     const container = document.getElementById('game-container');
-    const maxWidth = window.innerWidth - 20; // 10px padding on each side
-    const maxHeight = window.innerHeight - 100; // Space for controls on mobile
+    const isLandscape = window.innerWidth > window.innerHeight;
+    const isMobileLandscape = isMobile && isLandscape;
+
+    let maxWidth, maxHeight;
+
+    if (isMobileLandscape) {
+        // In mobile landscape, use nearly the full viewport
+        maxWidth = window.innerWidth - 10;
+        maxHeight = window.innerHeight - 10;
+    } else if (isMobile) {
+        // Portrait mode on mobile - leave room for controls
+        maxWidth = window.innerWidth - 20;
+        maxHeight = window.innerHeight - 120;
+    } else {
+        // Desktop - reasonable padding
+        maxWidth = window.innerWidth - 40;
+        maxHeight = window.innerHeight - 60;
+    }
 
     // Calculate scale to fit while maintaining aspect ratio
     const scaleX = maxWidth / BASE_WIDTH;
     const scaleY = maxHeight / BASE_HEIGHT;
-    scale = Math.min(scaleX, scaleY, 1.5); // Cap at 1.5x for large screens
+
+    // No cap on scale for mobile landscape to maximize screen usage
+    if (isMobileLandscape) {
+        scale = Math.min(scaleX, scaleY);
+    } else {
+        scale = Math.min(scaleX, scaleY, 2); // Cap at 2x for desktop
+    }
 
     // For very small screens, ensure minimum playable size
     if (scale < 0.4) scale = 0.4;
@@ -579,16 +601,12 @@ function debounce(func, wait) {
 // Update visibility of mobile controls
 function updateMobileControls() {
     const mobileControls = document.getElementById('mobile-controls');
-    const orientationOverlay = document.getElementById('orientation-overlay');
+    const isLandscape = window.innerWidth > window.innerHeight;
 
     if (mobileControls) {
-        mobileControls.style.display = isMobile ? 'flex' : 'none';
-    }
-
-    // Check orientation on mobile
-    if (orientationOverlay && isMobile) {
-        const isPortrait = window.innerHeight > window.innerWidth;
-        orientationOverlay.style.display = isPortrait ? 'flex' : 'none';
+        // Hide jump button in landscape (whole screen is tappable)
+        // Show only in portrait mode on mobile
+        mobileControls.style.display = (isMobile && !isLandscape) ? 'flex' : 'none';
     }
 }
 
