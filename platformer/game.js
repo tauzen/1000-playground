@@ -1,6 +1,9 @@
-// Game Constants
-const CANVAS_WIDTH = 800;
-const CANVAS_HEIGHT = 400;
+// Game Constants (base resolution)
+const BASE_WIDTH = 800;
+const BASE_HEIGHT = 400;
+let CANVAS_WIDTH = 800;
+let CANVAS_HEIGHT = 400;
+let scale = 1;
 const TILE_SIZE = 32;
 const GRAVITY = 0.6;
 const JUMP_FORCE = -14;
@@ -11,6 +14,14 @@ const START_SPEED = 2;
 const MAX_SPEED = 8;
 const SPEED_INCREMENT = 0.001; // Speed increase per frame
 let currentSpeed = START_SPEED;
+
+// Mobile detection
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                 ('ontouchstart' in window) ||
+                 (navigator.maxTouchPoints > 0);
+
+// Touch state for visual feedback
+let touchActive = false;
 
 // Colors - arctic palette
 const COLORS = {
@@ -157,7 +168,7 @@ function initBackground() {
     // Generate stars
     for (let i = 0; i < 30; i++) {
         background.stars.push({
-            x: Math.random() * CANVAS_WIDTH * 3,
+            x: Math.random() * BASE_WIDTH * 3,
             y: Math.random() * 120,
             size: Math.random() * 2 + 1,
             twinkle: Math.random() * Math.PI
@@ -166,7 +177,7 @@ function initBackground() {
 
     // Generate far mountains (slower parallax)
     let farX = 0;
-    while (farX < CANVAS_WIDTH * 3) {
+    while (farX < BASE_WIDTH * 3) {
         const width = 150 + Math.random() * 200;
         const height = 80 + Math.random() * 100;
         background.farMountains.push({
@@ -180,7 +191,7 @@ function initBackground() {
 
     // Generate near mountains (faster parallax)
     let nearX = 0;
-    while (nearX < CANVAS_WIDTH * 3) {
+    while (nearX < BASE_WIDTH * 3) {
         const width = 100 + Math.random() * 150;
         const height = 60 + Math.random() * 80;
         background.nearMountains.push({
@@ -195,7 +206,7 @@ function initBackground() {
     // Generate clouds
     for (let i = 0; i < 8; i++) {
         background.clouds.push({
-            x: Math.random() * CANVAS_WIDTH * 2,
+            x: Math.random() * BASE_WIDTH * 2,
             y: 20 + Math.random() * 80,
             width: 60 + Math.random() * 80,
             height: 20 + Math.random() * 20,
@@ -206,19 +217,19 @@ function initBackground() {
 
 function drawBackground() {
     // Sky gradient
-    const gradient = ctx.createLinearGradient(0, 0, 0, CANVAS_HEIGHT);
+    const gradient = ctx.createLinearGradient(0, 0, 0, BASE_HEIGHT);
     gradient.addColorStop(0, '#0a0f1a');
     gradient.addColorStop(0.3, '#0c1929');
     gradient.addColorStop(0.7, '#1a3a5c');
     gradient.addColorStop(1, '#2a5a7c');
     ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    ctx.fillRect(0, 0, BASE_WIDTH, BASE_HEIGHT);
 
     // Draw stars with twinkle
     for (const star of background.stars) {
-        let screenX = (star.x - scrollOffset * 0.02) % (CANVAS_WIDTH * 3);
-        if (screenX < 0) screenX += CANVAS_WIDTH * 3;
-        if (screenX < CANVAS_WIDTH + 10) {
+        let screenX = (star.x - scrollOffset * 0.02) % (BASE_WIDTH * 3);
+        if (screenX < 0) screenX += BASE_WIDTH * 3;
+        if (screenX < BASE_WIDTH + 10) {
             const alpha = 0.5 + 0.5 * Math.sin(star.twinkle + scrollOffset * 0.01);
             ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
             ctx.fillRect(screenX, star.y, star.size, star.size);
@@ -233,9 +244,9 @@ function drawBackground() {
     for (const mountain of background.farMountains) {
         const screenX = mountain.x - scrollOffset * farParallax;
         // Wrap around for infinite scrolling
-        let wrappedX = screenX % (CANVAS_WIDTH * 3);
-        if (wrappedX < -mountain.width) wrappedX += CANVAS_WIDTH * 3;
-        if (wrappedX > -mountain.width && wrappedX < CANVAS_WIDTH + mountain.width) {
+        let wrappedX = screenX % (BASE_WIDTH * 3);
+        if (wrappedX < -mountain.width) wrappedX += BASE_WIDTH * 3;
+        if (wrappedX > -mountain.width && wrappedX < BASE_WIDTH + mountain.width) {
             drawMountain(wrappedX, 200, mountain.width, mountain.height, '#1a3050', '#2a4060');
         }
     }
@@ -245,9 +256,9 @@ function drawBackground() {
     for (const mountain of background.nearMountains) {
         const screenX = mountain.x - scrollOffset * nearParallax;
         // Wrap around for infinite scrolling
-        let wrappedX = screenX % (CANVAS_WIDTH * 3);
-        if (wrappedX < -mountain.width) wrappedX += CANVAS_WIDTH * 3;
-        if (wrappedX > -mountain.width && wrappedX < CANVAS_WIDTH + mountain.width) {
+        let wrappedX = screenX % (BASE_WIDTH * 3);
+        if (wrappedX < -mountain.width) wrappedX += BASE_WIDTH * 3;
+        if (wrappedX > -mountain.width && wrappedX < BASE_WIDTH + mountain.width) {
             drawMountain(wrappedX, 220, mountain.width, mountain.height, '#2a4a6a', '#3a5a7a');
         }
     }
@@ -258,9 +269,9 @@ function drawBackground() {
     // Draw clouds (slow drift)
     ctx.fillStyle = 'rgba(200, 220, 240, 0.3)';
     for (const cloud of background.clouds) {
-        const screenX = (cloud.x - scrollOffset * 0.15) % (CANVAS_WIDTH * 2);
-        const wrappedX = screenX < -cloud.width ? screenX + CANVAS_WIDTH * 2 : screenX;
-        if (wrappedX > -cloud.width && wrappedX < CANVAS_WIDTH + cloud.width) {
+        const screenX = (cloud.x - scrollOffset * 0.15) % (BASE_WIDTH * 2);
+        const wrappedX = screenX < -cloud.width ? screenX + BASE_WIDTH * 2 : screenX;
+        if (wrappedX > -cloud.width && wrappedX < BASE_WIDTH + cloud.width) {
             drawCloud(wrappedX, cloud.y, cloud.width, cloud.height);
         }
     }
@@ -337,13 +348,13 @@ function drawAurora() {
         ctx.beginPath();
         ctx.moveTo(0, 60 + i * 15);
 
-        for (let x = 0; x <= CANVAS_WIDTH; x += 20) {
+        for (let x = 0; x <= BASE_WIDTH; x += 20) {
             const wave = Math.sin((x + scrollOffset * 0.5 + i * 100) * 0.01) * 20;
             const wave2 = Math.sin((x + scrollOffset * 0.3 + i * 50) * 0.02) * 10;
             ctx.lineTo(x, 60 + i * 15 + wave + wave2);
         }
 
-        ctx.lineTo(CANVAS_WIDTH, 150);
+        ctx.lineTo(BASE_WIDTH, 150);
         ctx.lineTo(0, 150);
         ctx.closePath();
         ctx.fill();
@@ -355,17 +366,17 @@ function drawAurora() {
 function drawFrozenOcean() {
     // Ocean base
     const oceanY = 280;
-    const gradient = ctx.createLinearGradient(0, oceanY, 0, CANVAS_HEIGHT);
+    const gradient = ctx.createLinearGradient(0, oceanY, 0, BASE_HEIGHT);
     gradient.addColorStop(0, '#1a4a6a');
     gradient.addColorStop(0.5, '#0a3050');
     gradient.addColorStop(1, '#082840');
     ctx.fillStyle = gradient;
-    ctx.fillRect(0, oceanY, CANVAS_WIDTH, CANVAS_HEIGHT - oceanY);
+    ctx.fillRect(0, oceanY, BASE_WIDTH, BASE_HEIGHT - oceanY);
 
     // Ice floes on water
     ctx.fillStyle = '#a0d0e8';
     for (let i = 0; i < 5; i++) {
-        const floeX = ((i * 200 + 50) - scrollOffset * 0.4) % (CANVAS_WIDTH + 200) - 100;
+        const floeX = ((i * 200 + 50) - scrollOffset * 0.4) % (BASE_WIDTH + 200) - 100;
         const floeY = oceanY + 5 + Math.sin(scrollOffset * 0.02 + i) * 3;
         const floeWidth = 40 + (i % 3) * 20;
 
@@ -378,7 +389,7 @@ function drawFrozenOcean() {
     // Water reflection lines
     ctx.fillStyle = 'rgba(100, 180, 220, 0.2)';
     for (let i = 0; i < 8; i++) {
-        const lineX = ((i * 120) - scrollOffset * 0.5) % (CANVAS_WIDTH + 100) - 50;
+        const lineX = ((i * 120) - scrollOffset * 0.5) % (BASE_WIDTH + 100) - 50;
         const lineY = oceanY + 20 + i * 10;
         ctx.fillRect(lineX, lineY, 30 + i * 5, 2);
     }
@@ -391,8 +402,8 @@ const NUM_SNOWFLAKES = 50;
 function initSnowflakes() {
     for (let i = 0; i < NUM_SNOWFLAKES; i++) {
         snowflakes.push({
-            x: Math.random() * CANVAS_WIDTH,
-            y: Math.random() * CANVAS_HEIGHT,
+            x: Math.random() * BASE_WIDTH,
+            y: Math.random() * BASE_HEIGHT,
             size: Math.random() * 3 + 1,
             speed: Math.random() * 1 + 0.5,
             drift: Math.random() * 0.5 - 0.25
@@ -405,12 +416,12 @@ function updateSnowflakes() {
         flake.y += flake.speed;
         flake.x += flake.drift - currentSpeed * 0.3;
 
-        if (flake.y > CANVAS_HEIGHT) {
+        if (flake.y > BASE_HEIGHT) {
             flake.y = -5;
-            flake.x = Math.random() * CANVAS_WIDTH;
+            flake.x = Math.random() * BASE_WIDTH;
         }
-        if (flake.x < 0) flake.x = CANVAS_WIDTH;
-        if (flake.x > CANVAS_WIDTH) flake.x = 0;
+        if (flake.x < 0) flake.x = BASE_WIDTH;
+        if (flake.x > BASE_WIDTH) flake.x = 0;
     }
 }
 
@@ -421,12 +432,42 @@ function drawSnowflakes() {
     }
 }
 
+// Resize canvas to fit screen
+function resizeCanvas() {
+    const container = document.getElementById('game-container');
+    const maxWidth = window.innerWidth - 20; // 10px padding on each side
+    const maxHeight = window.innerHeight - 100; // Space for controls on mobile
+
+    // Calculate scale to fit while maintaining aspect ratio
+    const scaleX = maxWidth / BASE_WIDTH;
+    const scaleY = maxHeight / BASE_HEIGHT;
+    scale = Math.min(scaleX, scaleY, 1.5); // Cap at 1.5x for large screens
+
+    // For very small screens, ensure minimum playable size
+    if (scale < 0.4) scale = 0.4;
+
+    CANVAS_WIDTH = Math.floor(BASE_WIDTH * scale);
+    CANVAS_HEIGHT = Math.floor(BASE_HEIGHT * scale);
+
+    canvas.width = BASE_WIDTH;
+    canvas.height = BASE_HEIGHT;
+    canvas.style.width = CANVAS_WIDTH + 'px';
+    canvas.style.height = CANVAS_HEIGHT + 'px';
+
+    // Update container size
+    container.style.width = CANVAS_WIDTH + 'px';
+
+    // Disable image smoothing for pixel art (needs to be reset after resize)
+    ctx.imageSmoothingEnabled = false;
+}
+
 // Initialize
 function init() {
     canvas = document.getElementById('game');
     ctx = canvas.getContext('2d');
-    canvas.width = CANVAS_WIDTH;
-    canvas.height = CANVAS_HEIGHT;
+
+    // Initial sizing
+    resizeCanvas();
 
     // Disable image smoothing for pixel art
     ctx.imageSmoothingEnabled = false;
@@ -443,12 +484,112 @@ function init() {
     // Event listeners
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keyup', handleKeyUp);
-    canvas.addEventListener('touchstart', handleTouchStart);
-    canvas.addEventListener('touchend', handleTouchEnd);
+
+    // Touch events on the whole document for mobile
+    document.addEventListener('touchstart', handleTouchStart, { passive: false });
+    document.addEventListener('touchend', handleTouchEnd, { passive: false });
     canvas.addEventListener('click', handleClick);
+
+    // Handle resize events
+    window.addEventListener('resize', debounce(handleResize, 100));
+    window.addEventListener('orientationchange', () => {
+        setTimeout(handleResize, 100);
+    });
+
+    // Mobile jump button
+    const jumpBtn = document.getElementById('jump-btn');
+    if (jumpBtn) {
+        jumpBtn.addEventListener('touchstart', handleJumpBtnStart, { passive: false });
+        jumpBtn.addEventListener('touchend', handleJumpBtnEnd, { passive: false });
+        jumpBtn.addEventListener('mousedown', handleJumpBtnStart);
+        jumpBtn.addEventListener('mouseup', handleJumpBtnEnd);
+        jumpBtn.addEventListener('mouseleave', handleJumpBtnEnd);
+    }
+
+    // Show/hide mobile controls and check orientation
+    handleResize();
 
     // Start game loop
     requestAnimationFrame(gameLoop);
+}
+
+// Handle resize and orientation
+function handleResize() {
+    resizeCanvas();
+    updateMobileControls();
+    checkOrientation();
+}
+
+// Check orientation and show overlay if portrait on mobile
+function checkOrientation() {
+    const orientationOverlay = document.getElementById('orientation-overlay');
+    if (orientationOverlay && isMobile) {
+        const isPortrait = window.innerHeight > window.innerWidth * 1.2;
+        orientationOverlay.style.display = isPortrait ? 'flex' : 'none';
+    }
+}
+
+// Jump button handlers
+function handleJumpBtnStart(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    touchActive = true;
+    player.jumpKeyHeld = true;
+
+    const jumpBtn = document.getElementById('jump-btn');
+    if (jumpBtn) jumpBtn.classList.add('active');
+
+    const container = document.getElementById('game-container');
+    if (container) container.classList.add('touch-active');
+
+    handleInput();
+}
+
+function handleJumpBtnEnd(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    touchActive = false;
+    player.jumpKeyHeld = false;
+
+    const jumpBtn = document.getElementById('jump-btn');
+    if (jumpBtn) jumpBtn.classList.remove('active');
+
+    const container = document.getElementById('game-container');
+    if (container) container.classList.remove('touch-active');
+
+    // Cut jump short if released while rising
+    if (player.isJumping && player.velY < 0) {
+        player.velY *= JUMP_CUT_MULTIPLIER;
+    }
+}
+
+// Debounce helper for resize events
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Update visibility of mobile controls
+function updateMobileControls() {
+    const mobileControls = document.getElementById('mobile-controls');
+    const orientationOverlay = document.getElementById('orientation-overlay');
+
+    if (mobileControls) {
+        mobileControls.style.display = isMobile ? 'flex' : 'none';
+    }
+
+    // Check orientation on mobile
+    if (orientationOverlay && isMobile) {
+        const isPortrait = window.innerHeight > window.innerWidth;
+        orientationOverlay.style.display = isPortrait ? 'flex' : 'none';
+    }
 }
 
 function generateInitialWorld() {
@@ -457,7 +598,7 @@ function generateInitialWorld() {
     chunksGenerated = 0;
 
     // Generate enough chunks to fill screen plus buffer
-    while (nextChunkX < CANVAS_WIDTH + TILE_SIZE * 16) {
+    while (nextChunkX < BASE_WIDTH + TILE_SIZE * 16) {
         generateNextChunk();
     }
 }
@@ -521,14 +662,37 @@ function handleKeyUp(e) {
 }
 
 function handleTouchStart(e) {
+    // Don't handle if touch is on the jump button (it has its own handler)
+    if (e.target.id === 'jump-btn') return;
+
     e.preventDefault();
+    touchActive = true;
     player.jumpKeyHeld = true;
+
+    // Update visual states
+    const jumpBtn = document.getElementById('jump-btn');
+    if (jumpBtn) jumpBtn.classList.add('active');
+
+    const container = document.getElementById('game-container');
+    if (container) container.classList.add('touch-active');
+
     handleInput();
 }
 
 function handleTouchEnd(e) {
+    // Don't handle if touch is on the jump button (it has its own handler)
+    if (e.target.id === 'jump-btn') return;
+
     e.preventDefault();
+    touchActive = false;
     player.jumpKeyHeld = false;
+
+    // Update visual states
+    const jumpBtn = document.getElementById('jump-btn');
+    if (jumpBtn) jumpBtn.classList.remove('active');
+
+    const container = document.getElementById('game-container');
+    if (container) container.classList.remove('touch-active');
 
     // Cut jump short if released while rising
     if (player.isJumping && player.velY < 0) {
@@ -652,12 +816,12 @@ function update() {
     }
 
     // Generate new chunks as needed
-    while (nextChunkX - scrollOffset < CANVAS_WIDTH + TILE_SIZE * 16) {
+    while (nextChunkX - scrollOffset < BASE_WIDTH + TILE_SIZE * 16) {
         generateNextChunk();
     }
 
     // Check if player fell off the screen
-    if (player.y > CANVAS_HEIGHT) {
+    if (player.y > BASE_HEIGHT) {
         gameOver();
     }
 
@@ -695,7 +859,7 @@ function draw() {
         const screenX = tile.x - scrollOffset;
 
         // Skip if off screen
-        if (screenX < -TILE_SIZE || screenX > CANVAS_WIDTH) continue;
+        if (screenX < -TILE_SIZE || screenX > BASE_WIDTH) continue;
 
         if (tile.type === 'ground') {
             // Ground block
@@ -769,7 +933,7 @@ function draw() {
 }
 
 function drawSpeedMeter() {
-    const meterX = CANVAS_WIDTH - 120;
+    const meterX = BASE_WIDTH - 120;
     const meterY = 16;
     const meterWidth = 100;
     const meterHeight = 16;
