@@ -437,10 +437,27 @@ function isFullscreen() {
     return !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
 }
 
+// Get actual viewport dimensions (accounts for browser chrome on mobile)
+function getViewportSize() {
+    // Use visualViewport API if available (more accurate on mobile)
+    if (window.visualViewport) {
+        return {
+            width: window.visualViewport.width,
+            height: window.visualViewport.height
+        };
+    }
+    // Fallback to innerWidth/innerHeight
+    return {
+        width: window.innerWidth,
+        height: window.innerHeight
+    };
+}
+
 // Resize canvas to fit screen
 function resizeCanvas() {
     const container = document.getElementById('game-container');
-    const isLandscape = window.innerWidth > window.innerHeight;
+    const viewport = getViewportSize();
+    const isLandscape = viewport.width > viewport.height;
     const isMobileLandscape = isMobile && isLandscape;
     const inFullscreen = isFullscreen();
 
@@ -448,20 +465,20 @@ function resizeCanvas() {
 
     if (inFullscreen) {
         // In fullscreen, use the entire screen
-        maxWidth = window.innerWidth;
-        maxHeight = window.innerHeight;
+        maxWidth = viewport.width;
+        maxHeight = viewport.height;
     } else if (isMobileLandscape) {
-        // In mobile landscape, use virtually the full viewport
-        maxWidth = window.innerWidth - 4;
-        maxHeight = window.innerHeight - 4;
+        // In mobile landscape, use the full visual viewport (no margins)
+        maxWidth = viewport.width;
+        maxHeight = viewport.height;
     } else if (isMobile) {
         // Portrait mode on mobile - leave room for controls
-        maxWidth = window.innerWidth - 20;
-        maxHeight = window.innerHeight - 120;
+        maxWidth = viewport.width - 10;
+        maxHeight = viewport.height - 100;
     } else {
         // Desktop - reasonable padding
-        maxWidth = window.innerWidth - 40;
-        maxHeight = window.innerHeight - 60;
+        maxWidth = viewport.width - 40;
+        maxHeight = viewport.height - 60;
     }
 
     // Calculate scale to fit while maintaining aspect ratio
@@ -527,6 +544,11 @@ function init() {
     window.addEventListener('orientationchange', () => {
         setTimeout(handleResize, 100);
     });
+
+    // Use visualViewport resize event for more accurate mobile resizing
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', debounce(handleResize, 100));
+    }
 
     // Handle fullscreen changes
     document.addEventListener('fullscreenchange', handleFullscreenChange);
