@@ -283,24 +283,64 @@ body {
     }
 }
 
-/* Landscape mobile */
+/* Landscape mobile - fullscreen mode */
 @media (max-height: 500px) and (orientation: landscape) {
     body {
-        padding: 5px;
-        padding-top: 5px;
+        padding: 0;
+        margin: 0;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        height: 100dvh; /* Dynamic viewport height for mobile browsers */
+        width: 100vw;
+        overflow: hidden;
+    }
+
+    #game-container {
+        margin: 0;
+        padding: 0;
+    }
+
+    #game {
+        border-width: 2px;
     }
 
     #mobile-controls {
-        padding: 8px;
-    }
-
-    #jump-btn {
-        height: 50px;
-        max-width: 250px;
+        display: none !important;
     }
 
     #version {
         display: none;
+    }
+
+    #score {
+        font-size: 16px;
+        top: 8px;
+        left: 8px;
+    }
+
+    #start-screen h1,
+    #game-over h1 {
+        font-size: 24px;
+        margin-bottom: 16px;
+    }
+
+    #start-screen p,
+    #game-over p {
+        font-size: 12px;
+        margin: 4px 0;
+    }
+
+    #start-screen .controls {
+        font-size: 10px;
+        margin-top: 12px;
+    }
+}
+
+/* Extra wide landscape (typical phone in landscape) */
+@media (max-height: 450px) and (orientation: landscape) and (min-width: 600px) {
+    #game {
+        border-width: 1px;
     }
 }
 
