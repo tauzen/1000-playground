@@ -441,9 +441,9 @@ function resizeCanvas() {
     let maxWidth, maxHeight;
 
     if (isMobileLandscape) {
-        // In mobile landscape, use nearly the full viewport
-        maxWidth = window.innerWidth - 10;
-        maxHeight = window.innerHeight - 10;
+        // In mobile landscape, use virtually the full viewport
+        maxWidth = window.innerWidth - 4;
+        maxHeight = window.innerHeight - 4;
     } else if (isMobile) {
         // Portrait mode on mobile - leave room for controls
         maxWidth = window.innerWidth - 20;
