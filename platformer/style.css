@@ -302,7 +302,8 @@ body {
     }
 
     #game {
-        border-width: 2px;
+        border-width: 1px;
+        box-shadow: none;
     }
 
     #mobile-controls {
@@ -314,9 +315,9 @@ body {
     }
 
     #score {
-        font-size: 16px;
-        top: 8px;
-        left: 8px;
+        font-size: 14px;
+        top: 6px;
+        left: 6px;
     }
 
     #start-screen h1,
@@ -334,13 +335,6 @@ body {
     #start-screen .controls {
         font-size: 10px;
         margin-top: 12px;
-    }
-}
-
-/* Extra wide landscape (typical phone in landscape) */
-@media (max-height: 450px) and (orientation: landscape) and (min-width: 600px) {
-    #game {
-        border-width: 1px;
     }
 }
 
