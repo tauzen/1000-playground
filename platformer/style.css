@@ -4,6 +4,12 @@
     box-sizing: border-box;
 }
 
+html {
+    height: 100%;
+    height: 100dvh;
+    overflow: hidden;
+}
+
 @font-face {
     font-family: 'PixelFont';
     src: local('Courier New');
@@ -15,7 +21,12 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    min-height: 100%;
+    min-height: 100dvh;
+    height: 100%;
+    height: 100dvh;
+    width: 100%;
+    width: 100dvw;
     font-family: 'Courier New', monospace;
     overflow: hidden;
     touch-action: manipulation;
@@ -28,6 +39,11 @@ body {
     position: relative;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 100%;
+    max-height: 100%;
 }
 
 #game {
@@ -36,6 +52,8 @@ body {
     box-shadow:
         0 0 20px #66ccff44,
         inset 0 0 20px #00000044;
+    max-width: 100%;
+    max-height: 100%;
 }
 
 #score {
@@ -290,26 +308,33 @@ body {
     }
 }
 
-/* Landscape mobile - fullscreen mode */
-@media (max-height: 500px) and (orientation: landscape) {
+/* Landscape mobile - fullscreen mode (increased threshold for modern phones) */
+@media (orientation: landscape) and (max-height: 600px),
+       (orientation: landscape) and (pointer: coarse),
+       (orientation: landscape) and (hover: none) {
     body {
         padding: 0;
         margin: 0;
         justify-content: center;
         align-items: center;
         height: 100vh;
-        height: 100dvh; /* Dynamic viewport height for mobile browsers */
+        height: 100dvh;
+        height: 100svh; /* Small viewport height - excludes browser chrome */
         width: 100vw;
+        width: 100dvw;
         overflow: hidden;
     }
 
     #game-container {
         margin: 0;
         padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     #game {
-        border-width: 1px;
+        border-width: 0;
         box-shadow: none;
     }
 
