@@ -432,15 +432,25 @@ function drawSnowflakes() {
     }
 }
 
+// Check if in fullscreen mode
+function isFullscreen() {
+    return !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+}
+
 // Resize canvas to fit screen
 function resizeCanvas() {
     const container = document.getElementById('game-container');
     const isLandscape = window.innerWidth > window.innerHeight;
     const isMobileLandscape = isMobile && isLandscape;
+    const inFullscreen = isFullscreen();
 
     let maxWidth, maxHeight;
 
-    if (isMobileLandscape) {
+    if (inFullscreen) {
+        // In fullscreen, use the entire screen
+        maxWidth = window.innerWidth;
+        maxHeight = window.innerHeight;
+    } else if (isMobileLandscape) {
         // In mobile landscape, use virtually the full viewport
         maxWidth = window.innerWidth - 4;
         maxHeight = window.innerHeight - 4;
@@ -458,8 +468,8 @@ function resizeCanvas() {
     const scaleX = maxWidth / BASE_WIDTH;
     const scaleY = maxHeight / BASE_HEIGHT;
 
-    // No cap on scale for mobile landscape to maximize screen usage
-    if (isMobileLandscape) {
+    // No cap on scale for fullscreen or mobile landscape to maximize screen usage
+    if (inFullscreen || isMobileLandscape) {
         scale = Math.min(scaleX, scaleY);
     } else {
         scale = Math.min(scaleX, scaleY, 2); // Cap at 2x for desktop
@@ -517,6 +527,10 @@ function init() {
     window.addEventListener('orientationchange', () => {
         setTimeout(handleResize, 100);
     });
+
+    // Handle fullscreen changes
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
 
     // Mobile jump button
     const jumpBtn = document.getElementById('jump-btn');
@@ -736,9 +750,34 @@ function handleInput() {
     }
 }
 
+// Request fullscreen mode (for mobile to hide browser chrome)
+function requestFullscreen() {
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen().catch(() => {});
+    } else if (elem.webkitRequestFullscreen) { // Safari
+        elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { // IE11
+        elem.msRequestFullscreen();
+    }
+}
+
+// Handle fullscreen changes
+function handleFullscreenChange() {
+    // Resize canvas after fullscreen change
+    setTimeout(() => {
+        handleResize();
+    }, 100);
+}
+
 function startGame() {
     gameState = 'playing';
     document.getElementById('start-screen').classList.add('hidden');
+
+    // Request fullscreen on mobile for immersive experience
+    if (isMobile) {
+        requestFullscreen();
+    }
 }
 
 function restartGame() {

@@ -91,6 +91,13 @@ body {
     font-size: 14px;
 }
 
+#start-screen .fullscreen-hint {
+    margin-top: 16px;
+    color: #4a6a8a;
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
 .hidden {
     display: none !important;
 }
@@ -343,4 +350,56 @@ body {
     box-shadow:
         0 0 30px #66ccff88,
         inset 0 0 20px #00000044;
+}
+
+/* Fullscreen mode */
+:fullscreen {
+    background-color: #0a1520;
+}
+
+:fullscreen body {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+:fullscreen #game-container {
+    margin: 0;
+    padding: 0;
+}
+
+:fullscreen #game {
+    border-width: 0;
+    box-shadow: none;
+}
+
+:fullscreen #mobile-controls,
+:fullscreen #version,
+:fullscreen #orientation-overlay {
+    display: none !important;
+}
+
+/* Webkit fullscreen (Safari) */
+:-webkit-full-screen {
+    background-color: #0a1520;
+}
+
+:-webkit-full-screen body {
+    padding: 0;
+    margin: 0;
+}
+
+:-webkit-full-screen #game {
+    border-width: 0;
+    box-shadow: none;
+}
+
+:-webkit-full-screen #mobile-controls,
+:-webkit-full-screen #version,
+:-webkit-full-screen #orientation-overlay {
+    display: none !important;
 }
