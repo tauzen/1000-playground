@@ -270,17 +270,21 @@
 
         .ascii-art {
             font-family: 'Courier New', Consolas, 'Liberation Mono', monospace;
-            font-size: 11px;
-            line-height: 1.15;
-            letter-spacing: 0px;
+            font-size: 14px;
+            line-height: 1.3;
+            letter-spacing: 1px;
             white-space: pre;
             color: #00ff88;
             background: linear-gradient(180deg, #0a0a12 0%, #0d0d1a 30%, #1a1a2a 100%);
-            padding: 15px 20px;
+            padding: 20px 25px;
             border-radius: 10px;
             overflow-x: auto;
             text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
             border: 1px solid #1a3a2a;
+            min-height: 320px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .palette-section {
@@ -875,78 +879,88 @@
         }
 
         async function generateAsciiArtAndPalette(openaiKey, location, weather, timeOfDay, season, date) {
-            const prompt = `Create a GAME BACKGROUND ASCII art scene and color palette for:
-- Location: ${location}
-- Weather: ${weather}
-- Time of day: ${timeOfDay}
-- Season: ${season}
+            const prompt = `Create SIMPLE STYLIZED ASCII art for a game background.
 
-CRITICAL ASCII ART TECHNIQUE - You MUST follow these rules:
+SCENE: ${location}
+WEATHER: ${weather}
+TIME: ${timeOfDay}
+SEASON: ${season}
 
-1. CHARACTER DENSITY GRADIENT (from light to dark):
-   Space > . > - > : > = > + > * > # > % > @ > M > W
-   Use these consistently: sparse chars for sky/light, dense chars for ground/dark
+STRICT RULES - FOLLOW EXACTLY:
 
-2. STRUCTURE (exactly 20 lines, exactly 80 characters per line):
-   - Lines 1-6: SKY LAYER - Use spaces, dots, and light characters
-   - Lines 7-10: HORIZON/MIDGROUND - Landmarks, distant buildings, mountains
-   - Lines 11-16: MAIN SCENE - Architecture, trees, main features with good detail
-   - Lines 17-20: GROUND LAYER - Dense characters, terrain texture
+1. SIZE: Exactly 60 characters wide x 16 lines tall
+2. PAD every line with spaces to exactly 60 chars
+3. USE ONLY: Space . \` ' - _ = + : ; | / \\ ( ) [ ] { } < > ^ v * # @ O o
 
-3. COMPOSITION FOR GAME BACKGROUNDS:
-   - Create clear SILHOUETTES of landmarks against the sky
-   - Include a visible GROUND LINE for platformer games
-   - Design with HORIZONTAL FLOW (scene should feel continuous)
-   - Add DEPTH through layering (background -> midground -> foreground)
+STYLE GUIDE - Keep it SIMPLE and CLEAN:
+- SKY (lines 1-5): Mostly spaces. Add sun/moon OR weather, not both.
+  * Clear day: Empty or minimal
+  * Night: Scatter * and . for stars
+  * Rain: Vertical | or / lines
+  * Clouds: Simple ___/~~~\\___
 
-4. WEATHER EFFECTS:
-   - Rain: Use | and / falling from sky, puddles on ground with ~
-   - Snow: Use * and . scattered, accumulated ^ on surfaces
-   - Clouds: Use rounded shapes with ( ) _ and soft chars
-   - Sun/Moon: Use O or @ with radiating - and / rays
-   - Fog: Increase dot density, blur distant objects
+- HORIZON (lines 6-9): Simple silhouette of ONE main landmark
+  * Use solid fills: ###, @@@, [[[
+  * Keep shapes geometric and recognizable
 
-5. TIME OF DAY:
-   - Night: Dense sky with * stars, heavy silhouettes
-   - Morning: Gradient from dark left to light right
-   - Afternoon: Bright sky (spaces), sharp shadows
-   - Evening: Medium density, warm feeling with = and -
+- GROUND (lines 10-16): Textured ground line + terrain
+  * Ground line: ========== or __________ or ##########
+  * Below ground: Dense patterns like @@@, ###, %%%
 
-6. EXAMPLE QUALITY REFERENCE (mountain scene):
+LANDMARK EXAMPLES (use as reference for style):
+
+TOWER (like Eiffel):
 \`\`\`
-                                          .  *    .        *          .    *
-     *        .    *                 .         .        .
-          .            *     .   *        .        *            .   *
-   .  *        .                      .                   .             *
-                   .        *                  *    .           *
-        *                        .        .              .
-                        /\\                                      /\\
-              /\\      /    \\          /\\                      /    \\
-            /    \\  /        \\      /    \\    /\\            /        \\
-    /\\    /        \\          \\  /        \\/    \\        /            \\
-  /    \\/            \\          \\            \\    \\    /                \\
-/        \\            \\          \\            \\    \\/                    \\
-==========================================================================
-%@@%@@%@@%@@%@@%@@%@@%@@%@@%@@%@@%@@%@@%@@%@@%@@%@@%@@%@@%@@%@@%@@%@@%@@%@@%
+           /\\
+          /  \\
+         /    \\
+        [======]
+        |      |
+       /|      |\\
+      / |______| \\
+     /__|      |__\\
 \`\`\`
 
-Respond with ONLY valid JSON in this exact format:
+CITY SKYLINE:
+\`\`\`
+    _____      ___
+   |     |_   |   |___
+  _|  _  | |__|_  |   |_
+ | | |_| |    | | | _ | |
+ | |     | [] | | |_| | |
+\`\`\`
+
+MOUNTAINS:
+\`\`\`
+            /\\
+     /\\    /  \\      /\\
+    /  \\  /    \\    /  \\
+   /    \\/      \\  /    \\
+  /              \\/      \\
+\`\`\`
+
+PYRAMID:
+\`\`\`
+           /\\
+          /  \\
+         /    \\
+        /      \\
+       /________\\
+\`\`\`
+
+NOW CREATE a complete 60x16 scene. Keep the landmark SIMPLE and CENTERED.
+
+Respond with ONLY this JSON (no markdown):
 {
-  "ascii_art": "line1\\nline2\\nline3...",
-  "scene_description": "Brief description of the scene",
+  "ascii_art": "line1\\nline2\\n...(16 lines total, each exactly 60 chars)",
+  "scene_description": "One sentence description",
   "colors": [
-    {"name": "Sky Blue", "hex": "#87CEEB", "description": "Main sky color"},
-    {"name": "Ground Brown", "hex": "#8B4513", "description": "Earth and terrain"}
+    {"name": "Evocative Name", "hex": "#XXXXXX", "description": "What it represents"}
   ]
 }
 
-COLOR PALETTE REQUIREMENTS:
-- Generate exactly 6 colors
-- Must include: 1 sky color, 1 ground color, 1-2 landmark colors, 1-2 accent/weather colors
-- Colors must match the time of day and weather mood
-- Provide evocative names (not just "blue" but "Twilight Azure" or "Storm Gray")
-
-IMPORTANT: Every line must be EXACTLY 80 characters (pad with spaces if needed). Generate EXACTLY 20 lines.`;
+COLORS: Generate exactly 5 colors matching the mood (sky, landmark, ground, 2 accents).
+Use evocative names like "Midnight Indigo" not just "Dark Blue".`;
 
             const response = await fetch('https://api.openai.com/v1/chat/completions', {
                 method: 'POST',
@@ -960,20 +974,15 @@ IMPORTANT: Every line must be EXACTLY 80 characters (pad with spaces if needed).
                     messages: [
                         {
                             role: 'system',
-                            content: `You are a master ASCII artist specializing in game background art. You have deep knowledge of:
-- ASCII art shading techniques using character density gradients
-- Creating depth and atmosphere in text-based scenes
-- Designing scenes suitable for 2D platformer game backgrounds
-- Color theory for game environments
+                            content: `You create SIMPLE, CLEAN ASCII art for game backgrounds. Your style is minimalist and geometric.
 
-Your ASCII art is known for:
-- Perfect consistency in line width (always exactly 80 chars)
-- Beautiful silhouettes and recognizable landmarks
-- Proper layering (sky -> horizon -> main scene -> ground)
-- Atmospheric effects that match weather conditions
-- Professional quality suitable for actual game use
+KEY PRINCIPLES:
+- SIMPLICITY over complexity - fewer characters, cleaner shapes
+- RECOGNIZABLE silhouettes - the landmark should be obvious
+- CONSISTENT line width - every line is exactly 60 characters
+- PROPER STRUCTURE - sky at top, landmark in middle, ground at bottom
 
-You ALWAYS respond with valid JSON only. Never include markdown formatting or extra text.`
+You NEVER add extra text. You ONLY output valid JSON. Every line in ascii_art is padded with spaces to exactly 60 characters.`
                         },
                         {
                             role: 'user',
