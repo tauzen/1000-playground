@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCII Art & Color Palette Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 1.8rem;
+        }
+
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .api-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .api-section h3 {
+            color: #0f3460;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .api-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .api-field {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .api-field label {
+            display: block;
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
+        .api-field input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .api-field input:focus {
+            outline: none;
+            border-color: #0f3460;
+        }
+
+        .api-hint {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .api-hint a {
+            color: #0f3460;
+            text-decoration: none;
+        }
+
+        .api-hint a:hover {
+            text-decoration: underline;
+        }
+
+        button {
+            background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
+            color: white;
+            border: none;
+            padding: 16px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+            min-height: 54px;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(15, 52, 96, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .progress-section {
+            margin: 25px 0;
+            display: none;
+        }
+
+        .progress-step {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: background 0.3s;
+        }
+
+        .progress-step.active {
+            background: #e3f2fd;
+        }
+
+        .progress-step.completed {
+            background: #e8f5e9;
+        }
+
+        .progress-step.error {
+            background: #ffebee;
+        }
+
+        .step-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 14px;
+            background: #ddd;
+            color: #666;
+        }
+
+        .progress-step.active .step-icon {
+            background: #2196f3;
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+
+        .progress-step.completed .step-icon {
+            background: #4caf50;
+            color: white;
+        }
+
+        .progress-step.error .step-icon {
+            background: #f44336;
+            color: white;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .step-text {
+            color: #333;
+            font-size: 14px;
+        }
+
+        .step-detail {
+            font-size: 12px;
+            color: #666;
+            margin-top: 3px;
+        }
+
+        .context-section {
+            background: #f5f7fa;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #0f3460;
+        }
+
+        .context-section h4 {
+            color: #0f3460;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .context-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+        }
+
+        .context-item {
+            font-size: 13px;
+        }
+
+        .context-item .label {
+            color: #888;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .context-item .value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .result-section {
+            margin-top: 25px;
+            display: none;
+        }
+
+        .ascii-box {
+            background: #1a1a2e;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            overflow-x: auto;
+        }
+
+        .ascii-box h3 {
+            color: #fff;
+            margin-bottom: 15px;
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ascii-art {
+            font-family: 'Courier New', Consolas, monospace;
+            font-size: 12px;
+            line-height: 1.2;
+            white-space: pre;
+            color: #e8e8e8;
+            background: #0d0d1a;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+
+        .palette-section {
+            background: #f5f7fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .palette-section h3 {
+            color: #0f3460;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .palette-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .color-swatch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .color-square {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .color-square:hover {
+            transform: scale(1.05);
+        }
+
+        .color-name {
+            font-size: 12px;
+            color: #555;
+            font-weight: 600;
+            text-align: center;
+            max-width: 80px;
+        }
+
+        .color-hex {
+            font-size: 11px;
+            color: #888;
+            font-family: 'Courier New', monospace;
+        }
+
+        .location-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .location-section h3 {
+            color: #0f3460;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .location-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .location-tab {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.2s;
+        }
+
+        .location-tab:hover {
+            border-color: #0f3460;
+            color: #0f3460;
+        }
+
+        .location-tab.active {
+            border-color: #0f3460;
+            background: #0f3460;
+            color: white;
+        }
+
+        .location-picker {
+            display: none;
+        }
+
+        .location-picker.visible {
+            display: block;
+        }
+
+        .location-picker select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .location-picker select:focus {
+            outline: none;
+            border-color: #0f3460;
+        }
+
+        .location-hint {
+            font-size: 12px;
+            color: #888;
+            margin-top: 8px;
+        }
+
+        .copy-btn {
+            background: #0f3460;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: auto;
+            width: auto;
+        }
+
+        .copy-btn:hover {
+            background: #1a4a7a;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(15, 52, 96, 0.3);
+        }
+
+        .copy-btn.copied {
+            background: #4caf50;
+        }
+
+        .reset-btn {
+            background: linear-gradient(135deg, #e94560 0%, #0f3460 100%);
+            margin-top: 20px;
+        }
+
+        .reset-btn:hover:not(:disabled) {
+            box-shadow: 0 4px 12px rgba(233, 69, 96, 0.3);
+        }
+
+        .collapsible-section {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #0f3460;
+            overflow: hidden;
+        }
+
+        .collapsible-header {
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .collapsible-header:hover {
+            background: rgba(15, 52, 96, 0.1);
+        }
+
+        .collapsible-header h3 {
+            color: #0f3460;
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .collapsible-toggle {
+            color: #0f3460;
+            font-size: 12px;
+            transition: transform 0.3s;
+        }
+
+        .collapsible-toggle.expanded {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .collapsible-content.expanded {
+            max-height: 2000px;
+        }
+
+        .collapsible-content-inner {
+            padding: 0 20px 20px 20px;
+        }
+
+        .scene-description {
+            color: #333;
+            line-height: 1.7;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+
+        .header-with-button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .css-output {
+            background: #1a1a2e;
+            color: #e8e8e8;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .ascii-art {
+                font-size: 8px;
+            }
+
+            .color-square {
+                width: 60px;
+                height: 60px;
+            }
+
+            .palette-grid {
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ASCII Art & Color Palette Generator</h1>
+        <p class="subtitle">
+            Generates ASCII art depicting your location's weather, time, and season,
+            <br>along with a matching color palette displayed as CSS squares.
+        </p>
+
+        <div id="app">
+            <div class="api-section">
+                <h3>API Keys</h3>
+                <div class="api-row">
+                    <div class="api-field">
+                        <label for="openaiKey">OpenAI API Key</label>
+                        <input type="password" id="openaiKey" placeholder="sk-...">
+                        <p class="api-hint">Required. Get one at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a></p>
+                    </div>
+                    <div class="api-field">
+                        <label for="weatherKey">OpenWeatherMap API Key</label>
+                        <input type="password" id="weatherKey" placeholder="Optional">
+                        <p class="api-hint">Optional. Get one at <a href="https://openweathermap.org/api" target="_blank">openweathermap.org</a></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="location-section">
+                <h3>Location</h3>
+                <div class="location-tabs">
+                    <div class="location-tab active" onclick="setLocationMode('auto')">My Location</div>
+                    <div class="location-tab" onclick="setLocationMode('pick')">Pick a Place</div>
+                </div>
+                <div class="location-picker" id="locationPicker">
+                    <select id="locationSelect">
+                        <optgroup label="Europe">
+                            <option value="48.8566,2.3522" data-tz="Europe/Paris">Paris, France - Eiffel Tower</option>
+                            <option value="41.9028,12.4964" data-tz="Europe/Rome">Rome, Italy - Colosseum</option>
+                            <option value="51.5074,-0.1278" data-tz="Europe/London">London, UK - Big Ben</option>
+                            <option value="52.3676,4.9041" data-tz="Europe/Amsterdam">Amsterdam, Netherlands - Canals</option>
+                            <option value="41.0082,28.9784" data-tz="Europe/Istanbul">Istanbul, Turkey - Hagia Sophia</option>
+                            <option value="59.3293,18.0686" data-tz="Europe/Stockholm">Stockholm, Sweden - Old Town</option>
+                            <option value="48.2082,16.3738" data-tz="Europe/Vienna">Vienna, Austria - Schonbrunn</option>
+                            <option value="55.7558,37.6173" data-tz="Europe/Moscow">Moscow, Russia - Red Square</option>
+                        </optgroup>
+                        <optgroup label="Asia">
+                            <option value="35.6762,139.6503" data-tz="Asia/Tokyo">Tokyo, Japan - Shibuya</option>
+                            <option value="31.2304,121.4737" data-tz="Asia/Shanghai">Shanghai, China - The Bund</option>
+                            <option value="22.3193,114.1694" data-tz="Asia/Hong_Kong">Hong Kong - Victoria Harbour</option>
+                            <option value="1.3521,103.8198" data-tz="Asia/Singapore">Singapore - Marina Bay</option>
+                            <option value="13.7563,100.5018" data-tz="Asia/Bangkok">Bangkok, Thailand - Grand Palace</option>
+                            <option value="28.6139,77.2090" data-tz="Asia/Kolkata">New Delhi, India - India Gate</option>
+                            <option value="39.9042,116.4074" data-tz="Asia/Shanghai">Beijing, China - Forbidden City</option>
+                            <option value="37.5665,126.9780" data-tz="Asia/Seoul">Seoul, South Korea - Gyeongbokgung</option>
+                        </optgroup>
+                        <optgroup label="Americas">
+                            <option value="40.7128,-74.0060" data-tz="America/New_York">New York, USA - Times Square</option>
+                            <option value="37.7749,-122.4194" data-tz="America/Los_Angeles">San Francisco, USA - Golden Gate</option>
+                            <option value="25.7617,-80.1918" data-tz="America/New_York">Miami, USA - South Beach</option>
+                            <option value="-22.9068,-43.1729" data-tz="America/Sao_Paulo">Rio de Janeiro, Brazil - Christ the Redeemer</option>
+                            <option value="19.4326,-99.1332" data-tz="America/Mexico_City">Mexico City, Mexico - Zocalo</option>
+                            <option value="-33.4489,-70.6693" data-tz="America/Santiago">Santiago, Chile - Andes Mountains</option>
+                            <option value="45.5017,-73.5673" data-tz="America/Toronto">Montreal, Canada - Old Port</option>
+                            <option value="-13.1631,-72.5450" data-tz="America/Lima">Machu Picchu, Peru</option>
+                        </optgroup>
+                        <optgroup label="Africa & Middle East">
+                            <option value="29.9792,31.1342" data-tz="Africa/Cairo">Giza, Egypt - Pyramids</option>
+                            <option value="-33.9249,18.4241" data-tz="Africa/Johannesburg">Cape Town, South Africa - Table Mountain</option>
+                            <option value="31.7683,35.2137" data-tz="Asia/Jerusalem">Jerusalem, Israel - Old City</option>
+                            <option value="25.2048,55.2708" data-tz="Asia/Dubai">Dubai, UAE - Burj Khalifa</option>
+                            <option value="-3.0674,37.3556" data-tz="Africa/Nairobi">Mount Kilimanjaro, Tanzania</option>
+                            <option value="33.9716,-6.8498" data-tz="Africa/Casablanca">Rabat, Morocco - Kasbah</option>
+                        </optgroup>
+                        <optgroup label="Oceania">
+                            <option value="-33.8688,151.2093" data-tz="Australia/Sydney">Sydney, Australia - Opera House</option>
+                            <option value="-36.8509,174.7645" data-tz="Pacific/Auckland">Auckland, New Zealand - Sky Tower</option>
+                            <option value="-17.6797,178.0650" data-tz="Pacific/Fiji">Fiji - Tropical Paradise</option>
+                            <option value="21.3069,-157.8583" data-tz="Pacific/Honolulu">Honolulu, Hawaii - Waikiki Beach</option>
+                        </optgroup>
+                        <optgroup label="Natural Wonders">
+                            <option value="36.1070,-112.1130" data-tz="America/Phoenix">Grand Canyon, USA</option>
+                            <option value="-25.6953,54.4367" data-tz="America/Sao_Paulo">Iguazu Falls, Argentina/Brazil</option>
+                            <option value="64.0028,-16.3317" data-tz="Atlantic/Reykjavik">Vatnajokull Glacier, Iceland</option>
+                            <option value="27.9881,86.9250" data-tz="Asia/Kathmandu">Mount Everest Base Camp, Nepal</option>
+                            <option value="-8.4095,115.1889" data-tz="Asia/Makassar">Bali, Indonesia - Rice Terraces</option>
+                            <option value="78.2232,15.6267" data-tz="Arctic/Longyearbyen">Svalbard, Norway - Arctic</option>
+                            <option value="-77.8400,166.6424" data-tz="Antarctica/McMurdo">McMurdo Station, Antarctica</option>
+                        </optgroup>
+                    </select>
+                    <p class="location-hint">Select a famous location to generate ASCII art based on its current weather and local time</p>
+                </div>
+            </div>
+
+            <button id="generateBtn" onclick="startGeneration()">Generate ASCII Art from My Location</button>
+        </div>
+
+        <div class="progress-section" id="progressSection">
+            <div class="progress-step" id="step1">
+                <div class="step-icon">1</div>
+                <div>
+                    <div class="step-text">Getting your location</div>
+                    <div class="step-detail" id="step1Detail"></div>
+                </div>
+            </div>
+            <div class="progress-step" id="step2">
+                <div class="step-icon">2</div>
+                <div>
+                    <div class="step-text">Fetching weather data</div>
+                    <div class="step-detail" id="step2Detail"></div>
+                </div>
+            </div>
+            <div class="progress-step" id="step3">
+                <div class="step-icon">3</div>
+                <div>
+                    <div class="step-text">Generating ASCII art & color palette</div>
+                    <div class="step-detail" id="step3Detail"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="context-section" id="contextSection" style="display: none;">
+            <h4>Current Context</h4>
+            <div class="context-grid">
+                <div class="context-item">
+                    <div class="label">Location</div>
+                    <div class="value" id="ctxLocation">-</div>
+                </div>
+                <div class="context-item">
+                    <div class="label">Weather</div>
+                    <div class="value" id="ctxWeather">-</div>
+                </div>
+                <div class="context-item">
+                    <div class="label">Temperature</div>
+                    <div class="value" id="ctxTemp">-</div>
+                </div>
+                <div class="context-item">
+                    <div class="label">Time of Day</div>
+                    <div class="value" id="ctxTime">-</div>
+                </div>
+                <div class="context-item">
+                    <div class="label">Season</div>
+                    <div class="value" id="ctxSeason">-</div>
+                </div>
+                <div class="context-item">
+                    <div class="label">Date</div>
+                    <div class="value" id="ctxDate">-</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="result-section" id="resultSection">
+            <div class="ascii-box">
+                <h3>
+                    <span>Generated ASCII Art</span>
+                    <button class="copy-btn" onclick="copyToClipboard('asciiArt', this)">Copy</button>
+                </h3>
+                <pre class="ascii-art" id="asciiArt"></pre>
+            </div>
+
+            <div class="palette-section">
+                <h3>Color Palette</h3>
+                <div class="palette-grid" id="paletteGrid"></div>
+            </div>
+
+            <div class="collapsible-section">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <div class="header-with-button">
+                        <h3>CSS Variables</h3>
+                        <button class="copy-btn" onclick="event.stopPropagation(); copyToClipboard('cssOutput', this)">Copy</button>
+                    </div>
+                    <span class="collapsible-toggle">&#9660;</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <pre class="css-output" id="cssOutput"></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible-section">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <div class="header-with-button">
+                        <h3>Scene Description</h3>
+                        <button class="copy-btn" onclick="event.stopPropagation(); copyToClipboard('sceneText', this)">Copy</button>
+                    </div>
+                    <span class="collapsible-toggle">&#9660;</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="scene-description" id="sceneText"></div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="reset-btn" onclick="resetApp()">Generate Another</button>
+        </div>
+
+        <div id="errorContainer"></div>
+    </div>
+
+    <script>
+        // Storage keys
+        const OPENAI_KEY = 'openai_api_key';
+        const WEATHER_KEY = 'openweather_api_key';
+
+        // Location mode: 'auto' or 'pick'
+        let locationMode = 'auto';
+
+        // Load saved API keys on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedOpenAI = localStorage.getItem(OPENAI_KEY);
+            const savedWeather = localStorage.getItem(WEATHER_KEY);
+            if (savedOpenAI) document.getElementById('openaiKey').value = savedOpenAI;
+            if (savedWeather) document.getElementById('weatherKey').value = savedWeather;
+        });
+
+        function setLocationMode(mode) {
+            locationMode = mode;
+            const tabs = document.querySelectorAll('.location-tab');
+            const picker = document.getElementById('locationPicker');
+            const btn = document.getElementById('generateBtn');
+
+            tabs.forEach((tab, i) => {
+                tab.classList.toggle('active', (mode === 'auto' && i === 0) || (mode === 'pick' && i === 1));
+            });
+
+            picker.classList.toggle('visible', mode === 'pick');
+            btn.textContent = mode === 'auto' ? 'Generate ASCII Art from My Location' : 'Generate ASCII Art from Selected Location';
+        }
+
+        // Time and season helpers
+        function getTimeOfDay(timezone = null) {
+            let hour;
+            if (timezone) {
+                const formatter = new Intl.DateTimeFormat('en-US', {
+                    timeZone: timezone,
+                    hour: 'numeric',
+                    hour12: false
+                });
+                hour = parseInt(formatter.format(new Date()), 10);
+            } else {
+                hour = new Date().getHours();
+            }
+            if (hour >= 5 && hour < 12) return 'morning';
+            if (hour >= 12 && hour < 17) return 'afternoon';
+            if (hour >= 17 && hour < 21) return 'evening';
+            return 'night';
+        }
+
+        function getSeason(timezone = null, latitude = null) {
+            let month;
+            if (timezone) {
+                const formatter = new Intl.DateTimeFormat('en-US', {
+                    timeZone: timezone,
+                    month: 'numeric'
+                });
+                month = parseInt(formatter.format(new Date()), 10) - 1;
+            } else {
+                month = new Date().getMonth();
+            }
+
+            let season;
+            if (month >= 2 && month <= 4) season = 'spring';
+            else if (month >= 5 && month <= 7) season = 'summer';
+            else if (month >= 8 && month <= 10) season = 'autumn';
+            else season = 'winter';
+
+            if (latitude !== null && latitude < 0) {
+                const flipMap = {
+                    'spring': 'autumn',
+                    'summer': 'winter',
+                    'autumn': 'spring',
+                    'winter': 'summer'
+                };
+                season = flipMap[season];
+            }
+
+            return season;
+        }
+
+        function getFormattedDate(timezone = null) {
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            };
+            if (timezone) {
+                options.timeZone = timezone;
+            }
+            return new Date().toLocaleDateString('en-US', options);
+        }
+
+        // Progress step helpers
+        function setStepActive(stepNum) {
+            document.getElementById(`step${stepNum}`).className = 'progress-step active';
+        }
+
+        function setStepCompleted(stepNum, detail) {
+            const step = document.getElementById(`step${stepNum}`);
+            step.className = 'progress-step completed';
+            step.querySelector('.step-icon').textContent = '✓';
+            if (detail) document.getElementById(`step${stepNum}Detail`).textContent = detail;
+        }
+
+        function setStepError(stepNum, detail) {
+            const step = document.getElementById(`step${stepNum}`);
+            step.className = 'progress-step error';
+            step.querySelector('.step-icon').textContent = '✗';
+            if (detail) document.getElementById(`step${stepNum}Detail`).textContent = detail;
+        }
+
+        function showError(message) {
+            document.getElementById('errorContainer').innerHTML = `<div class="error">${escapeHtml(message)}</div>`;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // API Functions
+        async function getLocationDetails(lat, lon) {
+            const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1`;
+            const response = await fetch(url, {
+                headers: { 'User-Agent': 'ASCIIArtPaletteApp/1.0' }
+            });
+            if (!response.ok) throw new Error('Failed to get location details');
+            return await response.json();
+        }
+
+        async function getWeather(lat, lon, apiKey) {
+            const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Failed to get weather data');
+            return await response.json();
+        }
+
+        async function generateAsciiArtAndPalette(openaiKey, location, weather, timeOfDay, season, date) {
+            const prompt = `Generate ASCII art and a color palette for a scene depicting:
+- Location: ${location}
+- Weather: ${weather}
+- Time of day: ${timeOfDay}
+- Season: ${season}
+- Current date: ${date}
+
+You must respond with valid JSON in exactly this format:
+{
+  "ascii_art": "your ASCII art here (use \\n for newlines)",
+  "scene_description": "A brief description of what the ASCII art depicts",
+  "colors": [
+    {"name": "Color Name", "hex": "#HEXCODE", "description": "What this color represents"},
+    ...
+  ]
+}
+
+Requirements for the ASCII art:
+1. Create detailed ASCII art that depicts a scene matching the location, weather, time, and season
+2. Use standard ASCII characters only (letters, numbers, symbols like @#$%^&*()_+-=[]{}|;:'",.<>/?~\`)
+3. The art should be approximately 60-80 characters wide and 25-35 lines tall
+4. Include recognizable elements of the location (landmarks, buildings, nature)
+5. Show weather effects (rain with /, snow with *, clouds, sun rays, etc.)
+6. Reflect the time of day through shading density
+
+Requirements for the color palette:
+1. Generate 5-7 colors that would be used if this scene were painted
+2. Colors should reflect the weather, time of day, and season
+3. Include a mix of dominant colors, accent colors, and atmospheric colors
+4. Each color needs a descriptive name, hex code, and brief description
+
+Respond ONLY with the JSON object, no additional text or markdown.`;
+
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${openaiKey}`
+                },
+                body: JSON.stringify({
+                    model: 'gpt-4o',
+                    max_tokens: 4096,
+                    messages: [
+                        {
+                            role: 'system',
+                            content: 'You are an expert ASCII artist and color theorist. You create detailed ASCII art scenes and matching color palettes. Always respond with valid JSON only.'
+                        },
+                        {
+                            role: 'user',
+                            content: prompt
+                        }
+                    ]
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error?.message || `Generation failed with status ${response.status}`);
+            }
+
+            const data = await response.json();
+            const content = data.choices[0].message.content;
+
+            // Parse the JSON response
+            try {
+                // Remove any markdown code block markers if present
+                let jsonStr = content.trim();
+                if (jsonStr.startsWith('```json')) {
+                    jsonStr = jsonStr.slice(7);
+                }
+                if (jsonStr.startsWith('```')) {
+                    jsonStr = jsonStr.slice(3);
+                }
+                if (jsonStr.endsWith('```')) {
+                    jsonStr = jsonStr.slice(0, -3);
+                }
+                return JSON.parse(jsonStr.trim());
+            } catch (e) {
+                console.error('Failed to parse response:', content);
+                throw new Error('Failed to parse AI response as JSON');
+            }
+        }
+
+        // Main generation flow
+        async function startGeneration() {
+            const openaiKey = document.getElementById('openaiKey').value.trim();
+            const weatherKey = document.getElementById('weatherKey').value.trim();
+
+            if (!openaiKey) {
+                showError('Please enter your OpenAI API key.');
+                return;
+            }
+
+            // Save API keys
+            localStorage.setItem(OPENAI_KEY, openaiKey);
+            if (weatherKey) localStorage.setItem(WEATHER_KEY, weatherKey);
+
+            // Reset UI
+            document.getElementById('errorContainer').innerHTML = '';
+            document.getElementById('generateBtn').disabled = true;
+            document.getElementById('progressSection').style.display = 'block';
+            document.getElementById('contextSection').style.display = 'none';
+            document.getElementById('resultSection').style.display = 'none';
+
+            // Reset progress steps
+            for (let i = 1; i <= 3; i++) {
+                const step = document.getElementById(`step${i}`);
+                step.className = 'progress-step';
+                step.querySelector('.step-icon').textContent = i;
+                document.getElementById(`step${i}Detail`).textContent = '';
+            }
+
+            // Start Step 1: Get location
+            setStepActive(1);
+
+            if (locationMode === 'pick') {
+                const select = document.getElementById('locationSelect');
+                const selectedOption = select.options[select.selectedIndex];
+                const coords = select.value.split(',');
+                const latitude = parseFloat(coords[0]);
+                const longitude = parseFloat(coords[1]);
+                const selectedName = selectedOption.text;
+                const timezone = selectedOption.dataset.tz || null;
+
+                await processLocation(latitude, longitude, selectedName, openaiKey, weatherKey, timezone);
+            } else {
+                if (!navigator.geolocation) {
+                    showError('Geolocation is not supported by your browser.');
+                    document.getElementById('generateBtn').disabled = false;
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        const { latitude, longitude } = position.coords;
+                        await processLocation(latitude, longitude, null, openaiKey, weatherKey, null);
+                    },
+                    (error) => {
+                        let message;
+                        switch (error.code) {
+                            case error.PERMISSION_DENIED:
+                                message = 'Location permission denied. Please allow location access.';
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                message = 'Location information unavailable.';
+                                break;
+                            case error.TIMEOUT:
+                                message = 'Location request timed out.';
+                                break;
+                            default:
+                                message = 'An unknown geolocation error occurred.';
+                        }
+                        setStepError(1, message);
+                        showError(message);
+                        document.getElementById('generateBtn').disabled = false;
+                    }
+                );
+            }
+        }
+
+        async function processLocation(latitude, longitude, presetName, openaiKey, weatherKey, timezone = null) {
+            try {
+                // Get location details from Nominatim
+                const locationData = await getLocationDetails(latitude, longitude);
+                const address = locationData.address || {};
+
+                const street = address.road || address.street || '';
+                const neighborhood = address.neighbourhood || address.suburb || address.quarter || '';
+                const city = address.city || address.town || address.village || address.county || '';
+                const country = address.country || '';
+
+                const locationParts = [street, neighborhood, city, country].filter(part => part);
+                let fullLocation = locationParts.length > 0 ? locationParts.join(', ') : 'Unknown location';
+
+                if (presetName) {
+                    fullLocation = presetName + (city ? ` (${city}, ${country})` : '');
+                }
+
+                const shortLocation = presetName || (city ? (country ? `${city}, ${country}` : city) : fullLocation);
+
+                setStepCompleted(1, shortLocation);
+
+                // Step 2: Get weather
+                setStepActive(2);
+
+                let weatherDescription = 'clear sky';
+                let fullWeatherDescription = 'clear sky, mild temperature';
+                let temperature = null;
+
+                if (weatherKey) {
+                    try {
+                        const weatherData = await getWeather(latitude, longitude, weatherKey);
+                        const conditions = weatherData.weather[0].description;
+                        temperature = Math.round(weatherData.main.temp);
+                        const feelsLike = Math.round(weatherData.main.feels_like);
+                        const humidity = weatherData.main.humidity;
+                        const windSpeed = weatherData.wind.speed;
+                        const visibility = weatherData.visibility ? Math.round(weatherData.visibility / 1000) : null;
+                        const clouds = weatherData.clouds?.all;
+
+                        const weatherParts = [
+                            conditions,
+                            `${temperature}°C (feels like ${feelsLike}°C)`,
+                            `humidity ${humidity}%`,
+                            `wind ${windSpeed} m/s`
+                        ];
+
+                        if (visibility !== null) {
+                            weatherParts.push(`visibility ${visibility} km`);
+                        }
+                        if (clouds !== undefined) {
+                            weatherParts.push(`cloud cover ${clouds}%`);
+                        }
+
+                        if (weatherData.rain) {
+                            const rainAmount = weatherData.rain['1h'] || weatherData.rain['3h'];
+                            if (rainAmount) weatherParts.push(`rain ${rainAmount} mm`);
+                        }
+                        if (weatherData.snow) {
+                            const snowAmount = weatherData.snow['1h'] || weatherData.snow['3h'];
+                            if (snowAmount) weatherParts.push(`snow ${snowAmount} mm`);
+                        }
+
+                        weatherDescription = conditions;
+                        fullWeatherDescription = weatherParts.join(', ');
+                        setStepCompleted(2, `${conditions}, ${temperature}°C`);
+                    } catch (err) {
+                        console.warn('Weather fetch failed, using defaults:', err);
+                        setStepCompleted(2, 'Using default (no API key)');
+                    }
+                } else {
+                    setStepCompleted(2, 'Skipped (no API key)');
+                }
+
+                // Get time/season context
+                const timeOfDay = getTimeOfDay(timezone);
+                const season = getSeason(timezone, latitude);
+                const currentDate = getFormattedDate(timezone);
+
+                // Update context display
+                document.getElementById('ctxLocation').textContent = fullLocation;
+                document.getElementById('ctxWeather').textContent = weatherDescription;
+                document.getElementById('ctxTemp').textContent = temperature ? `${temperature}°C` : 'N/A';
+                document.getElementById('ctxTime').textContent = timeOfDay;
+                document.getElementById('ctxSeason').textContent = season;
+                document.getElementById('ctxDate').textContent = currentDate;
+                document.getElementById('contextSection').style.display = 'block';
+
+                // Step 3: Generate ASCII art and palette
+                setStepActive(3);
+
+                const result = await generateAsciiArtAndPalette(
+                    openaiKey,
+                    fullLocation,
+                    fullWeatherDescription,
+                    timeOfDay,
+                    season,
+                    currentDate
+                );
+
+                setStepCompleted(3, 'Art & palette ready!');
+
+                // Display ASCII art
+                const asciiArt = result.ascii_art.replace(/\\n/g, '\n');
+                document.getElementById('asciiArt').textContent = asciiArt;
+
+                // Display scene description
+                document.getElementById('sceneText').textContent = result.scene_description;
+
+                // Display color palette
+                displayColorPalette(result.colors);
+
+                // Display CSS variables
+                displayCSSVariables(result.colors);
+
+                // Show results
+                document.getElementById('resultSection').style.display = 'block';
+
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message);
+
+                for (let i = 1; i <= 3; i++) {
+                    const step = document.getElementById(`step${i}`);
+                    if (step.className.includes('active')) {
+                        setStepError(i, error.message);
+                        break;
+                    }
+                }
+            } finally {
+                document.getElementById('generateBtn').disabled = false;
+            }
+        }
+
+        function displayColorPalette(colors) {
+            const grid = document.getElementById('paletteGrid');
+            grid.innerHTML = '';
+
+            colors.forEach((color, index) => {
+                const swatch = document.createElement('div');
+                swatch.className = 'color-swatch';
+
+                const square = document.createElement('div');
+                square.className = 'color-square';
+                square.style.backgroundColor = color.hex;
+                square.title = color.description || color.name;
+                square.onclick = () => copyColorToClipboard(color.hex, square);
+
+                const name = document.createElement('div');
+                name.className = 'color-name';
+                name.textContent = color.name;
+
+                const hex = document.createElement('div');
+                hex.className = 'color-hex';
+                hex.textContent = color.hex;
+
+                swatch.appendChild(square);
+                swatch.appendChild(name);
+                swatch.appendChild(hex);
+                grid.appendChild(swatch);
+            });
+        }
+
+        function displayCSSVariables(colors) {
+            const cssLines = [':root {'];
+            colors.forEach((color, index) => {
+                const varName = color.name.toLowerCase()
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/^-|-$/g, '');
+                cssLines.push(`  --color-${varName}: ${color.hex};`);
+            });
+            cssLines.push('}');
+
+            document.getElementById('cssOutput').textContent = cssLines.join('\n');
+        }
+
+        async function copyColorToClipboard(hex, element) {
+            try {
+                await navigator.clipboard.writeText(hex);
+                const originalBg = element.style.boxShadow;
+                element.style.boxShadow = '0 0 0 3px #4caf50';
+                setTimeout(() => {
+                    element.style.boxShadow = originalBg || '0 4px 12px rgba(0, 0, 0, 0.15)';
+                }, 500);
+            } catch (err) {
+                console.error('Failed to copy:', err);
+            }
+        }
+
+        function toggleCollapsible(header) {
+            const content = header.nextElementSibling;
+            const toggle = header.querySelector('.collapsible-toggle');
+            content.classList.toggle('expanded');
+            toggle.classList.toggle('expanded');
+        }
+
+        function resetApp() {
+            document.getElementById('progressSection').style.display = 'none';
+            document.getElementById('contextSection').style.display = 'none';
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('errorContainer').innerHTML = '';
+
+            // Reset collapsible sections
+            document.querySelectorAll('.collapsible-content').forEach(el => el.classList.remove('expanded'));
+            document.querySelectorAll('.collapsible-toggle').forEach(el => el.classList.remove('expanded'));
+
+            // Reset progress steps
+            for (let i = 1; i <= 3; i++) {
+                const step = document.getElementById(`step${i}`);
+                step.className = 'progress-step';
+                step.querySelector('.step-icon').textContent = i;
+                document.getElementById(`step${i}Detail`).textContent = '';
+            }
+        }
+
+        async function copyToClipboard(elementId, button) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+
+            try {
+                await navigator.clipboard.writeText(text);
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy text:', err);
+                button.textContent = 'Failed';
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                }, 2000);
+            }
+        }
+    </script>
+</body>
+</html>
