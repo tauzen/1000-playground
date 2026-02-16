@@ -111,45 +111,165 @@
     100% { transform: translateY(108vh) rotate(380deg) translateX(-25px); opacity: 0; }
   }
 
-  /* ── Card ── */
-  .card-container {
+  /* ── 3D Card ── */
+  .card-scene {
     position: relative;
     z-index: 10;
-    perspective: 1200px;
+    perspective: 1500px;
+    width: min(90vw, 560px);
+    height: min(120vw, 700px);
+    max-height: 85vh;
   }
 
-  .card {
+  .card-3d {
     position: relative;
-    width: min(90vw, 560px);
-    padding: 48px 36px 52px;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    animation: cardEntrance 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    opacity: 0;
+  }
+
+  @keyframes cardEntrance {
+    0%   { opacity: 0; transform: scale(0.7) rotateY(10deg); }
+    100% { opacity: 1; transform: scale(1) rotateY(0deg); }
+  }
+
+  /* ── Card glow aura ── */
+  .card-scene::before {
+    content: '';
+    position: absolute;
+    inset: -40px;
+    border-radius: 30px;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(255, 150, 180, 0.25) 0%,
+      rgba(255, 180, 200, 0.12) 40%,
+      transparent 70%
+    );
+    filter: blur(25px);
+    z-index: -1;
+    animation: auraPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes auraPulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50%      { opacity: 1; transform: scale(1.08); }
+  }
+
+  /* ── Inside of card (stationary back panel) ── */
+  .card-inside {
+    position: absolute;
+    inset: 0;
     background:
       linear-gradient(135deg,
         rgba(255, 252, 248, 0.97) 0%,
-        rgba(255, 245, 240, 0.95) 50%,
-        rgba(255, 240, 235, 0.97) 100%
+        rgba(255, 248, 244, 0.95) 50%,
+        rgba(255, 244, 240, 0.97) 100%
       );
     border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    animation: cardEntrance 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    padding: 48px 36px 52px;
+    box-shadow:
+      inset 0 0 40px rgba(180, 100, 120, 0.06),
+      0 2px 4px rgba(0,0,0,0.06),
+      0 8px 24px rgba(180, 100, 120, 0.1);
+    overflow: hidden;
+  }
+
+  /* Hand-drawn border for inside */
+  .card-inside::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border: 3px solid #e8a0b0;
+    border-radius: 10px;
+    pointer-events: none;
+    filter: url(#sketchy);
+    opacity: 0.5;
+  }
+
+  /* Decorative fold line on inside */
+  .card-inside::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    background: linear-gradient(
+      to bottom,
+      transparent 5%,
+      rgba(200, 160, 170, 0.15) 20%,
+      rgba(200, 160, 170, 0.25) 50%,
+      rgba(200, 160, 170, 0.15) 80%,
+      transparent 95%
+    );
+    transform: translateX(-0.5px);
+    pointer-events: none;
+  }
+
+  /* ── Inside content area (right half of inside) ── */
+  .inside-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding-left: 10%;
     opacity: 0;
-    transform: scale(0.8) rotate(-2deg);
-    /* Torn paper / rough edge via box-shadow layers */
+    transition: opacity 0.5s 0.4s ease;
+  }
+
+  .card-3d.is-open .inside-content {
+    opacity: 1;
+  }
+
+  /* ── Inside corner doodles ── */
+  .inside-doodle {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0.3;
+    z-index: 1;
+  }
+  .inside-doodle.top-right { top: 12px; right: 12px; }
+  .inside-doodle.bottom-right { bottom: 12px; right: 12px; transform: scaleY(-1); }
+  .inside-doodle.bottom-left { bottom: 12px; left: 12px; transform: scale(-1, -1); }
+
+  /* ── Front cover (flips open) ── */
+  .card-front {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(145deg,
+        rgba(255, 252, 248, 0.98) 0%,
+        rgba(255, 245, 240, 0.96) 40%,
+        rgba(255, 238, 232, 0.98) 100%
+      );
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 48px 36px 52px;
     box-shadow:
       0 2px 4px rgba(0,0,0,0.06),
       0 8px 24px rgba(180, 100, 120, 0.1),
       0 20px 60px rgba(180, 80, 100, 0.06);
-    /* SVG rough border */
-    border: none;
-    overflow: visible;
+    backface-visibility: hidden;
+    transform-origin: left center;
+    transform-style: preserve-3d;
+    transition: transform 1.2s cubic-bezier(0.4, 0.0, 0.2, 1),
+                box-shadow 0.8s ease;
+    cursor: pointer;
+    z-index: 5;
   }
 
-  @keyframes cardEntrance {
-    0%   { opacity: 0; transform: scale(0.8) rotate(-2deg); }
-    100% { opacity: 1; transform: scale(1) rotate(0deg); }
-  }
-
-  /* Hand-drawn border using SVG filter */
-  .card::before {
+  /* Hand-drawn border for front cover */
+  .card-front::before {
     content: '';
     position: absolute;
     inset: -3px;
@@ -160,7 +280,29 @@
     opacity: 0.7;
   }
 
-  /* ── Corner doodles (SVG flowers) ── */
+  /* Back of front cover (visible when opened) */
+  .card-front::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(135deg,
+        rgba(255, 248, 244, 0.98) 0%,
+        rgba(255, 242, 238, 0.96) 100%
+      );
+    border-radius: 8px;
+    transform: rotateY(180deg);
+    backface-visibility: hidden;
+  }
+
+  .card-3d.is-open .card-front {
+    transform: rotateY(-160deg);
+    box-shadow:
+      -4px 2px 12px rgba(0,0,0,0.08),
+      -2px 4px 20px rgba(180, 100, 120, 0.08);
+  }
+
+  /* ── Front cover corner doodles ── */
   .corner-doodle {
     position: absolute;
     pointer-events: none;
@@ -174,7 +316,7 @@
 
   /* ── Big hand-drawn heart ── */
   .big-heart-wrap {
-    margin-bottom: 14px;
+    margin-bottom: 18px;
     animation: heartReveal 1.4s 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
   }
 
@@ -185,6 +327,7 @@
 
   .big-heart {
     display: inline-block;
+    position: relative;
     animation: heartbeat 1.4s ease-in-out infinite;
     filter: drop-shadow(0 4px 12px rgba(220, 60, 80, 0.25));
     cursor: pointer;
@@ -198,15 +341,60 @@
     50%      { transform: scale(1); }
   }
 
-  /* ── Titles ── */
+  /* ── Heart shimmer / rainbow glow ── */
+  .big-heart::after {
+    content: '';
+    position: absolute;
+    inset: -15px;
+    border-radius: 50%;
+    background: conic-gradient(
+      from 0deg,
+      rgba(255, 100, 150, 0.3),
+      rgba(255, 180, 100, 0.2),
+      rgba(255, 255, 130, 0.2),
+      rgba(130, 255, 180, 0.2),
+      rgba(130, 200, 255, 0.2),
+      rgba(200, 130, 255, 0.2),
+      rgba(255, 100, 150, 0.3)
+    );
+    filter: blur(18px);
+    animation: shimmerRotate 4s linear infinite;
+    z-index: -1;
+    opacity: 0.7;
+  }
+
+  @keyframes shimmerRotate {
+    0%   { transform: rotate(0deg) scale(1); }
+    50%  { transform: rotate(180deg) scale(1.15); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+
+  /* ── Front cover title ── */
+  .front-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(28px, 6vw, 48px);
+    color: #8b3a4a;
+    line-height: 1.3;
+    animation: textFadeUp 1.2s 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .front-subtitle {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(16px, 3.5vw, 24px);
+    color: #b8687a;
+    margin-top: 10px;
+    letter-spacing: 2px;
+    animation: textFadeUp 1.2s 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* ── Inside titles ── */
   .title {
     font-family: 'Caveat', cursive;
-    font-size: clamp(30px, 7vw, 54px);
+    font-size: clamp(28px, 6.5vw, 50px);
     font-weight: 700;
     color: #8b3a4a;
     line-height: 1.3;
     margin-bottom: 4px;
-    animation: textFadeUp 1.2s 1s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   .title .name {
@@ -236,7 +424,6 @@
     justify-content: center;
     gap: 10px;
     margin: 18px 0 14px;
-    animation: textFadeUp 1.2s 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   .divider-line {
@@ -259,7 +446,6 @@
     font-weight: 600;
     color: #a04a5c;
     margin-top: 12px;
-    animation: textFadeUp 1.2s 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   .subtitle .name {
@@ -279,7 +465,12 @@
     color: #b88898;
     margin-top: 22px;
     letter-spacing: 2px;
-    animation: textFadeUp 1.2s 2s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* ── Inside heart decoration ── */
+  .inside-heart {
+    display: inline-block;
+    margin-bottom: 12px;
   }
 
   /* ── Click-burst sketchy hearts ── */
@@ -322,38 +513,6 @@
     100% { opacity: 0; transform: translate(var(--cx), var(--cy)) rotate(var(--cr)) scale(0.3); }
   }
 
-  /* ── Heart shimmer / rainbow glow ── */
-  .big-heart {
-    position: relative;
-  }
-
-  .big-heart::after {
-    content: '';
-    position: absolute;
-    inset: -15px;
-    border-radius: 50%;
-    background: conic-gradient(
-      from 0deg,
-      rgba(255, 100, 150, 0.3),
-      rgba(255, 180, 100, 0.2),
-      rgba(255, 255, 130, 0.2),
-      rgba(130, 255, 180, 0.2),
-      rgba(130, 200, 255, 0.2),
-      rgba(200, 130, 255, 0.2),
-      rgba(255, 100, 150, 0.3)
-    );
-    filter: blur(18px);
-    animation: shimmerRotate 4s linear infinite;
-    z-index: -1;
-    opacity: 0.7;
-  }
-
-  @keyframes shimmerRotate {
-    0%   { transform: rotate(0deg) scale(1); }
-    50%  { transform: rotate(180deg) scale(1.15); }
-    100% { transform: rotate(360deg) scale(1); }
-  }
-
   /* ── Floating sparkle particles ── */
   .sparkle-particle {
     position: fixed;
@@ -370,60 +529,67 @@
     100% { opacity: 0; transform: translateY(-110vh) scale(0.3); }
   }
 
-  /* ── Card glow aura ── */
-  .card-container::before {
-    content: '';
+  /* ── Open hint ── */
+  .open-hint {
     position: absolute;
-    inset: -40px;
-    border-radius: 30px;
-    background: radial-gradient(
-      ellipse at center,
-      rgba(255, 150, 180, 0.25) 0%,
-      rgba(255, 180, 200, 0.12) 40%,
-      transparent 70%
-    );
-    filter: blur(25px);
-    z-index: -1;
-    animation: auraPulse 3s ease-in-out infinite;
-  }
-
-  @keyframes auraPulse {
-    0%, 100% { opacity: 0.6; transform: scale(1); }
-    50%      { opacity: 1; transform: scale(1.08); }
-  }
-
-  /* ── Typewriter label for subtitle ── */
-  .typed-label {
-    display: inline-block;
+    bottom: -36px;
+    left: 50%;
+    transform: translateX(-50%);
     font-family: 'Patrick Hand', cursive;
-    font-size: clamp(13px, 2.5vw, 16px);
+    font-size: 15px;
     color: #c8889a;
-    margin-top: 8px;
-    opacity: 0;
-    animation: textFadeUp 1.2s 2.2s cubic-bezier(0.22, 1, 0.36, 1) both;
     letter-spacing: 1px;
+    opacity: 0;
+    animation: hintFade 1.2s 2.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
   }
 
-  .typed-label .typed-cursor {
-    display: inline-block;
-    width: 2px;
-    height: 1em;
-    background: #d4889a;
-    margin-left: 2px;
-    vertical-align: text-bottom;
-    animation: cursorBlink 0.7s step-end infinite;
+  .card-3d.is-open .open-hint {
+    opacity: 0 !important;
   }
 
-  @keyframes cursorBlink {
-    0%, 100% { opacity: 1; }
-    50%      { opacity: 0; }
+  @keyframes hintFade {
+    0%   { opacity: 0; transform: translateX(-50%) translateY(8px); }
+    100% { opacity: 0.7; transform: translateX(-50%) translateY(0); }
+  }
+
+  /* ── Fold shadow on spine ── */
+  .fold-shadow {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 30px;
+    transform: translateX(-50%);
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(0,0,0,0.03) 40%,
+      rgba(0,0,0,0.05) 50%,
+      rgba(0,0,0,0.03) 60%,
+      transparent 100%
+    );
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+
+  .card-3d.is-open .fold-shadow {
+    opacity: 0;
   }
 
   /* ── Responsive ── */
   @media (max-width: 480px) {
-    .card { padding: 32px 20px 40px; }
+    .card-front, .card-inside { padding: 32px 20px 40px; }
     .corner-doodle { opacity: 0.3; }
     .corner-doodle svg { width: 50px; height: 50px; }
+    .inside-doodle svg { width: 40px; height: 40px; }
+    .card-scene {
+      height: min(140vw, 700px);
+    }
   }
 </style>
 </head>
@@ -468,108 +634,162 @@
 <!-- Petals layer (JS-generated) -->
 <div id="petals-layer"></div>
 
-<!-- Card -->
-<div class="card-container">
-  <div class="card" id="card">
+<!-- 3D Card -->
+<div class="card-scene">
+  <div class="card-3d" id="card-3d">
 
-    <!-- Hand-drawn corner vine doodles -->
-    <div class="corner-doodle top-left">
-      <svg width="70" height="70" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M5 65 Q5 30 15 20 Q25 10 40 8" stroke="#d4a0ae" stroke-width="1.8" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
-        <path d="M5 55 Q8 35 18 28 Q28 20 38 22" stroke="#d4a0ae" stroke-width="1.2" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
-        <circle cx="42" cy="7" r="4" fill="none" stroke="#e0889e" stroke-width="1.2" filter="url(#pencil)"/>
-        <circle cx="42" cy="7" r="1.5" fill="#e8a0ae" filter="url(#pencil)"/>
-        <circle cx="40" cy="22" r="3" fill="none" stroke="#e0889e" stroke-width="1" filter="url(#pencil)"/>
-        <circle cx="40" cy="22" r="1" fill="#e8a0ae" filter="url(#pencil)"/>
-        <path d="M15 18 Q12 12 18 10" stroke="#a8c8a0" stroke-width="1" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
-        <path d="M20 14 Q22 8 18 10" stroke="#a8c8a0" stroke-width="1" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
-      </svg>
-    </div>
-    <div class="corner-doodle top-right">
-      <svg width="70" height="70" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M5 65 Q5 30 15 20 Q25 10 40 8" stroke="#d4a0ae" stroke-width="1.8" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
-        <path d="M5 55 Q8 35 18 28 Q28 20 38 22" stroke="#d4a0ae" stroke-width="1.2" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
-        <circle cx="42" cy="7" r="4" fill="none" stroke="#e0889e" stroke-width="1.2" filter="url(#pencil)"/>
-        <circle cx="42" cy="7" r="1.5" fill="#e8a0ae" filter="url(#pencil)"/>
-        <circle cx="40" cy="22" r="3" fill="none" stroke="#e0889e" stroke-width="1" filter="url(#pencil)"/>
-        <circle cx="40" cy="22" r="1" fill="#e8a0ae" filter="url(#pencil)"/>
-        <path d="M15 18 Q12 12 18 10" stroke="#a8c8a0" stroke-width="1" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
-        <path d="M20 14 Q22 8 18 10" stroke="#a8c8a0" stroke-width="1" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
-      </svg>
-    </div>
-    <div class="corner-doodle bottom-left">
-      <svg width="70" height="70" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M5 65 Q5 30 15 20 Q25 10 40 8" stroke="#d4a0ae" stroke-width="1.8" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
-        <path d="M5 55 Q8 35 18 28 Q28 20 38 22" stroke="#d4a0ae" stroke-width="1.2" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
-        <circle cx="42" cy="7" r="4" fill="none" stroke="#e0889e" stroke-width="1.2" filter="url(#pencil)"/>
-        <circle cx="42" cy="7" r="1.5" fill="#e8a0ae" filter="url(#pencil)"/>
-      </svg>
-    </div>
-    <div class="corner-doodle bottom-right">
-      <svg width="70" height="70" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M5 65 Q5 30 15 20 Q25 10 40 8" stroke="#d4a0ae" stroke-width="1.8" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
-        <path d="M5 55 Q8 35 18 28 Q28 20 38 22" stroke="#d4a0ae" stroke-width="1.2" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
-        <circle cx="42" cy="7" r="4" fill="none" stroke="#e0889e" stroke-width="1.2" filter="url(#pencil)"/>
-        <circle cx="42" cy="7" r="1.5" fill="#e8a0ae" filter="url(#pencil)"/>
-      </svg>
-    </div>
-
-    <!-- Hand-drawn SVG heart -->
-    <div class="big-heart-wrap">
-      <div class="big-heart" id="main-heart">
-        <svg width="110" height="100" viewBox="0 0 110 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Watercolor wash fill -->
-          <path d="M55 90 Q55 90 20 58 Q-2 38 8 20 Q16 5 32 5 Q45 5 55 20 Q65 5 78 5 Q94 5 102 20 Q112 38 90 58 Q55 90 55 90Z"
-                fill="url(#heartGrad)" filter="url(#sketchy-strong)" opacity="0.85"/>
-          <!-- Sketchy outline - drawn twice for a more hand-drawn look -->
-          <path d="M55 88 Q52 85 22 57 Q0 38 9 21 Q17 7 33 7 Q44 6 55 22 Q66 6 77 7 Q93 7 101 21 Q110 38 88 57 Q58 85 55 88Z"
-                stroke="#c43a5a" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#pencil)"/>
-          <path d="M55 86 Q53 84 24 56 Q2 37 10 22 Q18 8 33 9 Q43 8 55 23 Q67 8 77 9 Q92 8 100 22 Q108 37 86 56 Q57 84 55 86Z"
-                stroke="#d45a72" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.5" filter="url(#pencil)"/>
-          <!-- Little highlight scribble -->
-          <path d="M30 22 Q28 18 33 16 Q38 15 36 20" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
-          <defs>
-            <radialGradient id="heartGrad" cx="50%" cy="40%" r="55%">
-              <stop offset="0%" stop-color="#ff8fa8"/>
-              <stop offset="50%" stop-color="#e8506e"/>
-              <stop offset="100%" stop-color="#c43a5a"/>
-            </radialGradient>
-          </defs>
+    <!-- Inside of card (stationary) -->
+    <div class="card-inside">
+      <!-- Inside corner doodles -->
+      <div class="inside-doodle top-right">
+        <svg width="60" height="60" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 65 Q5 30 15 20 Q25 10 40 8" stroke="#d4a0ae" stroke-width="1.8" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <path d="M5 55 Q8 35 18 28 Q28 20 38 22" stroke="#d4a0ae" stroke-width="1.2" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="4" fill="none" stroke="#e0889e" stroke-width="1.2" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="1.5" fill="#e8a0ae" filter="url(#pencil)"/>
+          <circle cx="40" cy="22" r="3" fill="none" stroke="#e0889e" stroke-width="1" filter="url(#pencil)"/>
+          <circle cx="40" cy="22" r="1" fill="#e8a0ae" filter="url(#pencil)"/>
         </svg>
+      </div>
+      <div class="inside-doodle bottom-right">
+        <svg width="60" height="60" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 65 Q5 30 15 20 Q25 10 40 8" stroke="#d4a0ae" stroke-width="1.8" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <path d="M5 55 Q8 35 18 28 Q28 20 38 22" stroke="#d4a0ae" stroke-width="1.2" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="4" fill="none" stroke="#e0889e" stroke-width="1.2" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="1.5" fill="#e8a0ae" filter="url(#pencil)"/>
+        </svg>
+      </div>
+      <div class="inside-doodle bottom-left">
+        <svg width="60" height="60" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 65 Q5 30 15 20 Q25 10 40 8" stroke="#d4a0ae" stroke-width="1.8" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="4" fill="none" stroke="#e0889e" stroke-width="1.2" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="1.5" fill="#e8a0ae" filter="url(#pencil)"/>
+        </svg>
+      </div>
+
+      <!-- Inside content -->
+      <div class="inside-content" id="inside-content">
+        <div class="inside-heart">
+          <svg width="60" height="54" viewBox="0 0 110 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M55 90 Q55 90 20 58 Q-2 38 8 20 Q16 5 32 5 Q45 5 55 20 Q65 5 78 5 Q94 5 102 20 Q112 38 90 58 Q55 90 55 90Z"
+                  fill="url(#heartGrad2)" filter="url(#sketchy-strong)" opacity="0.75"/>
+            <path d="M55 88 Q52 85 22 57 Q0 38 9 21 Q17 7 33 7 Q44 6 55 22 Q66 6 77 7 Q93 7 101 21 Q110 38 88 57 Q58 85 55 88Z"
+                  stroke="#c43a5a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#pencil)"/>
+            <defs>
+              <radialGradient id="heartGrad2" cx="50%" cy="40%" r="55%">
+                <stop offset="0%" stop-color="#ff8fa8"/>
+                <stop offset="50%" stop-color="#e8506e"/>
+                <stop offset="100%" stop-color="#c43a5a"/>
+              </radialGradient>
+            </defs>
+          </svg>
+        </div>
+
+        <div class="title" id="title-line">
+          Dla Mamy <span class="name" id="name-mama"></span> i <span class="name" id="name-child"></span>
+        </div>
+
+        <div class="divider">
+          <div class="divider-line"></div>
+          <div class="divider-flower">
+            <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 8 Q20 12 18 14 Q16 12 18 8Z" fill="#e8a0ae" stroke="#d08898" stroke-width="0.8" filter="url(#pencil)"/>
+              <path d="M24 12 Q22 15 20 15 Q21 13 24 12Z" fill="#e8a0ae" stroke="#d08898" stroke-width="0.8" filter="url(#pencil)"/>
+              <path d="M25 19 Q22 18 21 16 Q23 16 25 19Z" fill="#e8a0ae" stroke="#d08898" stroke-width="0.8" filter="url(#pencil)"/>
+              <path d="M12 12 Q14 15 16 15 Q15 13 12 12Z" fill="#e8a0ae" stroke="#d08898" stroke-width="0.8" filter="url(#pencil)"/>
+              <path d="M11 19 Q14 18 15 16 Q13 16 11 19Z" fill="#e8a0ae" stroke="#d08898" stroke-width="0.8" filter="url(#pencil)"/>
+              <circle cx="18" cy="15" r="3" fill="#f0c0c8" stroke="#d08898" stroke-width="0.8" filter="url(#pencil)"/>
+              <path d="M18 18 Q17 24 18 30" stroke="#8cb888" stroke-width="1.2" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+              <path d="M18 23 Q14 21 12 22" stroke="#8cb888" stroke-width="0.8" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+              <path d="M18 26 Q22 24 24 25" stroke="#8cb888" stroke-width="0.8" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+            </svg>
+          </div>
+          <div class="divider-line"></div>
+        </div>
+
+        <div class="subtitle">
+          Od Taty <span class="name" id="name-tata"></span>
+        </div>
+
+        <div class="date" id="date-line"></div>
       </div>
     </div>
 
-    <div class="title" id="title-line">
-      Dla Mamy <span class="name" id="name-mama"></span> i <span class="name" id="name-child"></span>
-    </div>
-
-    <div class="divider">
-      <div class="divider-line"></div>
-      <div class="divider-flower">
-        <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Hand-drawn little flower -->
-          <path d="M18 8 Q20 12 18 14 Q16 12 18 8Z" fill="#e8a0ae" stroke="#d08898" stroke-width="0.8" filter="url(#pencil)"/>
-          <path d="M24 12 Q22 15 20 15 Q21 13 24 12Z" fill="#e8a0ae" stroke="#d08898" stroke-width="0.8" filter="url(#pencil)"/>
-          <path d="M25 19 Q22 18 21 16 Q23 16 25 19Z" fill="#e8a0ae" stroke="#d08898" stroke-width="0.8" filter="url(#pencil)"/>
-          <path d="M12 12 Q14 15 16 15 Q15 13 12 12Z" fill="#e8a0ae" stroke="#d08898" stroke-width="0.8" filter="url(#pencil)"/>
-          <path d="M11 19 Q14 18 15 16 Q13 16 11 19Z" fill="#e8a0ae" stroke="#d08898" stroke-width="0.8" filter="url(#pencil)"/>
-          <circle cx="18" cy="15" r="3" fill="#f0c0c8" stroke="#d08898" stroke-width="0.8" filter="url(#pencil)"/>
-          <!-- Stem -->
-          <path d="M18 18 Q17 24 18 30" stroke="#8cb888" stroke-width="1.2" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
-          <path d="M18 23 Q14 21 12 22" stroke="#8cb888" stroke-width="0.8" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
-          <path d="M18 26 Q22 24 24 25" stroke="#8cb888" stroke-width="0.8" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+    <!-- Front cover (flips open on click) -->
+    <div class="card-front" id="card-front">
+      <!-- Corner doodles on front cover -->
+      <div class="corner-doodle top-left">
+        <svg width="70" height="70" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 65 Q5 30 15 20 Q25 10 40 8" stroke="#d4a0ae" stroke-width="1.8" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <path d="M5 55 Q8 35 18 28 Q28 20 38 22" stroke="#d4a0ae" stroke-width="1.2" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="4" fill="none" stroke="#e0889e" stroke-width="1.2" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="1.5" fill="#e8a0ae" filter="url(#pencil)"/>
+          <circle cx="40" cy="22" r="3" fill="none" stroke="#e0889e" stroke-width="1" filter="url(#pencil)"/>
+          <circle cx="40" cy="22" r="1" fill="#e8a0ae" filter="url(#pencil)"/>
+          <path d="M15 18 Q12 12 18 10" stroke="#a8c8a0" stroke-width="1" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <path d="M20 14 Q22 8 18 10" stroke="#a8c8a0" stroke-width="1" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
         </svg>
       </div>
-      <div class="divider-line"></div>
+      <div class="corner-doodle top-right">
+        <svg width="70" height="70" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 65 Q5 30 15 20 Q25 10 40 8" stroke="#d4a0ae" stroke-width="1.8" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <path d="M5 55 Q8 35 18 28 Q28 20 38 22" stroke="#d4a0ae" stroke-width="1.2" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="4" fill="none" stroke="#e0889e" stroke-width="1.2" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="1.5" fill="#e8a0ae" filter="url(#pencil)"/>
+          <circle cx="40" cy="22" r="3" fill="none" stroke="#e0889e" stroke-width="1" filter="url(#pencil)"/>
+          <circle cx="40" cy="22" r="1" fill="#e8a0ae" filter="url(#pencil)"/>
+          <path d="M15 18 Q12 12 18 10" stroke="#a8c8a0" stroke-width="1" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <path d="M20 14 Q22 8 18 10" stroke="#a8c8a0" stroke-width="1" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+        </svg>
+      </div>
+      <div class="corner-doodle bottom-left">
+        <svg width="70" height="70" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 65 Q5 30 15 20 Q25 10 40 8" stroke="#d4a0ae" stroke-width="1.8" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <path d="M5 55 Q8 35 18 28 Q28 20 38 22" stroke="#d4a0ae" stroke-width="1.2" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="4" fill="none" stroke="#e0889e" stroke-width="1.2" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="1.5" fill="#e8a0ae" filter="url(#pencil)"/>
+        </svg>
+      </div>
+      <div class="corner-doodle bottom-right">
+        <svg width="70" height="70" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 65 Q5 30 15 20 Q25 10 40 8" stroke="#d4a0ae" stroke-width="1.8" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <path d="M5 55 Q8 35 18 28 Q28 20 38 22" stroke="#d4a0ae" stroke-width="1.2" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="4" fill="none" stroke="#e0889e" stroke-width="1.2" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="1.5" fill="#e8a0ae" filter="url(#pencil)"/>
+        </svg>
+      </div>
+
+      <!-- Hand-drawn SVG heart on front cover -->
+      <div class="big-heart-wrap">
+        <div class="big-heart" id="main-heart">
+          <svg width="130" height="118" viewBox="0 0 110 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Watercolor wash fill -->
+            <path d="M55 90 Q55 90 20 58 Q-2 38 8 20 Q16 5 32 5 Q45 5 55 20 Q65 5 78 5 Q94 5 102 20 Q112 38 90 58 Q55 90 55 90Z"
+                  fill="url(#heartGrad)" filter="url(#sketchy-strong)" opacity="0.85"/>
+            <!-- Sketchy outline -->
+            <path d="M55 88 Q52 85 22 57 Q0 38 9 21 Q17 7 33 7 Q44 6 55 22 Q66 6 77 7 Q93 7 101 21 Q110 38 88 57 Q58 85 55 88Z"
+                  stroke="#c43a5a" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#pencil)"/>
+            <path d="M55 86 Q53 84 24 56 Q2 37 10 22 Q18 8 33 9 Q43 8 55 23 Q67 8 77 9 Q92 8 100 22 Q108 37 86 56 Q57 84 55 86Z"
+                  stroke="#d45a72" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.5" filter="url(#pencil)"/>
+            <!-- Highlight scribble -->
+            <path d="M30 22 Q28 18 33 16 Q38 15 36 20" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+            <defs>
+              <radialGradient id="heartGrad" cx="50%" cy="40%" r="55%">
+                <stop offset="0%" stop-color="#ff8fa8"/>
+                <stop offset="50%" stop-color="#e8506e"/>
+                <stop offset="100%" stop-color="#c43a5a"/>
+              </radialGradient>
+            </defs>
+          </svg>
+        </div>
+      </div>
+
+      <div class="front-title">Happy Valentine's Day</div>
+      <div class="front-subtitle">kliknij aby otworzyc</div>
     </div>
 
-    <div class="subtitle">
-      Od Taty <span class="name" id="name-tata"></span>
-    </div>
-
-    <div class="typed-label" id="typed-label"></div>
-
-    <div class="date" id="date-line"></div>
+    <!-- Hint text below card -->
+    <div class="open-hint" id="open-hint">kliknij kartke</div>
   </div>
 </div>
 
@@ -595,6 +815,39 @@
   const d = new Date();
   document.getElementById('date-line').textContent = '14 lutego ' + d.getFullYear();
 
+  // ── 3D card open/close ──
+  const card3d = document.getElementById('card-3d');
+  const cardFront = document.getElementById('card-front');
+  let isOpen = false;
+
+  cardFront.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (!isOpen) {
+      card3d.classList.add('is-open');
+      isOpen = true;
+    }
+  });
+
+  // Click on inside or outside to close
+  document.addEventListener('click', function(e) {
+    if (isOpen && !cardFront.contains(e.target)) {
+      // If clicking outside or on the inside, close card
+      if (!e.target.closest('.card-inside') || e.target.closest('.card-inside')) {
+        card3d.classList.remove('is-open');
+        isOpen = false;
+      }
+    }
+  });
+
+  // Also allow clicking inside to toggle
+  document.querySelector('.card-inside').addEventListener('click', function(e) {
+    if (isOpen) {
+      e.stopPropagation();
+      card3d.classList.remove('is-open');
+      isOpen = false;
+    }
+  });
+
   // ── Background doodle canvas (scattered tiny sketchy shapes) ──
   const canvas = document.getElementById('doodle-canvas');
   const ctx = canvas.getContext('2d');
@@ -613,7 +866,6 @@
     ctx.lineWidth = 1.2;
     ctx.lineCap = 'round';
     ctx.beginPath();
-    // Hand-drawn heart with slight jitter
     const j = () => (Math.random() - 0.5) * size * 0.1;
     ctx.moveTo(cx + j(), cy - size * 0.2 + j());
     ctx.bezierCurveTo(
@@ -683,44 +935,36 @@
     ctx.clearRect(0, 0, W, H);
     const colors = ['#e8a0b0', '#d4889a', '#c8a8b8', '#dab0b8', '#b8a0c0'];
 
-    // Scatter small hearts
     for (let i = 0; i < 25; i++) {
       drawSketchyHeart(
-        Math.random() * W,
-        Math.random() * H,
+        Math.random() * W, Math.random() * H,
         Math.random() * 8 + 4,
         colors[Math.floor(Math.random() * colors.length)],
         Math.random() * 0.15 + 0.05
       );
     }
 
-    // Scatter tiny sparkle stars
     for (let i = 0; i < 20; i++) {
       drawSketchyStar(
-        Math.random() * W,
-        Math.random() * H,
+        Math.random() * W, Math.random() * H,
         Math.random() * 4 + 2,
         colors[Math.floor(Math.random() * colors.length)],
         Math.random() * 0.12 + 0.04
       );
     }
 
-    // Scatter little swirls
     for (let i = 0; i < 12; i++) {
       drawSketchySwirl(
-        Math.random() * W,
-        Math.random() * H,
+        Math.random() * W, Math.random() * H,
         Math.random() * 10 + 5,
         colors[Math.floor(Math.random() * colors.length)],
         Math.random() * 0.1 + 0.03
       );
     }
 
-    // Scatter gentle dots
     for (let i = 0; i < 35; i++) {
       drawSketchyDot(
-        Math.random() * W,
-        Math.random() * H,
+        Math.random() * W, Math.random() * H,
         Math.random() * 2 + 0.5,
         colors[Math.floor(Math.random() * colors.length)],
         Math.random() * 0.15 + 0.05
@@ -736,7 +980,6 @@
 
   function createHeartSVG(size, color) {
     const s = size;
-    // Each heart has slightly different curves for that hand-drawn feel
     const j = () => (Math.random() - 0.5) * s * 0.15;
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('width', s * 2.2);
@@ -846,22 +1089,6 @@
     }
   });
 
-  // ── Gentle card tilt on mouse ──
-  const card = document.getElementById('card');
-  card.addEventListener('mousemove', function(e) {
-    const rect = card.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const dx = (e.clientX - cx) / (rect.width / 2);
-    const dy = (e.clientY - cy) / (rect.height / 2);
-    card.style.transform = `rotateY(${dx * 4}deg) rotateX(${-dy * 4}deg)`;
-    card.style.transition = 'transform 0.15s ease-out';
-  });
-  card.addEventListener('mouseleave', function() {
-    card.style.transform = 'rotateY(0) rotateX(0)';
-    card.style.transition = 'transform 0.5s ease-out';
-  });
-
   // ── Mouse sparkle trail ──
   let sparkleThrottle = 0;
   document.addEventListener('mousemove', function(e) {
@@ -939,6 +1166,12 @@
       mainHeart.style.transform = 'scale(1)';
       mainHeart.style.transition = 'transform 0.4s ease-out';
     }, 200);
+
+    // Also open the card when clicking the heart
+    if (!isOpen) {
+      card3d.classList.add('is-open');
+      isOpen = true;
+    }
   });
 
   // ── Floating sparkle / glitter particles ──
@@ -963,29 +1196,6 @@
 
   for (let i = 0; i < 15; i++) setTimeout(spawnSparkleParticle, i * 300);
   setInterval(spawnSparkleParticle, 800);
-
-  // ── Typewriter effect on subtitle area ──
-  const typedLabel = document.getElementById('typed-label');
-  const message = '\u2764 made with love \u2764';
-  let charIndex = 0;
-
-  function typeChar() {
-    if (charIndex < message.length) {
-      typedLabel.textContent = message.slice(0, charIndex + 1);
-      charIndex++;
-      setTimeout(typeChar, 80 + Math.random() * 60);
-    } else {
-      // Add blinking cursor after typing
-      const cursor = document.createElement('span');
-      cursor.classList.add('typed-cursor');
-      typedLabel.appendChild(cursor);
-      // Remove cursor after a few seconds
-      setTimeout(() => cursor.remove(), 4000);
-    }
-  }
-
-  // Start typing after card animation completes
-  setTimeout(typeChar, 2800);
 
   // ── Double-click anywhere for heart rain ──
   document.addEventListener('dblclick', function(e) {
