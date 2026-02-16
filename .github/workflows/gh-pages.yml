@@ -28,6 +28,18 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
+      - name: Inject Valentine names from secrets
+        run: |
+          if [ -n "${{ secrets.VALENTINE_MAMA }}" ]; then
+            sed -i "s/mama: 'Katarzyna'/mama: '${{ secrets.VALENTINE_MAMA }}'/" valentines-card/index.html
+          fi
+          if [ -n "${{ secrets.VALENTINE_CHILD }}" ]; then
+            sed -i "s/child: 'Zosia'/child: '${{ secrets.VALENTINE_CHILD }}'/" valentines-card/index.html
+          fi
+          if [ -n "${{ secrets.VALENTINE_TATA }}" ]; then
+            sed -i "s/tata: 'Tomasz'/tata: '${{ secrets.VALENTINE_TATA }}'/" valentines-card/index.html
+          fi
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
