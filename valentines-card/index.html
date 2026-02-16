@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Walentynkowa Kartka</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@400;700&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 30% 20%, #4a0011 0%, #1a0005 50%, #0d0002 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    cursor: default;
+  }
+
+  /* ── Starfield / sparkle canvas ── */
+  #sparkle-canvas {
+    position: fixed; inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ── Floating hearts layer ── */
+  .hearts-layer {
+    position: fixed; inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .floating-heart {
+    position: absolute;
+    bottom: -80px;
+    color: rgba(255, 60, 100, 0.35);
+    animation: floatUp linear infinite;
+    filter: blur(0.5px);
+    user-select: none;
+  }
+
+  @keyframes floatUp {
+    0%   { transform: translateY(0) rotate(0deg) scale(1); opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { transform: translateY(-110vh) rotate(360deg) scale(0.5); opacity: 0; }
+  }
+
+  /* ── Petal layer ── */
+  .petal {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    background: radial-gradient(ellipse at 30% 30%, #ff6b8a, #cc2255);
+    border-radius: 50% 0 50% 50%;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+    animation: petalFall linear infinite;
+  }
+
+  @keyframes petalFall {
+    0%   { transform: translateY(-20px) rotate(0deg) translateX(0); opacity: 0; }
+    10%  { opacity: 0.7; }
+    50%  { transform: translateY(50vh) rotate(180deg) translateX(50px); }
+    90%  { opacity: 0.5; }
+    100% { transform: translateY(105vh) rotate(360deg) translateX(-30px); opacity: 0; }
+  }
+
+  /* ── Card ── */
+  .card-container {
+    position: relative;
+    z-index: 10;
+    perspective: 1200px;
+  }
+
+  .card {
+    position: relative;
+    width: min(88vw, 600px);
+    padding: 50px 40px 60px;
+    background: linear-gradient(
+      160deg,
+      rgba(120, 10, 40, 0.85) 0%,
+      rgba(80, 5, 25, 0.92) 40%,
+      rgba(50, 2, 15, 0.95) 100%
+    );
+    border: 2px solid rgba(255, 150, 170, 0.25);
+    border-radius: 24px;
+    box-shadow:
+      0 0 60px rgba(255, 50, 80, 0.15),
+      0 0 120px rgba(255, 20, 60, 0.08),
+      inset 0 0 80px rgba(255, 80, 120, 0.05);
+    text-align: center;
+    backdrop-filter: blur(12px);
+    animation: cardEntrance 2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    opacity: 0;
+    transform: scale(0.7) rotateX(15deg);
+  }
+
+  @keyframes cardEntrance {
+    0%   { opacity: 0; transform: scale(0.7) rotateX(15deg); }
+    100% { opacity: 1; transform: scale(1) rotateX(0deg); }
+  }
+
+  /* Golden corner flourishes */
+  .card::before, .card::after {
+    content: '';
+    position: absolute;
+    width: 80px; height: 80px;
+    border: 2px solid rgba(255, 200, 100, 0.3);
+    pointer-events: none;
+  }
+  .card::before {
+    top: 12px; left: 12px;
+    border-right: none; border-bottom: none;
+    border-radius: 12px 0 0 0;
+  }
+  .card::after {
+    bottom: 12px; right: 12px;
+    border-left: none; border-top: none;
+    border-radius: 0 0 12px 0;
+  }
+
+  /* ── Big pulsing heart ── */
+  .big-heart-wrap {
+    margin-bottom: 20px;
+    animation: heartReveal 1.5s 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  @keyframes heartReveal {
+    0%   { opacity: 0; transform: scale(0); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  .big-heart {
+    display: inline-block;
+    font-size: 80px;
+    color: #ff3366;
+    animation: heartbeat 1.2s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(255, 50, 100, 0.6))
+            drop-shadow(0 0 40px rgba(255, 50, 100, 0.3));
+    user-select: none;
+  }
+
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    15%      { transform: scale(1.2); }
+    30%      { transform: scale(1); }
+    45%      { transform: scale(1.15); }
+    60%      { transform: scale(1); }
+  }
+
+  /* ── Title: "DLA MAMY ... I ..." ── */
+  .title {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(28px, 6vw, 52px);
+    color: #ffd4e0;
+    line-height: 1.3;
+    margin-bottom: 10px;
+    text-shadow:
+      0 0 20px rgba(255, 100, 140, 0.5),
+      0 2px 4px rgba(0,0,0,0.4);
+    animation: textFadeUp 1.4s 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .title .name {
+    color: #ffb8cc;
+    font-weight: 700;
+    position: relative;
+    display: inline-block;
+    background: linear-gradient(135deg, #ffc8d9, #ff85a5, #ffc8d9);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmerName 3s ease-in-out infinite;
+  }
+
+  @keyframes shimmerName {
+    0%, 100% { background-position: 0% 50%; }
+    50%      { background-position: 100% 50%; }
+  }
+
+  /* ── Subtitle: "OD TATY ..." ── */
+  .subtitle {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(20px, 4.5vw, 36px);
+    color: #ffafc5;
+    margin-top: 16px;
+    text-shadow: 0 0 15px rgba(255, 100, 140, 0.4);
+    animation: textFadeUp 1.4s 1.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .subtitle .name {
+    color: #ffd0dd;
+    font-weight: 700;
+  }
+
+  @keyframes textFadeUp {
+    0%   { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Divider ribbon ── */
+  .ribbon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin: 22px 0 18px;
+    animation: textFadeUp 1.4s 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .ribbon-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,180,200,0.5), transparent);
+  }
+
+  .ribbon-icon {
+    color: rgba(255,180,200,0.7);
+    font-size: 14px;
+    letter-spacing: 6px;
+  }
+
+  /* ── Love message ── */
+  .love-msg {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(14px, 2.5vw, 18px);
+    color: rgba(255, 200, 215, 0.75);
+    margin-top: 8px;
+    line-height: 1.6;
+    animation: textFadeUp 1.4s 2s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* ── Date ── */
+  .date {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    color: rgba(255, 180, 200, 0.4);
+    margin-top: 24px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    animation: textFadeUp 1.4s 2.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* ── Click-burst hearts ── */
+  .burst-heart {
+    position: fixed;
+    pointer-events: none;
+    z-index: 100;
+    font-size: 24px;
+    animation: burstAnim 1s ease-out forwards;
+  }
+
+  @keyframes burstAnim {
+    0%   { opacity: 1; transform: translate(0, 0) scale(1) rotate(0deg); }
+    100% { opacity: 0; transform: translate(var(--bx), var(--by)) scale(0.3) rotate(var(--br)); }
+  }
+
+  /* ── Glow orbs floating in background ── */
+  .glow-orb {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    filter: blur(60px);
+    animation: orbFloat 12s ease-in-out infinite alternate;
+  }
+
+  @keyframes orbFloat {
+    0%   { transform: translate(0, 0); }
+    33%  { transform: translate(30px, -40px); }
+    66%  { transform: translate(-20px, 30px); }
+    100% { transform: translate(10px, -20px); }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 480px) {
+    .card { padding: 36px 24px 44px; }
+    .big-heart { font-size: 56px; }
+    .card::before, .card::after { width: 50px; height: 50px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Background sparkles -->
+<canvas id="sparkle-canvas"></canvas>
+
+<!-- Glow orbs -->
+<div class="glow-orb" style="width:300px;height:300px;background:rgba(180,20,60,0.15);top:10%;left:5%;animation-duration:14s;"></div>
+<div class="glow-orb" style="width:250px;height:250px;background:rgba(200,40,80,0.12);top:60%;right:5%;animation-duration:18s;animation-delay:-4s;"></div>
+<div class="glow-orb" style="width:200px;height:200px;background:rgba(160,30,70,0.1);bottom:10%;left:40%;animation-duration:16s;animation-delay:-8s;"></div>
+
+<!-- Floating hearts layer (JS-generated) -->
+<div class="hearts-layer" id="hearts-layer"></div>
+
+<!-- Rose petals (JS-generated) -->
+<div id="petals-layer"></div>
+
+<!-- Card -->
+<div class="card-container">
+  <div class="card" id="card">
+    <div class="big-heart-wrap">
+      <span class="big-heart" id="main-heart">&#10084;</span>
+    </div>
+
+    <div class="title" id="title-line">
+      Dla Mamy <span class="name" id="name-mama"></span> i <span class="name" id="name-child"></span>
+    </div>
+
+    <div class="ribbon">
+      <span class="ribbon-line"></span>
+      <span class="ribbon-icon">&#10045; &#10045; &#10045;</span>
+      <span class="ribbon-line"></span>
+    </div>
+
+    <div class="subtitle">
+      Od Taty <span class="name" id="name-tata"></span>
+    </div>
+
+    <div class="love-msg">
+      &ldquo;Kocham Was najbardziej na &sacute;wiecie&rdquo;
+    </div>
+
+    <div class="date" id="date-line"></div>
+  </div>
+</div>
+
+<script>
+(function() {
+  // ── LocalStorage names ──
+  const DEFAULTS = { mama: 'Katarzyna', child: 'Zosia', tata: 'Tomasz' };
+
+  function getName(key) {
+    let val = localStorage.getItem('valentine_' + key);
+    if (!val) {
+      val = DEFAULTS[key];
+      localStorage.setItem('valentine_' + key, val);
+    }
+    return val;
+  }
+
+  document.getElementById('name-mama').textContent  = getName('mama');
+  document.getElementById('name-child').textContent = getName('child');
+  document.getElementById('name-tata').textContent  = getName('tata');
+
+  // ── Date line ──
+  const months = ['stycznia','lutego','marca','kwietnia','maja','czerwca',
+                  'lipca','sierpnia','wrze\u015bnia','pa\u017adziernika','listopada','grudnia'];
+  const d = new Date();
+  document.getElementById('date-line').textContent =
+    '14 lutego ' + d.getFullYear() + ' \u2764';
+
+  // ── Sparkle canvas ──
+  const canvas = document.getElementById('sparkle-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H;
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  class Sparkle {
+    constructor() { this.reset(); }
+    reset() {
+      this.x = Math.random() * W;
+      this.y = Math.random() * H;
+      this.r = Math.random() * 2 + 0.5;
+      this.maxAlpha = Math.random() * 0.6 + 0.2;
+      this.alpha = 0;
+      this.phase = Math.random() * Math.PI * 2;
+      this.speed = Math.random() * 0.02 + 0.008;
+      this.hue = Math.random() > 0.5 ? 340 + Math.random()*20 : 30 + Math.random()*20;
+    }
+    update() {
+      this.phase += this.speed;
+      this.alpha = this.maxAlpha * Math.max(0, Math.sin(this.phase));
+      if (this.phase > Math.PI * 4) this.reset();
+    }
+    draw() {
+      if (this.alpha <= 0) return;
+      ctx.save();
+      ctx.globalAlpha = this.alpha;
+      ctx.fillStyle = `hsl(${this.hue}, 80%, 80%)`;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      ctx.fill();
+      // cross sparkle
+      ctx.strokeStyle = `hsl(${this.hue}, 80%, 85%)`;
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.moveTo(this.x - this.r*3, this.y);
+      ctx.lineTo(this.x + this.r*3, this.y);
+      ctx.moveTo(this.x, this.y - this.r*3);
+      ctx.lineTo(this.x, this.y + this.r*3);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  const sparkles = Array.from({length: 80}, () => new Sparkle());
+
+  function animateSparkles() {
+    ctx.clearRect(0, 0, W, H);
+    sparkles.forEach(s => { s.update(); s.draw(); });
+    requestAnimationFrame(animateSparkles);
+  }
+  animateSparkles();
+
+  // ── Floating hearts ──
+  const layer = document.getElementById('hearts-layer');
+  const heartChars = ['\u2764', '\u2765', '\u2661', '\u2763', '\uD83D\uDC95', '\uD83D\uDC96'];
+  function spawnHeart() {
+    const el = document.createElement('span');
+    el.classList.add('floating-heart');
+    el.textContent = heartChars[Math.floor(Math.random() * heartChars.length)];
+    el.style.left = Math.random() * 100 + '%';
+    el.style.fontSize = (Math.random() * 28 + 14) + 'px';
+    const dur = Math.random() * 8 + 8;
+    el.style.animationDuration = dur + 's';
+    el.style.animationDelay = '0s';
+    el.style.opacity = Math.random() * 0.3 + 0.15;
+    layer.appendChild(el);
+    setTimeout(() => el.remove(), dur * 1000);
+  }
+  // Initial burst
+  for (let i = 0; i < 15; i++) setTimeout(spawnHeart, i * 300);
+  setInterval(spawnHeart, 800);
+
+  // ── Rose petals ──
+  const petalsLayer = document.getElementById('petals-layer');
+  function spawnPetal() {
+    const el = document.createElement('div');
+    el.classList.add('petal');
+    el.style.left = Math.random() * 100 + '%';
+    el.style.top = '-20px';
+    const size = Math.random() * 10 + 8;
+    el.style.width = size + 'px';
+    el.style.height = size + 'px';
+    const dur = Math.random() * 8 + 10;
+    el.style.animationDuration = dur + 's';
+    el.style.animationDelay = '0s';
+    const hue = Math.random() * 20 + 340;
+    el.style.background = `radial-gradient(ellipse at 30% 30%, hsl(${hue},80%,70%), hsl(${hue},70%,45%))`;
+    el.style.transform = `rotate(${Math.random()*360}deg)`;
+    petalsLayer.appendChild(el);
+    setTimeout(() => el.remove(), dur * 1000);
+  }
+  for (let i = 0; i < 10; i++) setTimeout(spawnPetal, i * 500);
+  setInterval(spawnPetal, 1200);
+
+  // ── Click burst effect ──
+  document.addEventListener('click', function(e) {
+    const count = 12;
+    for (let i = 0; i < count; i++) {
+      const heart = document.createElement('span');
+      heart.classList.add('burst-heart');
+      heart.textContent = heartChars[Math.floor(Math.random() * heartChars.length)];
+      heart.style.left = e.clientX + 'px';
+      heart.style.top = e.clientY + 'px';
+      heart.style.fontSize = (Math.random() * 20 + 14) + 'px';
+      const angle = (Math.PI * 2 / count) * i + Math.random() * 0.5;
+      const dist = Math.random() * 80 + 60;
+      heart.style.setProperty('--bx', Math.cos(angle) * dist + 'px');
+      heart.style.setProperty('--by', Math.sin(angle) * dist + 'px');
+      heart.style.setProperty('--br', (Math.random() * 360) + 'deg');
+      heart.style.color = `hsl(${340 + Math.random()*30}, 80%, ${60 + Math.random()*20}%)`;
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 1000);
+    }
+  });
+
+  // ── Card tilt on mouse move ──
+  const card = document.getElementById('card');
+  card.addEventListener('mousemove', function(e) {
+    const rect = card.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dx = (e.clientX - cx) / (rect.width / 2);
+    const dy = (e.clientY - cy) / (rect.height / 2);
+    card.style.transform = `rotateY(${dx * 5}deg) rotateX(${-dy * 5}deg)`;
+    card.style.transition = 'transform 0.1s ease-out';
+  });
+  card.addEventListener('mouseleave', function() {
+    card.style.transform = 'rotateY(0) rotateX(0)';
+    card.style.transition = 'transform 0.5s ease-out';
+  });
+})();
+</script>
+</body>
+</html>
