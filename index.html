@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1000 Playground - Experiments</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        .tech-stack {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tech-badge {
+            background: #667eea;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 15px;
+            font-size: 0.85em;
+        }
+
+        .projects {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .project-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .project-card h2 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .project-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .project-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #764ba2;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 60px;
+            padding: 20px;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>1000 Playground</h1>
+            <p class="subtitle">Quick and Dirty Experiments</p>
+            <div class="tech-stack">
+                <span class="tech-badge">Python</span>
+                <span class="tech-badge">JavaScript</span>
+                <span class="tech-badge">TypeScript</span>
+                <span class="tech-badge">HTML/CSS</span>
+            </div>
+        </header>
+
+        <div class="projects">
+            <a href="hello-world/" class="project-card">
+                <h2>Hello World</h2>
+                <p>A simple interactive example demonstrating HTML, CSS, and JavaScript with a click counter.</p>
+                <span class="project-link">View Project →</span>
+            </a>
+
+            <a href="local-weather/" class="project-card">
+                <h2>Local Weather App</h2>
+                <p>A weather application that displays current weather conditions using the OpenWeatherMap API with localStorage for API key management.</p>
+                <span class="project-link">View Project →</span>
+            </a>
+
+            <a href="location-scene-generator/" class="project-card">
+                <h2>Location Scene Generator</h2>
+                <p>Generate detailed scene descriptions for image prompts using Claude AI. Input a location and weather conditions to create vivid descriptions with landmarks.</p>
+                <span class="project-link">View Project →</span>
+            </a>
+
+            <a href="openai-image-generation/" class="project-card">
+                <h2>OpenAI Image Generation</h2>
+                <p>Generate images from text descriptions using OpenAI's DALL-E 3 model. Enter a detailed prompt and watch your imagination come to life.</p>
+                <span class="project-link">View Project →</span>
+            </a>
+
+            <a href="weather-to-image/" class="project-card">
+                <h2>Weather to Image Generator</h2>
+                <p>One-click image generation based on your location's weather, time of day, and season. Combines geolocation, weather data, scene generation, and DALL-E 3.</p>
+                <span class="project-link">View Project →</span>
+            </a>
+
+            <a href="ascii-art-palette/" class="project-card">
+                <h2>ASCII Art & Color Palette</h2>
+                <p>Generate ASCII art depicting your location's weather and time, along with a matching color palette displayed as interactive CSS squares.</p>
+                <span class="project-link">View Project →</span>
+            </a>
+
+            <a href="platformer/" class="project-card">
+                <h2>Square Runner</h2>
+                <p>A simple 2D platformer game with infinite side-scrolling, procedural level generation, and oldschool pixel art vibes. Jump over gaps and survive!</p>
+                <span class="project-link">View Project →</span>
+            </a>
+
+            <a href="ascii-runner/" class="project-card">
+                <h2>ASCII Runner</h2>
+                <p>A cyberpunk-themed runner game with ASCII art backgrounds featuring neon cities, mountains, and retro grid effects. Uses CSS color palette variables.</p>
+                <span class="project-link">View Project →</span>
+            </a>
+
+            <a href="windows-me-simulator/" class="project-card">
+                <h2>Windows ME Simulator</h2>
+                <p>A nostalgic browser experiment that recreates the Windows Millennium Edition desktop, Start menu, and an Internet Explorer-style window with iframe browsing.</p>
+                <span class="project-link">View Project →</span>
+            </a>
+
+            <!-- Add more projects here as you create them -->
+        </div>
+
+        <footer>
+            <p>All experiments are automatically deployed via GitHub Actions</p>
+            <p><a href="https://github.com/tauzen/1000-playground">View on GitHub</a></p>
+        </footer>
+    </div>
+
+    <script>
+        console.log('1000 Playground - Experiments Repository');
+        console.log('Add new projects by creating folders in the root directory');
+    </script>
+</body>
+</html>

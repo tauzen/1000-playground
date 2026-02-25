@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Walentynkowa Kartka</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Kalam:wght@300;400;700&family=Patrick+Hand&family=Great+Vibes&family=Dancing+Script:wght@400;700&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    overflow: hidden;
+    background: #fdf6f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Kalam', cursive;
+    cursor: default;
+  }
+
+  /* ── Soft paper texture overlay ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(180, 140, 120, 0.015) 3px,
+        rgba(180, 140, 120, 0.015) 4px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 5px,
+        rgba(180, 140, 120, 0.01) 5px,
+        rgba(180, 140, 120, 0.01) 6px
+      );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Watercolor wash background blobs ── */
+  .wash {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    filter: blur(80px);
+    opacity: 0.4;
+  }
+
+  /* ── Canvas for hand-drawn doodles ── */
+  #doodle-canvas {
+    position: fixed; inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* ── Floating sketch hearts layer ── */
+  .hearts-layer {
+    position: fixed; inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .floating-heart {
+    position: absolute;
+    bottom: -60px;
+    animation: floatUp linear infinite;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .floating-heart svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  @keyframes floatUp {
+    0%   { transform: translateY(0) rotate(0deg) scale(1); opacity: 0; }
+    8%   { opacity: 0.6; }
+    92%  { opacity: 0.6; }
+    100% { transform: translateY(-115vh) rotate(340deg) scale(0.4); opacity: 0; }
+  }
+
+  /* ── Falling petals ── */
+  .petal {
+    position: fixed;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0;
+    animation: petalDrift linear infinite;
+  }
+
+  .petal svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  @keyframes petalDrift {
+    0%   { transform: translateY(-30px) rotate(0deg) translateX(0); opacity: 0; }
+    8%   { opacity: 0.55; }
+    50%  { transform: translateY(50vh) rotate(200deg) translateX(40px); }
+    92%  { opacity: 0.4; }
+    100% { transform: translateY(108vh) rotate(380deg) translateX(-25px); opacity: 0; }
+  }
+
+  /* ── 3D Card ── */
+  .card-scene {
+    position: relative;
+    z-index: 10;
+    perspective: 1500px;
+    width: min(90vw, 560px);
+    height: min(120vw, 700px);
+    max-height: 85vh;
+  }
+
+  .card-3d {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    animation: cardEntrance 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    opacity: 0;
+  }
+
+  @keyframes cardEntrance {
+    0%   { opacity: 0; transform: scale(0.7) rotateY(10deg); }
+    100% { opacity: 1; transform: scale(1) rotateY(0deg); }
+  }
+
+  /* ── Card glow aura ── */
+  .card-scene::before {
+    content: '';
+    position: absolute;
+    inset: -40px;
+    border-radius: 30px;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(255, 150, 180, 0.25) 0%,
+      rgba(255, 180, 200, 0.12) 40%,
+      transparent 70%
+    );
+    filter: blur(25px);
+    z-index: -1;
+    animation: auraPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes auraPulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50%      { opacity: 1; transform: scale(1.08); }
+  }
+
+  /* ── Inside of card (stationary back panel) ── */
+  .card-inside {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(135deg,
+        rgba(255, 252, 248, 0.97) 0%,
+        rgba(255, 248, 244, 0.95) 50%,
+        rgba(255, 244, 240, 0.97) 100%
+      );
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 48px 36px 52px;
+    box-shadow:
+      inset 0 0 40px rgba(180, 100, 120, 0.06),
+      0 2px 4px rgba(0,0,0,0.06),
+      0 8px 24px rgba(180, 100, 120, 0.1);
+    overflow: hidden;
+  }
+
+  /* Hand-drawn border for inside */
+  .card-inside::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border: 3px solid #e8a0b0;
+    border-radius: 10px;
+    pointer-events: none;
+    filter: url(#sketchy);
+    opacity: 0.5;
+  }
+
+  /* Decorative fold line on inside */
+  .card-inside::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    background: linear-gradient(
+      to bottom,
+      transparent 5%,
+      rgba(200, 160, 170, 0.15) 20%,
+      rgba(200, 160, 170, 0.25) 50%,
+      rgba(200, 160, 170, 0.15) 80%,
+      transparent 95%
+    );
+    transform: translateX(-0.5px);
+    pointer-events: none;
+  }
+
+  /* ── Inside content area (right half of inside) ── */
+  .inside-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding-left: 10%;
+    opacity: 0;
+    transition: opacity 0.5s 0.4s ease;
+  }
+
+  .card-3d.is-open .inside-content {
+    opacity: 1;
+  }
+
+  /* ── Inside corner doodles ── */
+  .inside-doodle {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0.3;
+    z-index: 1;
+  }
+  .inside-doodle.top-right { top: 12px; right: 12px; }
+  .inside-doodle.bottom-right { bottom: 12px; right: 12px; transform: scaleY(-1); }
+  .inside-doodle.bottom-left { bottom: 12px; left: 12px; transform: scale(-1, -1); }
+
+  /* ── Front cover (flips open) ── */
+  .card-front {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(145deg,
+        rgba(255, 252, 248, 0.98) 0%,
+        rgba(255, 245, 240, 0.96) 40%,
+        rgba(255, 238, 232, 0.98) 100%
+      );
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 48px 36px 52px;
+    box-shadow:
+      0 2px 4px rgba(0,0,0,0.06),
+      0 8px 24px rgba(180, 100, 120, 0.1),
+      0 20px 60px rgba(180, 80, 100, 0.06);
+    backface-visibility: hidden;
+    transform-origin: left center;
+    transform-style: preserve-3d;
+    transition: transform 1.2s cubic-bezier(0.4, 0.0, 0.2, 1),
+                box-shadow 0.8s ease;
+    cursor: pointer;
+    z-index: 5;
+  }
+
+  /* Hand-drawn border for front cover */
+  .card-front::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border: 3px solid #e8a0b0;
+    border-radius: 10px;
+    pointer-events: none;
+    filter: url(#sketchy);
+    opacity: 0.7;
+  }
+
+  /* Back of front cover (visible when opened) */
+  .card-front::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(135deg,
+        rgba(255, 248, 244, 0.98) 0%,
+        rgba(255, 242, 238, 0.96) 100%
+      );
+    border-radius: 8px;
+    transform: rotateY(180deg);
+    backface-visibility: hidden;
+  }
+
+  .card-3d.is-open .card-front {
+    transform: rotateY(-160deg);
+    box-shadow:
+      -4px 2px 12px rgba(0,0,0,0.08),
+      -2px 4px 20px rgba(180, 100, 120, 0.08);
+  }
+
+  /* ── Front cover corner doodles ── */
+  .corner-doodle {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0.45;
+    z-index: 2;
+  }
+  .corner-doodle.top-left { top: 8px; left: 8px; }
+  .corner-doodle.top-right { top: 8px; right: 8px; transform: scaleX(-1); }
+  .corner-doodle.bottom-left { bottom: 8px; left: 8px; transform: scaleY(-1); }
+  .corner-doodle.bottom-right { bottom: 8px; right: 8px; transform: scale(-1, -1); }
+
+  /* ── Big hand-drawn heart ── */
+  .big-heart-wrap {
+    margin-bottom: 18px;
+    animation: heartReveal 1.4s 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  @keyframes heartReveal {
+    0%   { opacity: 0; transform: scale(0) rotate(-15deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0deg); }
+  }
+
+  .big-heart {
+    display: inline-block;
+    position: relative;
+    animation: heartbeat 1.4s ease-in-out infinite;
+    filter: drop-shadow(0 4px 12px rgba(220, 60, 80, 0.25));
+    cursor: pointer;
+  }
+
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    12%      { transform: scale(1.15); }
+    25%      { transform: scale(1); }
+    37%      { transform: scale(1.1); }
+    50%      { transform: scale(1); }
+  }
+
+  /* ── Heart shimmer / rainbow glow ── */
+  .big-heart::after {
+    content: '';
+    position: absolute;
+    inset: -15px;
+    border-radius: 50%;
+    background: conic-gradient(
+      from 0deg,
+      rgba(255, 100, 150, 0.3),
+      rgba(255, 180, 100, 0.2),
+      rgba(255, 255, 130, 0.2),
+      rgba(130, 255, 180, 0.2),
+      rgba(130, 200, 255, 0.2),
+      rgba(200, 130, 255, 0.2),
+      rgba(255, 100, 150, 0.3)
+    );
+    filter: blur(18px);
+    animation: shimmerRotate 4s linear infinite;
+    z-index: -1;
+    opacity: 0.7;
+  }
+
+  @keyframes shimmerRotate {
+    0%   { transform: rotate(0deg) scale(1); }
+    50%  { transform: rotate(180deg) scale(1.15); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+
+  /* ── Front cover title ── */
+  .front-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(28px, 6vw, 48px);
+    color: #8b3a4a;
+    line-height: 1.3;
+    animation: textFadeUp 1.2s 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .front-subtitle {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(16px, 3.5vw, 24px);
+    color: #b8687a;
+    margin-top: 10px;
+    letter-spacing: 2px;
+    animation: textFadeUp 1.2s 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* ── Inside titles ── */
+  .title {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(28px, 6.5vw, 50px);
+    font-weight: 700;
+    color: #8b3a4a;
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+
+  .title .name {
+    color: #d4456a;
+    font-weight: 700;
+    position: relative;
+    display: inline-block;
+  }
+
+  /* Hand-drawn underline under names */
+  .title .name::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: -4px;
+    right: -4px;
+    height: 8px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 8'%3E%3Cpath d='M2 5 Q15 2 30 5 Q45 8 60 4 Q75 1 90 5 Q105 8 118 4' stroke='%23e8849e' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center;
+    background-size: 100% 100%;
+    opacity: 0.6;
+  }
+
+  /* ── Divider doodle ── */
+  .divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 18px 0 14px;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 12px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12'%3E%3Cpath d='M2 6 Q25 2 50 6 Q75 10 100 6 Q125 2 150 6 Q175 10 198 6' stroke='%23d4a0ae' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center;
+    background-size: 100% 100%;
+    opacity: 0.5;
+  }
+
+  .divider-flower {
+    opacity: 0.55;
+    flex-shrink: 0;
+  }
+
+  /* ── Subtitle ── */
+  .subtitle {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(22px, 5vw, 38px);
+    font-weight: 600;
+    color: #a04a5c;
+    margin-top: 12px;
+  }
+
+  .subtitle .name {
+    color: #c85070;
+    font-weight: 700;
+  }
+
+  @keyframes textFadeUp {
+    0%   { opacity: 0; transform: translateY(24px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Date ── */
+  .date {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 14px;
+    color: #b88898;
+    margin-top: 22px;
+    letter-spacing: 2px;
+  }
+
+  /* ── Inside heart decoration ── */
+  .inside-heart {
+    display: inline-block;
+    margin-bottom: 12px;
+  }
+
+  /* ── Click-burst sketchy hearts ── */
+  .burst-heart {
+    position: fixed;
+    pointer-events: none;
+    z-index: 100;
+    animation: burstAnim 1.1s ease-out forwards;
+  }
+
+  @keyframes burstAnim {
+    0%   { opacity: 1; transform: translate(0, 0) scale(1) rotate(0deg); }
+    100% { opacity: 0; transform: translate(var(--bx), var(--by)) scale(0.2) rotate(var(--br)); }
+  }
+
+  /* ── Mouse sparkle trail ── */
+  .sparkle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 200;
+    border-radius: 50%;
+    animation: sparkleFade 0.8s ease-out forwards;
+  }
+
+  @keyframes sparkleFade {
+    0%   { opacity: 1; transform: scale(1) rotate(0deg); }
+    100% { opacity: 0; transform: scale(0) rotate(180deg); }
+  }
+
+  /* ── Confetti ── */
+  .confetti {
+    position: fixed;
+    pointer-events: none;
+    z-index: 150;
+    animation: confettiFall linear forwards;
+  }
+
+  @keyframes confettiFall {
+    0%   { opacity: 1; transform: translate(0, 0) rotate(0deg) scale(1); }
+    100% { opacity: 0; transform: translate(var(--cx), var(--cy)) rotate(var(--cr)) scale(0.3); }
+  }
+
+  /* ── Floating sparkle particles ── */
+  .sparkle-particle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 3;
+    animation: sparkleFloat linear infinite;
+  }
+
+  @keyframes sparkleFloat {
+    0%   { opacity: 0; transform: translateY(0) scale(0.5); }
+    10%  { opacity: 1; }
+    50%  { transform: translateY(-50vh) scale(1); }
+    90%  { opacity: 0.8; }
+    100% { opacity: 0; transform: translateY(-110vh) scale(0.3); }
+  }
+
+  /* ── Open hint ── */
+  .open-hint {
+    position: absolute;
+    bottom: -36px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Patrick Hand', cursive;
+    font-size: 15px;
+    color: #c8889a;
+    letter-spacing: 1px;
+    opacity: 0;
+    animation: hintFade 1.2s 2.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+  }
+
+  .card-3d.is-open .open-hint {
+    opacity: 0 !important;
+  }
+
+  @keyframes hintFade {
+    0%   { opacity: 0; transform: translateX(-50%) translateY(8px); }
+    100% { opacity: 0.7; transform: translateX(-50%) translateY(0); }
+  }
+
+  /* ── Fold shadow on spine ── */
+  .fold-shadow {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 30px;
+    transform: translateX(-50%);
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(0,0,0,0.03) 40%,
+      rgba(0,0,0,0.05) 50%,
+      rgba(0,0,0,0.03) 60%,
+      transparent 100%
+    );
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+
+  .card-3d.is-open .fold-shadow {
+    opacity: 0;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 480px) {
+    .card-front, .card-inside { padding: 32px 20px 40px; }
+    .corner-doodle { opacity: 0.3; }
+    .corner-doodle svg { width: 50px; height: 50px; }
+    .inside-doodle svg { width: 40px; height: 40px; }
+    .card-scene {
+      height: min(140vw, 700px);
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- SVG filter for sketchy/hand-drawn effect -->
+<svg style="position:absolute;width:0;height:0;">
+  <defs>
+    <filter id="sketchy" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="turbulence" baseFrequency="0.03" numOctaves="4" result="turbulence" seed="2"/>
+      <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="2.5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="sketchy-strong" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="3" result="turbulence" seed="5"/>
+      <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="3.5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="pencil" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="5" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="1" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
+<!-- Watercolor wash blobs -->
+<div class="wash" style="width:450px;height:450px;background:radial-gradient(circle,rgba(255,180,200,0.5),transparent 70%);top:-5%;left:-10%;"></div>
+<div class="wash" style="width:400px;height:400px;background:radial-gradient(circle,rgba(255,200,180,0.4),transparent 70%);bottom:-10%;right:-5%;animation:orbDrift 20s ease-in-out infinite alternate;"></div>
+<div class="wash" style="width:300px;height:300px;background:radial-gradient(circle,rgba(220,180,220,0.3),transparent 70%);top:50%;left:60%;animation:orbDrift 16s ease-in-out infinite alternate-reverse;"></div>
+<style>
+  @keyframes orbDrift {
+    0%   { transform: translate(0,0); }
+    50%  { transform: translate(30px,-20px); }
+    100% { transform: translate(-20px,15px); }
+  }
+</style>
+
+<!-- Background doodle canvas -->
+<canvas id="doodle-canvas"></canvas>
+
+<!-- Floating hearts layer (JS-generated) -->
+<div class="hearts-layer" id="hearts-layer"></div>
+
+<!-- Petals layer (JS-generated) -->
+<div id="petals-layer"></div>
+
+<!-- 3D Card -->
+<div class="card-scene">
+  <div class="card-3d" id="card-3d">
+
+    <!-- Inside of card (stationary) -->
+    <div class="card-inside">
+      <!-- Inside corner doodles -->
+      <div class="inside-doodle top-right">
+        <svg width="60" height="60" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 65 Q5 30 15 20 Q25 10 40 8" stroke="#d4a0ae" stroke-width="1.8" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <path d="M5 55 Q8 35 18 28 Q28 20 38 22" stroke="#d4a0ae" stroke-width="1.2" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="4" fill="none" stroke="#e0889e" stroke-width="1.2" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="1.5" fill="#e8a0ae" filter="url(#pencil)"/>
+          <circle cx="40" cy="22" r="3" fill="none" stroke="#e0889e" stroke-width="1" filter="url(#pencil)"/>
+          <circle cx="40" cy="22" r="1" fill="#e8a0ae" filter="url(#pencil)"/>
+        </svg>
+      </div>
+      <div class="inside-doodle bottom-right">
+        <svg width="60" height="60" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 65 Q5 30 15 20 Q25 10 40 8" stroke="#d4a0ae" stroke-width="1.8" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <path d="M5 55 Q8 35 18 28 Q28 20 38 22" stroke="#d4a0ae" stroke-width="1.2" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="4" fill="none" stroke="#e0889e" stroke-width="1.2" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="1.5" fill="#e8a0ae" filter="url(#pencil)"/>
+        </svg>
+      </div>
+      <div class="inside-doodle bottom-left">
+        <svg width="60" height="60" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 65 Q5 30 15 20 Q25 10 40 8" stroke="#d4a0ae" stroke-width="1.8" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="4" fill="none" stroke="#e0889e" stroke-width="1.2" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="1.5" fill="#e8a0ae" filter="url(#pencil)"/>
+        </svg>
+      </div>
+
+      <!-- Inside content -->
+      <div class="inside-content" id="inside-content">
+        <div class="inside-heart">
+          <svg width="60" height="54" viewBox="0 0 110 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M55 90 Q55 90 20 58 Q-2 38 8 20 Q16 5 32 5 Q45 5 55 20 Q65 5 78 5 Q94 5 102 20 Q112 38 90 58 Q55 90 55 90Z"
+                  fill="url(#heartGrad2)" filter="url(#sketchy-strong)" opacity="0.75"/>
+            <path d="M55 88 Q52 85 22 57 Q0 38 9 21 Q17 7 33 7 Q44 6 55 22 Q66 6 77 7 Q93 7 101 21 Q110 38 88 57 Q58 85 55 88Z"
+                  stroke="#c43a5a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#pencil)"/>
+            <defs>
+              <radialGradient id="heartGrad2" cx="50%" cy="40%" r="55%">
+                <stop offset="0%" stop-color="#ff8fa8"/>
+                <stop offset="50%" stop-color="#e8506e"/>
+                <stop offset="100%" stop-color="#c43a5a"/>
+              </radialGradient>
+            </defs>
+          </svg>
+        </div>
+
+        <div class="title" id="title-line">
+          Dla Mamy <span class="name" id="name-mama"></span> i <span class="name" id="name-child"></span>
+        </div>
+
+        <div class="divider">
+          <div class="divider-line"></div>
+          <div class="divider-flower">
+            <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 8 Q20 12 18 14 Q16 12 18 8Z" fill="#e8a0ae" stroke="#d08898" stroke-width="0.8" filter="url(#pencil)"/>
+              <path d="M24 12 Q22 15 20 15 Q21 13 24 12Z" fill="#e8a0ae" stroke="#d08898" stroke-width="0.8" filter="url(#pencil)"/>
+              <path d="M25 19 Q22 18 21 16 Q23 16 25 19Z" fill="#e8a0ae" stroke="#d08898" stroke-width="0.8" filter="url(#pencil)"/>
+              <path d="M12 12 Q14 15 16 15 Q15 13 12 12Z" fill="#e8a0ae" stroke="#d08898" stroke-width="0.8" filter="url(#pencil)"/>
+              <path d="M11 19 Q14 18 15 16 Q13 16 11 19Z" fill="#e8a0ae" stroke="#d08898" stroke-width="0.8" filter="url(#pencil)"/>
+              <circle cx="18" cy="15" r="3" fill="#f0c0c8" stroke="#d08898" stroke-width="0.8" filter="url(#pencil)"/>
+              <path d="M18 18 Q17 24 18 30" stroke="#8cb888" stroke-width="1.2" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+              <path d="M18 23 Q14 21 12 22" stroke="#8cb888" stroke-width="0.8" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+              <path d="M18 26 Q22 24 24 25" stroke="#8cb888" stroke-width="0.8" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+            </svg>
+          </div>
+          <div class="divider-line"></div>
+        </div>
+
+        <div class="subtitle">
+          Od Taty <span class="name" id="name-tata"></span>
+        </div>
+
+        <div class="date" id="date-line"></div>
+      </div>
+    </div>
+
+    <!-- Front cover (flips open on click) -->
+    <div class="card-front" id="card-front">
+      <!-- Corner doodles on front cover -->
+      <div class="corner-doodle top-left">
+        <svg width="70" height="70" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 65 Q5 30 15 20 Q25 10 40 8" stroke="#d4a0ae" stroke-width="1.8" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <path d="M5 55 Q8 35 18 28 Q28 20 38 22" stroke="#d4a0ae" stroke-width="1.2" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="4" fill="none" stroke="#e0889e" stroke-width="1.2" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="1.5" fill="#e8a0ae" filter="url(#pencil)"/>
+          <circle cx="40" cy="22" r="3" fill="none" stroke="#e0889e" stroke-width="1" filter="url(#pencil)"/>
+          <circle cx="40" cy="22" r="1" fill="#e8a0ae" filter="url(#pencil)"/>
+          <path d="M15 18 Q12 12 18 10" stroke="#a8c8a0" stroke-width="1" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <path d="M20 14 Q22 8 18 10" stroke="#a8c8a0" stroke-width="1" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+        </svg>
+      </div>
+      <div class="corner-doodle top-right">
+        <svg width="70" height="70" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 65 Q5 30 15 20 Q25 10 40 8" stroke="#d4a0ae" stroke-width="1.8" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <path d="M5 55 Q8 35 18 28 Q28 20 38 22" stroke="#d4a0ae" stroke-width="1.2" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="4" fill="none" stroke="#e0889e" stroke-width="1.2" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="1.5" fill="#e8a0ae" filter="url(#pencil)"/>
+          <circle cx="40" cy="22" r="3" fill="none" stroke="#e0889e" stroke-width="1" filter="url(#pencil)"/>
+          <circle cx="40" cy="22" r="1" fill="#e8a0ae" filter="url(#pencil)"/>
+          <path d="M15 18 Q12 12 18 10" stroke="#a8c8a0" stroke-width="1" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <path d="M20 14 Q22 8 18 10" stroke="#a8c8a0" stroke-width="1" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+        </svg>
+      </div>
+      <div class="corner-doodle bottom-left">
+        <svg width="70" height="70" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 65 Q5 30 15 20 Q25 10 40 8" stroke="#d4a0ae" stroke-width="1.8" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <path d="M5 55 Q8 35 18 28 Q28 20 38 22" stroke="#d4a0ae" stroke-width="1.2" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="4" fill="none" stroke="#e0889e" stroke-width="1.2" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="1.5" fill="#e8a0ae" filter="url(#pencil)"/>
+        </svg>
+      </div>
+      <div class="corner-doodle bottom-right">
+        <svg width="70" height="70" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 65 Q5 30 15 20 Q25 10 40 8" stroke="#d4a0ae" stroke-width="1.8" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <path d="M5 55 Q8 35 18 28 Q28 20 38 22" stroke="#d4a0ae" stroke-width="1.2" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="4" fill="none" stroke="#e0889e" stroke-width="1.2" filter="url(#pencil)"/>
+          <circle cx="42" cy="7" r="1.5" fill="#e8a0ae" filter="url(#pencil)"/>
+        </svg>
+      </div>
+
+      <!-- Hand-drawn SVG heart on front cover -->
+      <div class="big-heart-wrap">
+        <div class="big-heart" id="main-heart">
+          <svg width="130" height="118" viewBox="0 0 110 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Watercolor wash fill -->
+            <path d="M55 90 Q55 90 20 58 Q-2 38 8 20 Q16 5 32 5 Q45 5 55 20 Q65 5 78 5 Q94 5 102 20 Q112 38 90 58 Q55 90 55 90Z"
+                  fill="url(#heartGrad)" filter="url(#sketchy-strong)" opacity="0.85"/>
+            <!-- Sketchy outline -->
+            <path d="M55 88 Q52 85 22 57 Q0 38 9 21 Q17 7 33 7 Q44 6 55 22 Q66 6 77 7 Q93 7 101 21 Q110 38 88 57 Q58 85 55 88Z"
+                  stroke="#c43a5a" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#pencil)"/>
+            <path d="M55 86 Q53 84 24 56 Q2 37 10 22 Q18 8 33 9 Q43 8 55 23 Q67 8 77 9 Q92 8 100 22 Q108 37 86 56 Q57 84 55 86Z"
+                  stroke="#d45a72" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.5" filter="url(#pencil)"/>
+            <!-- Highlight scribble -->
+            <path d="M30 22 Q28 18 33 16 Q38 15 36 20" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" fill="none" stroke-linecap="round" filter="url(#pencil)"/>
+            <defs>
+              <radialGradient id="heartGrad" cx="50%" cy="40%" r="55%">
+                <stop offset="0%" stop-color="#ff8fa8"/>
+                <stop offset="50%" stop-color="#e8506e"/>
+                <stop offset="100%" stop-color="#c43a5a"/>
+              </radialGradient>
+            </defs>
+          </svg>
+        </div>
+      </div>
+
+      <div class="front-title">Happy Valentine's Day</div>
+      <div class="front-subtitle">kliknij aby otworzyc</div>
+    </div>
+
+    <!-- Hint text below card -->
+    <div class="open-hint" id="open-hint">kliknij kartke</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  // ── Names from localStorage / defaults ──
+  const DEFAULTS = { mama: 'Martyny', child: 'Leny', tata: 'Krzysztofa' };
+
+  function getName(key) {
+    let val = localStorage.getItem('valentine_' + key);
+    if (!val) {
+      val = DEFAULTS[key];
+      localStorage.setItem('valentine_' + key, val);
+    }
+    return val;
+  }
+
+  document.getElementById('name-mama').textContent  = getName('mama');
+  document.getElementById('name-child').textContent = getName('child');
+  document.getElementById('name-tata').textContent  = getName('tata');
+
+  // ── Date line ──
+  const d = new Date();
+  document.getElementById('date-line').textContent = '14 lutego ' + d.getFullYear();
+
+  // ── 3D card open/close ──
+  const card3d = document.getElementById('card-3d');
+  const cardFront = document.getElementById('card-front');
+  let isOpen = false;
+
+  cardFront.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (!isOpen) {
+      card3d.classList.add('is-open');
+      isOpen = true;
+    }
+  });
+
+  // Click on inside or outside to close
+  document.addEventListener('click', function(e) {
+    if (isOpen && !cardFront.contains(e.target)) {
+      // If clicking outside or on the inside, close card
+      if (!e.target.closest('.card-inside') || e.target.closest('.card-inside')) {
+        card3d.classList.remove('is-open');
+        isOpen = false;
+      }
+    }
+  });
+
+  // Also allow clicking inside to toggle
+  document.querySelector('.card-inside').addEventListener('click', function(e) {
+    if (isOpen) {
+      e.stopPropagation();
+      card3d.classList.remove('is-open');
+      isOpen = false;
+    }
+  });
+
+  // ── Background doodle canvas (scattered tiny sketchy shapes) ──
+  const canvas = document.getElementById('doodle-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    drawDoodles();
+  }
+
+  function drawSketchyHeart(cx, cy, size, color, alpha) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.2;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    const j = () => (Math.random() - 0.5) * size * 0.1;
+    ctx.moveTo(cx + j(), cy - size * 0.2 + j());
+    ctx.bezierCurveTo(
+      cx - size * 0.5 + j(), cy - size * 0.8 + j(),
+      cx - size * 1.0 + j(), cy - size * 0.1 + j(),
+      cx + j(), cy + size * 0.7 + j()
+    );
+    ctx.moveTo(cx + j(), cy - size * 0.2 + j());
+    ctx.bezierCurveTo(
+      cx + size * 0.5 + j(), cy - size * 0.8 + j(),
+      cx + size * 1.0 + j(), cy - size * 0.1 + j(),
+      cx + j(), cy + size * 0.7 + j()
+    );
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawSketchyStar(cx, cy, size, color, alpha) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 0.8;
+    ctx.lineCap = 'round';
+    const j = () => (Math.random() - 0.5) * 2;
+    ctx.beginPath();
+    ctx.moveTo(cx + j(), cy - size + j());
+    ctx.lineTo(cx + j(), cy + size + j());
+    ctx.moveTo(cx - size + j(), cy + j());
+    ctx.lineTo(cx + size + j(), cy + j());
+    ctx.moveTo(cx - size*0.7 + j(), cy - size*0.7 + j());
+    ctx.lineTo(cx + size*0.7 + j(), cy + size*0.7 + j());
+    ctx.moveTo(cx + size*0.7 + j(), cy - size*0.7 + j());
+    ctx.lineTo(cx - size*0.7 + j(), cy + size*0.7 + j());
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawSketchySwirl(cx, cy, size, color, alpha) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 0.8;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    for (let a = 0; a < Math.PI * 3; a += 0.15) {
+      const r = size * 0.2 + (a / (Math.PI * 3)) * size;
+      const x = cx + Math.cos(a) * r + (Math.random() - 0.5) * 1;
+      const y = cy + Math.sin(a) * r + (Math.random() - 0.5) * 1;
+      if (a === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawSketchyDot(cx, cy, size, color, alpha) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(cx, cy, size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawDoodles() {
+    ctx.clearRect(0, 0, W, H);
+    const colors = ['#e8a0b0', '#d4889a', '#c8a8b8', '#dab0b8', '#b8a0c0'];
+
+    for (let i = 0; i < 25; i++) {
+      drawSketchyHeart(
+        Math.random() * W, Math.random() * H,
+        Math.random() * 8 + 4,
+        colors[Math.floor(Math.random() * colors.length)],
+        Math.random() * 0.15 + 0.05
+      );
+    }
+
+    for (let i = 0; i < 20; i++) {
+      drawSketchyStar(
+        Math.random() * W, Math.random() * H,
+        Math.random() * 4 + 2,
+        colors[Math.floor(Math.random() * colors.length)],
+        Math.random() * 0.12 + 0.04
+      );
+    }
+
+    for (let i = 0; i < 12; i++) {
+      drawSketchySwirl(
+        Math.random() * W, Math.random() * H,
+        Math.random() * 10 + 5,
+        colors[Math.floor(Math.random() * colors.length)],
+        Math.random() * 0.1 + 0.03
+      );
+    }
+
+    for (let i = 0; i < 35; i++) {
+      drawSketchyDot(
+        Math.random() * W, Math.random() * H,
+        Math.random() * 2 + 0.5,
+        colors[Math.floor(Math.random() * colors.length)],
+        Math.random() * 0.15 + 0.05
+      );
+    }
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+
+  // ── Floating hand-drawn hearts ──
+  const heartsLayer = document.getElementById('hearts-layer');
+
+  function createHeartSVG(size, color) {
+    const s = size;
+    const j = () => (Math.random() - 0.5) * s * 0.15;
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('width', s * 2.2);
+    svg.setAttribute('height', s * 2);
+    svg.setAttribute('viewBox', '0 0 44 40');
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    const x = 22, y = 36;
+    path.setAttribute('d',
+      `M${x} ${y} ` +
+      `Q${x - 2 + j()} ${y - 4 + j()} ${8 + j()} ${22 + j()} ` +
+      `Q${-2 + j()} ${14 + j()} ${4 + j()} ${8 + j()} ` +
+      `Q${10 + j()} ${2 + j()} ${x} ${12 + j()} ` +
+      `Q${34 + j()} ${2 + j()} ${40 + j()} ${8 + j()} ` +
+      `Q${46 + j()} ${14 + j()} ${36 + j()} ${22 + j()} ` +
+      `Q${x + 2 + j()} ${y - 4 + j()} ${x} ${y}Z`
+    );
+    path.setAttribute('stroke', color);
+    path.setAttribute('stroke-width', '1.8');
+    path.setAttribute('fill', color.replace(')', ',0.15)').replace('rgb', 'rgba'));
+    path.setAttribute('stroke-linecap', 'round');
+    path.setAttribute('stroke-linejoin', 'round');
+    svg.appendChild(path);
+    return svg;
+  }
+
+  function spawnHeart() {
+    const el = document.createElement('div');
+    el.classList.add('floating-heart');
+    const size = Math.random() * 12 + 8;
+    const hue = 340 + Math.random() * 25;
+    const lightness = 55 + Math.random() * 20;
+    const color = `hsl(${hue}, 60%, ${lightness}%)`;
+    el.appendChild(createHeartSVG(size, color));
+    el.style.left = Math.random() * 100 + '%';
+    el.style.width = (size * 2.2) + 'px';
+    el.style.height = (size * 2) + 'px';
+    const dur = Math.random() * 10 + 10;
+    el.style.animationDuration = dur + 's';
+    el.style.opacity = Math.random() * 0.3 + 0.15;
+    heartsLayer.appendChild(el);
+    setTimeout(() => el.remove(), dur * 1000);
+  }
+
+  for (let i = 0; i < 12; i++) setTimeout(spawnHeart, i * 400);
+  setInterval(spawnHeart, 1000);
+
+  // ── Falling hand-drawn petals ──
+  const petalsLayer = document.getElementById('petals-layer');
+
+  function createPetalSVG(size, hue) {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('width', size);
+    svg.setAttribute('height', size);
+    svg.setAttribute('viewBox', '0 0 20 20');
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    const j = () => (Math.random() - 0.5) * 2;
+    path.setAttribute('d',
+      `M10 2 Q${15+j()} ${5+j()} ${16+j()} ${10+j()} Q${15+j()} ${16+j()} ${10+j()} ${18+j()} Q${5+j()} ${16+j()} ${4+j()} ${10+j()} Q${5+j()} ${5+j()} 10 2Z`
+    );
+    path.setAttribute('fill', `hsla(${hue}, 65%, 72%, 0.5)`);
+    path.setAttribute('stroke', `hsla(${hue}, 55%, 60%, 0.4)`);
+    path.setAttribute('stroke-width', '0.6');
+    svg.appendChild(path);
+    return svg;
+  }
+
+  function spawnPetal() {
+    const el = document.createElement('div');
+    el.classList.add('petal');
+    const size = Math.random() * 14 + 10;
+    const hue = 340 + Math.random() * 30;
+    el.appendChild(createPetalSVG(size, hue));
+    el.style.left = Math.random() * 100 + '%';
+    el.style.top = '-30px';
+    el.style.width = size + 'px';
+    el.style.height = size + 'px';
+    const dur = Math.random() * 10 + 12;
+    el.style.animationDuration = dur + 's';
+    petalsLayer.appendChild(el);
+    setTimeout(() => el.remove(), dur * 1000);
+  }
+
+  for (let i = 0; i < 8; i++) setTimeout(spawnPetal, i * 600);
+  setInterval(spawnPetal, 1400);
+
+  // ── Click burst with sketchy hearts ──
+  document.addEventListener('click', function(e) {
+    const count = 10;
+    for (let i = 0; i < count; i++) {
+      const wrap = document.createElement('div');
+      wrap.classList.add('burst-heart');
+      const size = Math.random() * 12 + 8;
+      const hue = 340 + Math.random() * 30;
+      const color = `hsl(${hue}, 65%, ${55 + Math.random() * 25}%)`;
+      wrap.appendChild(createHeartSVG(size, color));
+      wrap.style.left = e.clientX + 'px';
+      wrap.style.top = e.clientY + 'px';
+      wrap.style.width = (size * 2.2) + 'px';
+      wrap.style.height = (size * 2) + 'px';
+      const angle = (Math.PI * 2 / count) * i + Math.random() * 0.4;
+      const dist = Math.random() * 80 + 50;
+      wrap.style.setProperty('--bx', Math.cos(angle) * dist + 'px');
+      wrap.style.setProperty('--by', Math.sin(angle) * dist + 'px');
+      wrap.style.setProperty('--br', (Math.random() * 360) + 'deg');
+      document.body.appendChild(wrap);
+      setTimeout(() => wrap.remove(), 1100);
+    }
+  });
+
+  // ── Mouse sparkle trail ──
+  let sparkleThrottle = 0;
+  document.addEventListener('mousemove', function(e) {
+    const now = Date.now();
+    if (now - sparkleThrottle < 50) return;
+    sparkleThrottle = now;
+
+    const sparkle = document.createElement('div');
+    sparkle.classList.add('sparkle');
+    const size = Math.random() * 6 + 3;
+    const hue = 330 + Math.random() * 60;
+    sparkle.style.width = size + 'px';
+    sparkle.style.height = size + 'px';
+    sparkle.style.left = (e.clientX - size / 2 + (Math.random() - 0.5) * 12) + 'px';
+    sparkle.style.top = (e.clientY - size / 2 + (Math.random() - 0.5) * 12) + 'px';
+    sparkle.style.background = `radial-gradient(circle, hsl(${hue}, 80%, 75%), hsl(${hue}, 60%, 55%))`;
+    sparkle.style.boxShadow = `0 0 ${size}px hsl(${hue}, 80%, 70%)`;
+    document.body.appendChild(sparkle);
+    setTimeout(() => sparkle.remove(), 800);
+  });
+
+  // ── Confetti explosion on big heart click ──
+  const mainHeart = document.getElementById('main-heart');
+  mainHeart.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const rect = mainHeart.getBoundingClientRect();
+    const originX = rect.left + rect.width / 2;
+    const originY = rect.top + rect.height / 2;
+    const shapes = ['circle', 'square', 'strip'];
+    const colors = ['#ff6b8a', '#ff9eb5', '#ffd700', '#ff69b4', '#ff4081',
+                    '#e040fb', '#7c4dff', '#ff6e40', '#ffab40', '#69f0ae'];
+
+    for (let i = 0; i < 50; i++) {
+      const confetti = document.createElement('div');
+      confetti.classList.add('confetti');
+      const shape = shapes[Math.floor(Math.random() * shapes.length)];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const size = Math.random() * 8 + 4;
+
+      if (shape === 'circle') {
+        confetti.style.width = size + 'px';
+        confetti.style.height = size + 'px';
+        confetti.style.borderRadius = '50%';
+      } else if (shape === 'square') {
+        confetti.style.width = size + 'px';
+        confetti.style.height = size + 'px';
+        confetti.style.borderRadius = '1px';
+      } else {
+        confetti.style.width = (size * 0.4) + 'px';
+        confetti.style.height = (size * 1.8) + 'px';
+        confetti.style.borderRadius = '1px';
+      }
+
+      confetti.style.background = color;
+      confetti.style.left = originX + 'px';
+      confetti.style.top = originY + 'px';
+      confetti.style.boxShadow = `0 0 3px ${color}`;
+
+      const angle = Math.random() * Math.PI * 2;
+      const velocity = Math.random() * 250 + 100;
+      const gravity = Math.random() * 200 + 150;
+      confetti.style.setProperty('--cx', (Math.cos(angle) * velocity) + 'px');
+      confetti.style.setProperty('--cy', (Math.sin(angle) * velocity - gravity) + 'px');
+      confetti.style.setProperty('--cr', (Math.random() * 1080 - 540) + 'deg');
+      confetti.style.animationDuration = (Math.random() * 1.5 + 1) + 's';
+
+      document.body.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 2500);
+    }
+
+    // Extra pop scale on heart
+    mainHeart.style.transform = 'scale(1.4)';
+    mainHeart.style.transition = 'transform 0.15s ease-out';
+    setTimeout(() => {
+      mainHeart.style.transform = 'scale(1)';
+      mainHeart.style.transition = 'transform 0.4s ease-out';
+    }, 200);
+
+    // Also open the card when clicking the heart
+    if (!isOpen) {
+      card3d.classList.add('is-open');
+      isOpen = true;
+    }
+  });
+
+  // ── Floating sparkle / glitter particles ──
+  function spawnSparkleParticle() {
+    const el = document.createElement('div');
+    el.classList.add('sparkle-particle');
+    const size = Math.random() * 4 + 2;
+    const hue = 330 + Math.random() * 60;
+    const x = Math.random() * window.innerWidth;
+    el.style.left = x + 'px';
+    el.style.bottom = '-10px';
+    el.style.width = size + 'px';
+    el.style.height = size + 'px';
+    el.style.borderRadius = '50%';
+    el.style.background = `radial-gradient(circle, hsla(${hue}, 80%, 80%, 0.9), hsla(${hue}, 60%, 60%, 0.4))`;
+    el.style.boxShadow = `0 0 ${size + 2}px hsla(${hue}, 80%, 70%, 0.6)`;
+    const dur = Math.random() * 8 + 8;
+    el.style.animationDuration = dur + 's';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), dur * 1000);
+  }
+
+  for (let i = 0; i < 15; i++) setTimeout(spawnSparkleParticle, i * 300);
+  setInterval(spawnSparkleParticle, 800);
+
+  // ── Double-click anywhere for heart rain ──
+  document.addEventListener('dblclick', function(e) {
+    for (let i = 0; i < 30; i++) {
+      setTimeout(() => {
+        const heart = document.createElement('div');
+        heart.classList.add('floating-heart');
+        const size = Math.random() * 14 + 8;
+        const hue = 330 + Math.random() * 40;
+        const lightness = 55 + Math.random() * 25;
+        const color = `hsl(${hue}, 65%, ${lightness}%)`;
+        heart.appendChild(createHeartSVG(size, color));
+        heart.style.left = (e.clientX + (Math.random() - 0.5) * 200) + 'px';
+        heart.style.width = (size * 2.2) + 'px';
+        heart.style.height = (size * 2) + 'px';
+        const dur = Math.random() * 6 + 6;
+        heart.style.animationDuration = dur + 's';
+        heart.style.opacity = Math.random() * 0.5 + 0.3;
+        heartsLayer.appendChild(heart);
+        setTimeout(() => heart.remove(), dur * 1000);
+      }, i * 60);
+    }
+  });
+})();
+</script>
+</body>
+</html>

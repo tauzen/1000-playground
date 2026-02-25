@@ -1,0 +1,71 @@
+name: Deploy to gh-pages
+
+on:
+  push:
+    branches-ignore:
+      - gh-pages
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Inject Valentine names from secrets
+        run: |
+          if [ -n "${{ secrets.VALENTINE_MAMA }}" ]; then
+            sed -i "s/mama: 'Katarzyna'/mama: '${{ secrets.VALENTINE_MAMA }}'/" valentines-card/index.html
+          fi
+          if [ -n "${{ secrets.VALENTINE_CHILD }}" ]; then
+            sed -i "s/child: 'Zosia'/child: '${{ secrets.VALENTINE_CHILD }}'/" valentines-card/index.html
+          fi
+          if [ -n "${{ secrets.VALENTINE_TATA }}" ]; then
+            sed -i "s/tata: 'Tomasz'/tata: '${{ secrets.VALENTINE_TATA }}'/" valentines-card/index.html
+          fi
+
+      - name: Publish to gh-pages
+        env:
+          BRANCH_NAME: ${{ github.ref_name }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git fetch origin gh-pages || true
+
+          publish_dir="$(mktemp -d)"
+          rsync -a --delete --exclude '.git' ./ "$publish_dir/"
+
+          if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
+            git worktree add /tmp/gh-pages origin/gh-pages
+          else
+            git worktree add --detach /tmp/gh-pages
+            (
+              cd /tmp/gh-pages
+              git checkout --orphan gh-pages
+              git rm -rf . || true
+            )
+          fi
+
+          rsync -a --delete --exclude '.git' "$publish_dir/" /tmp/gh-pages/
+
+          (
+            cd /tmp/gh-pages
+            touch .nojekyll
+            git add --all
+            if git diff --staged --quiet; then
+              echo "No changes to publish"
+              exit 0
+            fi
+            git commit -m "Deploy ${COMMIT_SHA} from ${BRANCH_NAME}"
+            git push origin HEAD:gh-pages
+          )
