@@ -1,20 +1,30 @@
-name: Deploy to gh-pages
+name: Deploy to GitHub Pages
 
 on:
   push:
-    branches-ignore:
-      - gh-pages
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
 
       - name: Inject Valentine names from secrets
         run: |
@@ -28,44 +38,11 @@ jobs:
             sed -i "s/tata: 'Tomasz'/tata: '${{ secrets.VALENTINE_TATA }}'/" valentines-card/index.html
           fi
 
-      - name: Publish to gh-pages
-        env:
-          BRANCH_NAME: ${{ github.ref_name }}
-          COMMIT_SHA: ${{ github.sha }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-        run: |
-          set -euo pipefail
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: .
 
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          publish_dir="$(mktemp -d)"
-          rsync -a --delete --exclude '.git' ./ "$publish_dir/"
-
-          deploy_dir="$(mktemp -d)"
-          git clone "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$deploy_dir"
-
-          (
-            cd "$deploy_dir"
-
-            if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
-              git checkout gh-pages
-            else
-              git checkout --orphan gh-pages
-            fi
-
-            find . -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
-            rsync -a --delete --exclude '.git' "$publish_dir/" ./
-
-            touch .nojekyll
-            git add --all
-
-            if git diff --staged --quiet; then
-              echo "No changes to publish"
-              exit 0
-            fi
-
-            git commit -m "Deploy ${COMMIT_SHA} from ${BRANCH_NAME}"
-            git push origin gh-pages
-          )
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
