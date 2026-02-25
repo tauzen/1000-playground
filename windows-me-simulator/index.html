@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Windows ME Simulator</title>
+    <title>Windows 95 Simulator</title>
     <style>
         :root {
             --desktop-bg: radial-gradient(circle at 20% 20%, #72d0dd 0%, #2ca0bf 32%, #0978a6 100%);
@@ -84,6 +84,10 @@
             top: 34px;
             display: flex;
             flex-direction: column;
+        }
+
+        .window.hidden {
+            display: none;
         }
 
         .titlebar {
@@ -393,20 +397,20 @@
             <div class="icon"><div class="icon-graphic"></div>My Computer</div>
             <div class="icon"><div class="icon-graphic"></div>My Documents</div>
             <div class="icon"><div class="icon-graphic"></div>Recycle Bin</div>
-            <div class="icon"><div class="icon-graphic"></div>Internet Explorer</div>
+            <div class="icon" id="internetExplorerIcon"><div class="icon-graphic"></div>Internet Explorer</div>
             <div class="icon"><div class="icon-graphic"></div>Outlook Express</div>
         </div>
 
-        <section class="window" aria-label="Internet Explorer window">
+        <section class="window hidden" id="ieWindow" aria-label="Internet Explorer window">
             <div class="titlebar">
                 <div class="title-left">
                     <span class="title-logo" aria-hidden="true"></span>
-                    <span>Internet Explorer - Windows Millennium Edition</span>
+                    <span>Internet Explorer - Windows 95</span>
                 </div>
                 <div class="window-controls" aria-hidden="true">
                     <div class="ctrl-btn">_</div>
                     <div class="ctrl-btn">□</div>
-                    <div class="ctrl-btn">×</div>
+                    <button class="ctrl-btn" id="closeWindowBtn" aria-label="Close Internet Explorer">×</button>
                 </div>
             </div>
 
@@ -443,7 +447,7 @@
     </div>
 
     <div class="start-menu" id="startMenu" aria-label="Start menu">
-        <div class="start-rail">Windows ME</div>
+        <div class="start-rail">Windows 95</div>
         <div class="menu-content">
             <div class="menu-main">
                 <div class="menu-item"><span class="bullet"></span><strong>Internet Explorer</strong></div>
@@ -480,7 +484,7 @@
 
     <div class="taskbar">
         <button class="start-btn" id="startButton">start</button>
-        <button class="task-button">Internet Explorer</button>
+        <button class="task-button" id="taskButton" style="display:none;">Internet Explorer</button>
         <div class="tray">
             <span>🔊</span>
             <span id="clock">12:00 PM</span>
@@ -489,11 +493,15 @@
 
     <script>
         const frame = document.getElementById('browserFrame');
+        const ieWindow = document.getElementById('ieWindow');
         const addressInput = document.getElementById('addressInput');
         const statusText = document.getElementById('statusText');
         const startButton = document.getElementById('startButton');
         const startMenu = document.getElementById('startMenu');
         const clock = document.getElementById('clock');
+        const internetExplorerIcon = document.getElementById('internetExplorerIcon');
+        const closeWindowBtn = document.getElementById('closeWindowBtn');
+        const taskButton = document.getElementById('taskButton');
 
         const historyStack = [];
         let historyIndex = -1;
@@ -518,6 +526,20 @@
                 historyStack.push(finalUrl);
                 historyIndex = historyStack.length - 1;
             }
+        }
+
+        function openInternetExplorer() {
+            ieWindow.classList.remove('hidden');
+            taskButton.style.display = 'block';
+
+            if (!frame.src || frame.src === 'about:blank') {
+                navigate(homePage);
+            }
+        }
+
+        function closeInternetExplorer() {
+            ieWindow.classList.add('hidden');
+            taskButton.style.display = 'none';
         }
 
         function updateClock() {
@@ -561,6 +583,10 @@
             statusText.textContent = 'Done';
         });
 
+        internetExplorerIcon.addEventListener('dblclick', openInternetExplorer);
+        taskButton.addEventListener('click', openInternetExplorer);
+        closeWindowBtn.addEventListener('click', closeInternetExplorer);
+
         startButton.addEventListener('click', () => {
             startMenu.classList.toggle('open');
         });
@@ -574,7 +600,6 @@
 
         setInterval(updateClock, 1000);
         updateClock();
-        navigate(homePage);
     </script>
 </body>
 </html>
