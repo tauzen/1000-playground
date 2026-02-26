@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Windows 95 Simulator</title>
+    <title>Windows Me Simulator</title>
     <style>
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            margin: 0;
             min-height: 100vh;
             font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif;
             background: #008080;
@@ -17,60 +16,113 @@
             font-size: 11px;
         }
 
-        /* Classic Win95 3D border helpers */
-        .raised {
-            border-top: 2px solid #fff;
-            border-left: 2px solid #fff;
-            border-bottom: 2px solid #808080;
-            border-right: 2px solid #808080;
-        }
-
-        .sunken {
-            border-top: 2px solid #808080;
-            border-left: 2px solid #808080;
-            border-bottom: 2px solid #fff;
-            border-right: 2px solid #fff;
-        }
-
+        /* ── Desktop ── */
         .desktop {
             position: fixed;
             inset: 0;
-            padding: 8px;
-            padding-bottom: 34px;
+            padding: 4px;
+            padding-bottom: 32px;
         }
 
         .desktop-icons {
-            width: 80px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            flex-wrap: wrap;
+            gap: 4px;
+            height: calc(100vh - 36px);
+            align-content: flex-start;
+            padding: 2px;
         }
 
         .icon {
-            width: 80px;
+            width: 75px;
             text-align: center;
             color: #fff;
             font-size: 11px;
-            text-shadow: 1px 1px #000;
+            text-shadow: 1px 1px 2px #000, 1px 1px #000;
             user-select: none;
             cursor: default;
-            padding: 4px;
+            padding: 4px 2px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
         }
 
-        .icon:focus,
-        .icon.selected {
+        .icon:hover .icon-label {
+            background: #000080;
+            color: #fff;
             outline: 1px dotted #fff;
+        }
+
+        .icon.selected .icon-label {
+            background: #000080;
+            color: #fff;
+            outline: 1px dotted #fff;
+        }
+
+        .icon-label {
+            padding: 1px 2px;
+            line-height: 1.2;
+            max-width: 72px;
+            word-wrap: break-word;
         }
 
         .icon-graphic {
             width: 32px;
             height: 32px;
-            margin: 0 auto 4px;
             image-rendering: pixelated;
             position: relative;
+            flex-shrink: 0;
         }
 
-        /* Simple pixel-art style icons using CSS */
+        /* ── Icon Styles (CSS pixel art) ── */
+
+        /* My Documents - Yellow folder */
+        .icon-documents .icon-graphic {
+            background: #FFFF80;
+            border: 1px solid #808040;
+            border-top: 3px solid #808040;
+            border-radius: 0 2px 2px 2px;
+        }
+        .icon-documents .icon-graphic::before {
+            content: "";
+            position: absolute;
+            top: -3px; left: 0;
+            width: 14px; height: 3px;
+            background: #FFFF80;
+            border: 1px solid #808040;
+            border-bottom: none;
+            border-radius: 2px 2px 0 0;
+        }
+
+        /* Online Services - folder with globe */
+        .icon-online-services .icon-graphic {
+            background: #FFFF80;
+            border: 1px solid #808040;
+            border-top: 3px solid #808040;
+            border-radius: 0 2px 2px 2px;
+        }
+        .icon-online-services .icon-graphic::before {
+            content: "";
+            position: absolute;
+            top: -3px; left: 0;
+            width: 14px; height: 3px;
+            background: #FFFF80;
+            border: 1px solid #808040;
+            border-bottom: none;
+        }
+        .icon-online-services .icon-graphic::after {
+            content: "";
+            position: absolute;
+            bottom: 2px; right: 2px;
+            width: 14px; height: 14px;
+            background: #4080FF;
+            border: 1px solid #003080;
+            border-radius: 50%;
+        }
+
+        /* My Computer - monitor */
         .icon-my-computer .icon-graphic {
             background: #C0C0C0;
             border: 2px solid #000;
@@ -91,60 +143,7 @@
             background: #808080;
         }
 
-        .icon-documents .icon-graphic {
-            background: #FFFF80;
-            border: 1px solid #808080;
-            border-top: 3px solid #808080;
-        }
-        .icon-documents .icon-graphic::before {
-            content: "";
-            position: absolute;
-            top: -3px; left: 0;
-            width: 14px; height: 3px;
-            background: #FFFF80;
-            border: 1px solid #808080;
-            border-bottom: none;
-        }
-
-        .icon-recycle .icon-graphic {
-            background: transparent;
-            border: none;
-        }
-        .icon-recycle .icon-graphic::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 4px;
-            width: 24px; height: 28px;
-            background: #C0C0C0;
-            border: 2px solid #000;
-            border-top: none;
-        }
-        .icon-recycle .icon-graphic::after {
-            content: "";
-            position: absolute;
-            top: 0; left: 2px;
-            width: 28px; height: 6px;
-            background: #C0C0C0;
-            border: 2px solid #000;
-        }
-
-        .icon-ie .icon-graphic {
-            background: #fff;
-            border: 2px solid #0000C0;
-        }
-        .icon-ie .icon-graphic::before {
-            content: "e";
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 20px;
-            font-weight: bold;
-            font-style: italic;
-            font-family: serif;
-            color: #0000C0;
-            line-height: 1;
-        }
-
+        /* Outlook Express - envelope */
         .icon-outlook .icon-graphic {
             background: #FFFFCC;
             border: 2px solid #808000;
@@ -152,27 +151,177 @@
         .icon-outlook .icon-graphic::before {
             content: "";
             position: absolute;
-            top: 6px; left: 4px; right: 4px;
-            height: 12px;
+            top: 6px; left: 3px; right: 3px;
+            height: 14px;
             background: #fff;
             border: 1px solid #808000;
         }
         .icon-outlook .icon-graphic::after {
             content: "";
             position: absolute;
-            top: 10px; left: 4px;
+            top: 6px; left: 3px;
             width: 0; height: 0;
-            border-left: 12px solid transparent;
-            border-right: 12px solid transparent;
-            border-top: 8px solid #808000;
+            border-left: 13px solid transparent;
+            border-right: 13px solid transparent;
+            border-top: 10px solid #808000;
         }
 
-        /* ── Window ── */
+        /* My Network Places */
+        .icon-network .icon-graphic {
+            background: transparent;
+            border: none;
+        }
+        .icon-network .icon-graphic::before {
+            content: "";
+            position: absolute;
+            top: 4px; left: 2px;
+            width: 12px; height: 10px;
+            background: #C0C0C0;
+            border: 2px solid #000;
+            box-shadow: 14px 0 0 0 #C0C0C0, 14px 0 0 2px #000;
+        }
+        .icon-network .icon-graphic::after {
+            content: "";
+            position: absolute;
+            bottom: 4px; left: 4px;
+            width: 24px; height: 2px;
+            background: #000;
+            box-shadow: 0 4px 0 0 #000;
+        }
+
+        /* Windows Media Player */
+        .icon-media .icon-graphic {
+            background: #000;
+            border: 2px solid #404040;
+            border-radius: 3px;
+        }
+        .icon-media .icon-graphic::before {
+            content: "";
+            position: absolute;
+            top: 50%; left: 55%;
+            transform: translate(-50%, -50%);
+            width: 0; height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 12px solid #FF8000;
+        }
+
+        /* Recycle Bin */
+        .icon-recycle .icon-graphic {
+            background: transparent;
+            border: none;
+        }
+        .icon-recycle .icon-graphic::before {
+            content: "";
+            position: absolute;
+            top: 6px; left: 5px;
+            width: 22px; height: 22px;
+            background: #C0C0C0;
+            border: 2px solid #000;
+            border-top: none;
+        }
+        .icon-recycle .icon-graphic::after {
+            content: "";
+            position: absolute;
+            top: 2px; left: 3px;
+            width: 26px; height: 6px;
+            background: #C0C0C0;
+            border: 2px solid #000;
+        }
+
+        /* Connect to Internet */
+        .icon-connect .icon-graphic {
+            background: transparent;
+            border: none;
+        }
+        .icon-connect .icon-graphic::before {
+            content: "";
+            position: absolute;
+            top: 2px; left: 4px;
+            width: 24px; height: 24px;
+            background: #4080FF;
+            border: 2px solid #003080;
+            border-radius: 50%;
+        }
+        .icon-connect .icon-graphic::after {
+            content: "";
+            position: absolute;
+            bottom: 2px; right: 2px;
+            width: 12px; height: 8px;
+            background: #C0C0C0;
+            border: 1px solid #000;
+        }
+
+        /* Internet Explorer */
+        .icon-ie .icon-graphic {
+            background: #fff;
+            border: 2px solid #0060C0;
+            border-radius: 2px;
+        }
+        .icon-ie .icon-graphic::before {
+            content: "e";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 22px;
+            font-weight: bold;
+            font-style: italic;
+            font-family: "Times New Roman", serif;
+            color: #0060C0;
+            line-height: 1;
+        }
+
+        /* Setup MSN */
+        .icon-msn .icon-graphic {
+            background: #fff;
+            border: 2px solid #000;
+        }
+        .icon-msn .icon-graphic::before {
+            content: "";
+            position: absolute;
+            top: 4px; left: 3px;
+            width: 10px; height: 16px;
+            background: #FF6600;
+            border-radius: 50% 50% 0 0;
+        }
+        .icon-msn .icon-graphic::after {
+            content: "";
+            position: absolute;
+            top: 6px; right: 3px;
+            width: 10px; height: 16px;
+            background: #00CC00;
+            border-radius: 50% 50% 0 0;
+        }
+
+        /* My Briefcase */
+        .icon-briefcase .icon-graphic {
+            background: #808080;
+            border: 2px solid #404040;
+            border-radius: 0 0 2px 2px;
+        }
+        .icon-briefcase .icon-graphic::before {
+            content: "";
+            position: absolute;
+            top: -4px; left: 8px;
+            width: 12px; height: 6px;
+            border: 2px solid #404040;
+            border-bottom: none;
+            background: transparent;
+        }
+        .icon-briefcase .icon-graphic::after {
+            content: "";
+            position: absolute;
+            top: 8px; left: 6px;
+            width: 16px; height: 2px;
+            background: #404040;
+        }
+
+        /* ── IE Window ── */
         .window {
-            width: min(800px, calc(100vw - 120px));
-            height: min(520px, calc(100vh - 80px));
-            min-width: 400px;
-            min-height: 300px;
+            width: min(820px, calc(100vw - 100px));
+            height: min(560px, calc(100vh - 60px));
+            min-width: 420px;
+            min-height: 320px;
             background: #C0C0C0;
             border-top: 2px solid #fff;
             border-left: 2px solid #fff;
@@ -180,20 +329,20 @@
             border-right: 2px solid #000;
             box-shadow: inset 1px 1px 0 #DFDFDF, inset -1px -1px 0 #808080;
             position: absolute;
-            left: clamp(100px, 15vw, 180px);
-            top: 24px;
+            left: clamp(90px, 12vw, 160px);
+            top: 16px;
             display: flex;
             flex-direction: column;
             padding: 3px;
+            z-index: 10;
         }
 
-        .window.hidden {
-            display: none;
-        }
+        .window.hidden { display: none; }
 
+        /* Title bar - blue gradient like Win ME */
         .titlebar {
-            height: 20px;
-            background: #000080;
+            height: 22px;
+            background: linear-gradient(to right, #0A246A, #3A6EA5);
             color: #fff;
             display: flex;
             align-items: center;
@@ -201,6 +350,10 @@
             padding: 0 3px;
             font-size: 11px;
             font-weight: bold;
+        }
+
+        .titlebar.inactive {
+            background: linear-gradient(to right, #808080, #B0B0B0);
         }
 
         .title-left {
@@ -212,22 +365,23 @@
         }
 
         .title-logo {
-            width: 14px;
-            height: 14px;
+            width: 16px;
+            height: 16px;
             background: #fff;
             border: 1px solid #000;
             position: relative;
             flex-shrink: 0;
+            border-radius: 1px;
         }
         .title-logo::before {
             content: "e";
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 10px;
+            font-size: 11px;
             font-style: italic;
-            font-family: serif;
-            color: #0000C0;
+            font-family: "Times New Roman", serif;
+            color: #0060C0;
             line-height: 1;
         }
 
@@ -246,18 +400,15 @@
             border-bottom: 1px solid #000;
             border-right: 1px solid #000;
             color: #000;
-            line-height: 12px;
+            line-height: 1;
             text-align: center;
             font-weight: bold;
             font-size: 10px;
-            font-family: "Marlett", "MS Sans Serif", sans-serif;
             cursor: default;
-            padding: 0;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-
         .ctrl-btn:active {
             border-top: 1px solid #000;
             border-left: 1px solid #000;
@@ -265,58 +416,222 @@
             border-right: 1px solid #fff;
         }
 
+        /* Menu bar */
         .menubar {
             height: 20px;
             display: flex;
             align-items: center;
-            gap: 0;
             padding: 0;
             font-size: 11px;
             background: #C0C0C0;
+            border-bottom: 1px solid #808080;
         }
-
         .menubar span {
-            padding: 2px 8px;
+            padding: 2px 6px;
             cursor: default;
         }
-
         .menubar span:hover {
             background: #000080;
             color: #fff;
         }
 
+        /* Toolbar - IE 5.5 style with icons above text */
         .toolbar {
             display: flex;
             align-items: center;
-            gap: 2px;
-            padding: 2px 4px;
+            gap: 0;
+            padding: 1px 2px;
             background: #C0C0C0;
             border-top: 1px solid #fff;
             border-bottom: 1px solid #808080;
-            flex-wrap: wrap;
         }
 
-        .toolbar button {
-            background: #C0C0C0;
+        .toolbar-grip {
+            width: 4px;
+            height: 28px;
+            margin-right: 2px;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent, transparent 1px,
+                #808080 1px, #808080 2px,
+                #fff 2px, #fff 3px
+            );
+        }
+
+        .tb-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: 1px solid transparent;
+            min-width: 40px;
+            height: 36px;
+            padding: 1px 4px;
+            cursor: default;
+            font-size: 10px;
+            font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif;
+            color: #000;
+            gap: 0;
+        }
+        .tb-btn:hover {
             border-top: 1px solid #fff;
             border-left: 1px solid #fff;
             border-bottom: 1px solid #808080;
             border-right: 1px solid #808080;
-            font-size: 11px;
-            font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif;
-            min-width: 52px;
-            height: 22px;
-            padding: 0 6px;
-            cursor: default;
         }
-
-        .toolbar button:active {
+        .tb-btn:active {
             border-top: 1px solid #808080;
             border-left: 1px solid #808080;
             border-bottom: 1px solid #fff;
             border-right: 1px solid #fff;
         }
 
+        .tb-icon {
+            width: 20px;
+            height: 20px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .tb-sep {
+            width: 2px;
+            height: 32px;
+            border-left: 1px solid #808080;
+            border-right: 1px solid #fff;
+            margin: 0 2px;
+        }
+
+        /* Toolbar icon drawings */
+        .tb-icon-back { position: relative; }
+        .tb-icon-back::before {
+            content: "";
+            position: absolute;
+            top: 6px; left: 3px;
+            width: 0; height: 0;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-right: 7px solid #008000;
+        }
+        .tb-icon-back::after {
+            content: "";
+            position: absolute;
+            top: 8px; left: 9px;
+            width: 8px; height: 4px;
+            background: #008000;
+        }
+
+        .tb-icon-forward { position: relative; }
+        .tb-icon-forward::before {
+            content: "";
+            position: absolute;
+            top: 6px; right: 3px;
+            width: 0; height: 0;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-left: 7px solid #008000;
+        }
+        .tb-icon-forward::after {
+            content: "";
+            position: absolute;
+            top: 8px; left: 3px;
+            width: 8px; height: 4px;
+            background: #008000;
+        }
+
+        .tb-icon-stop::before {
+            content: "×";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            color: #CC0000;
+            font-weight: bold;
+        }
+
+        .tb-icon-refresh::before {
+            content: "";
+            position: absolute;
+            top: 3px; left: 3px;
+            width: 12px; height: 12px;
+            border: 3px solid #008000;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+        }
+        .tb-icon-refresh::after {
+            content: "";
+            position: absolute;
+            top: 2px; right: 2px;
+            width: 0; height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-bottom: 5px solid #008000;
+        }
+
+        .tb-icon-home::before {
+            content: "";
+            position: absolute;
+            top: 2px; left: 3px;
+            width: 0; height: 0;
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+            border-bottom: 7px solid #804000;
+        }
+        .tb-icon-home::after {
+            content: "";
+            position: absolute;
+            bottom: 1px; left: 5px;
+            width: 10px; height: 8px;
+            background: #FFCC00;
+            border: 1px solid #804000;
+        }
+
+        .tb-icon-search::before {
+            content: "";
+            position: absolute;
+            top: 2px; left: 3px;
+            width: 10px; height: 10px;
+            border: 2px solid #0060C0;
+            border-radius: 50%;
+        }
+        .tb-icon-search::after {
+            content: "";
+            position: absolute;
+            bottom: 2px; right: 3px;
+            width: 6px; height: 2px;
+            background: #0060C0;
+            transform: rotate(45deg);
+        }
+
+        .tb-icon-favorites::before {
+            content: "★";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            color: #FFD700;
+            text-shadow: 0 0 1px #000;
+        }
+
+        .tb-icon-history::before {
+            content: "";
+            position: absolute;
+            top: 2px; left: 3px;
+            width: 14px; height: 14px;
+            border: 2px solid #0060C0;
+            border-radius: 50%;
+        }
+        .tb-icon-history::after {
+            content: "";
+            position: absolute;
+            top: 4px; left: 9px;
+            width: 2px; height: 7px;
+            background: #0060C0;
+            transform-origin: bottom center;
+            box-shadow: -3px 2px 0 0 #0060C0;
+        }
+
+        /* Address bar */
         .address-row {
             display: flex;
             align-items: center;
@@ -324,27 +639,56 @@
             padding: 2px 4px;
             background: #C0C0C0;
             font-size: 11px;
+            border-top: 1px solid #fff;
+            border-bottom: 1px solid #808080;
+        }
+
+        .address-row .toolbar-grip {
+            height: 18px;
         }
 
         .address-row label {
-            font-weight: bold;
             white-space: nowrap;
         }
 
         .address-row input {
             flex: 1;
             height: 20px;
-            border-top: 1px solid #808080;
-            border-left: 1px solid #808080;
-            border-bottom: 1px solid #fff;
-            border-right: 1px solid #fff;
-            padding: 0 4px;
+            border: 1px solid #808080;
+            box-shadow: inset 1px 1px 0 #404040;
+            padding: 0 4px 0 20px;
             font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif;
             font-size: 11px;
             background: #fff;
+            outline: none;
         }
 
-        .address-row button {
+        .address-input-wrap {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .address-icon {
+            position: absolute;
+            left: 3px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 14px;
+            height: 14px;
+            z-index: 1;
+        }
+        .address-icon::before {
+            content: "e";
+            font-size: 10px;
+            font-style: italic;
+            font-family: "Times New Roman", serif;
+            color: #0060C0;
+            font-weight: bold;
+        }
+
+        .address-row .go-btn {
             background: #C0C0C0;
             border-top: 1px solid #fff;
             border-left: 1px solid #fff;
@@ -355,53 +699,19 @@
             font-size: 11px;
             font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif;
             cursor: default;
+            padding: 0 6px;
         }
-
-        .address-row button:active {
+        .address-row .go-btn:active {
             border-top: 1px solid #808080;
             border-left: 1px solid #808080;
             border-bottom: 1px solid #fff;
             border-right: 1px solid #fff;
         }
 
-        .status {
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 4px;
-            font-size: 11px;
-            background: #C0C0C0;
-        }
-
-        .status-left {
-            flex: 1;
-            border-top: 1px solid #808080;
-            border-left: 1px solid #808080;
-            border-bottom: 1px solid #fff;
-            border-right: 1px solid #fff;
-            padding: 1px 4px;
-            overflow: hidden;
-            white-space: nowrap;
-        }
-
-        .status-right {
-            width: 100px;
-            border-top: 1px solid #808080;
-            border-left: 1px solid #808080;
-            border-bottom: 1px solid #fff;
-            border-right: 1px solid #fff;
-            padding: 1px 4px;
-            text-align: right;
-            margin-left: 4px;
-        }
-
+        /* Content area */
         .view {
             flex: 1;
-            border-top: 2px solid #808080;
-            border-left: 2px solid #808080;
-            border-bottom: 2px solid #fff;
-            border-right: 2px solid #fff;
+            border: 2px inset #C0C0C0;
             background: #fff;
             overflow: hidden;
         }
@@ -413,25 +723,74 @@
             background: #fff;
         }
 
+        /* Status bar */
+        .status {
+            height: 20px;
+            display: flex;
+            align-items: center;
+            padding: 0 2px;
+            gap: 2px;
+            font-size: 11px;
+            background: #C0C0C0;
+        }
+
+        .status-left {
+            flex: 1;
+            border: 1px inset #C0C0C0;
+            padding: 1px 4px;
+            overflow: hidden;
+            white-space: nowrap;
+            height: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .status-right {
+            width: 80px;
+            border: 1px inset #C0C0C0;
+            padding: 1px 4px;
+            text-align: center;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .status-icon {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            background: #4080FF;
+            border-radius: 50%;
+            margin-right: 4px;
+            flex-shrink: 0;
+            position: relative;
+        }
+        .status-icon::before {
+            content: "";
+            position: absolute;
+            top: 2px; left: 5px;
+            width: 4px; height: 4px;
+            background: #FFFF00;
+            border-radius: 50%;
+        }
+
         /* ── Taskbar ── */
         .taskbar {
             position: fixed;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            height: 28px;
+            left: 0; right: 0; bottom: 0;
+            height: 30px;
             background: #C0C0C0;
             border-top: 2px solid #fff;
             display: flex;
             align-items: center;
-            gap: 4px;
-            padding: 2px 2px;
+            gap: 0;
+            padding: 2px;
             z-index: 20;
         }
 
         .start-btn {
-            height: 22px;
-            min-width: 54px;
+            height: 24px;
             background: #C0C0C0;
             border-top: 2px solid #fff;
             border-left: 2px solid #fff;
@@ -441,42 +800,121 @@
             font-size: 11px;
             font-weight: bold;
             font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif;
-            text-align: left;
             padding: 0 6px;
             cursor: default;
             display: flex;
             align-items: center;
             gap: 3px;
+            flex-shrink: 0;
         }
-
-        .start-btn:active {
+        .start-btn:active, .start-btn.pressed {
             border-top: 2px solid #808080;
             border-left: 2px solid #808080;
             border-bottom: 2px solid #fff;
             border-right: 2px solid #fff;
         }
 
-        /* Win95 flag icon approximation */
+        /* Windows flag */
         .start-flag {
-            width: 14px;
-            height: 14px;
+            width: 16px;
+            height: 16px;
             display: grid;
             grid-template-columns: 1fr 1fr;
             grid-template-rows: 1fr 1fr;
             gap: 1px;
             flex-shrink: 0;
+            transform: perspective(20px) rotateY(-5deg);
         }
         .start-flag .f1 { background: #FF0000; }
-        .start-flag .f2 { background: #00FF00; }
+        .start-flag .f2 { background: #00B200; }
         .start-flag .f3 { background: #0000FF; }
         .start-flag .f4 { background: #FFFF00; }
 
+        /* Quick Launch */
+        .quick-launch {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            padding: 0 4px;
+            height: 24px;
+            border-left: 2px groove #C0C0C0;
+            margin-left: 2px;
+        }
+
+        .ql-btn {
+            width: 20px;
+            height: 20px;
+            background: transparent;
+            border: 1px solid transparent;
+            cursor: default;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .ql-btn:hover {
+            border-top: 1px solid #fff;
+            border-left: 1px solid #fff;
+            border-bottom: 1px solid #808080;
+            border-right: 1px solid #808080;
+        }
+
+        .ql-ie::before {
+            content: "e";
+            font-size: 13px;
+            font-style: italic;
+            font-weight: bold;
+            font-family: "Times New Roman", serif;
+            color: #0060C0;
+        }
+
+        .ql-outlook::before {
+            content: "";
+            position: absolute;
+            top: 3px; left: 3px;
+            width: 12px; height: 8px;
+            background: #FFFFCC;
+            border: 1px solid #808000;
+        }
+        .ql-outlook::after {
+            content: "";
+            position: absolute;
+            top: 3px; left: 3px;
+            width: 0; height: 0;
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+            border-top: 5px solid #808000;
+        }
+
+        .ql-desktop::before {
+            content: "";
+            position: absolute;
+            top: 3px; left: 3px;
+            width: 13px; height: 10px;
+            background: #008080;
+            border: 1px solid #404040;
+        }
+        .ql-desktop::after {
+            content: "";
+            position: absolute;
+            bottom: 3px; left: 5px;
+            width: 10px; height: 2px;
+            background: #404040;
+        }
+
         .task-divider {
             width: 2px;
-            height: 20px;
-            border-left: 1px solid #808080;
-            border-right: 1px solid #fff;
-            margin: 0 1px;
+            height: 22px;
+            border-left: 2px groove #C0C0C0;
+            margin: 0 2px;
+        }
+
+        .task-area {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            overflow: hidden;
         }
 
         .task-button {
@@ -487,6 +925,7 @@
             border-bottom: 1px solid #fff;
             border-right: 1px solid #fff;
             min-width: 140px;
+            max-width: 180px;
             text-align: left;
             padding: 0 6px;
             font-size: 11px;
@@ -494,6 +933,26 @@
             color: #000;
             font-weight: bold;
             cursor: default;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .task-button .task-icon {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+            position: relative;
+        }
+        .task-button .task-icon::before {
+            content: "e";
+            font-size: 10px;
+            font-style: italic;
+            font-weight: bold;
+            font-family: "Times New Roman", serif;
+            color: #0060C0;
         }
 
         .tray {
@@ -501,34 +960,31 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            height: 22px;
+            height: 24px;
             padding: 0 8px;
-            border-top: 1px solid #808080;
-            border-left: 1px solid #808080;
-            border-bottom: 1px solid #fff;
-            border-right: 1px solid #fff;
+            border: 1px inset #C0C0C0;
             font-size: 11px;
             color: #000;
-            min-width: 80px;
-            justify-content: end;
+            flex-shrink: 0;
         }
 
         .tray-volume {
-            width: 12px;
-            height: 12px;
+            width: 14px;
+            height: 14px;
             position: relative;
+            cursor: default;
         }
         .tray-volume::before {
             content: "";
             position: absolute;
-            left: 0; top: 3px;
+            left: 0; top: 4px;
             width: 5px; height: 6px;
             background: #000;
         }
         .tray-volume::after {
             content: "";
             position: absolute;
-            left: 3px; top: 1px;
+            left: 3px; top: 2px;
             width: 0; height: 0;
             border-top: 5px solid transparent;
             border-bottom: 5px solid transparent;
@@ -539,8 +995,8 @@
         .start-menu {
             position: fixed;
             left: 2px;
-            bottom: 28px;
-            width: 200px;
+            bottom: 30px;
+            width: 220px;
             background: #C0C0C0;
             border-top: 2px solid #fff;
             border-left: 2px solid #fff;
@@ -556,8 +1012,8 @@
         }
 
         .start-rail {
-            width: 24px;
-            background: #808080;
+            width: 22px;
+            background: linear-gradient(to top, #0A246A, #3A6EA5);
             color: #C0C0C0;
             display: flex;
             align-items: flex-end;
@@ -566,14 +1022,12 @@
             writing-mode: vertical-rl;
             text-orientation: mixed;
             transform: rotate(180deg);
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
             letter-spacing: 1px;
         }
 
-        .start-rail strong {
-            color: #fff;
-        }
+        .start-rail strong { color: #fff; }
 
         .menu-list {
             flex: 1;
@@ -584,12 +1038,11 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 4px 12px 4px 6px;
+            padding: 5px 16px 5px 8px;
             font-size: 11px;
             cursor: default;
             white-space: nowrap;
         }
-
         .menu-item:hover {
             background: #000080;
             color: #fff;
@@ -601,65 +1054,20 @@
             flex-shrink: 0;
         }
 
-        .menu-icon-programs {
-            background: #C0C0C0;
-            border: 1px solid #000;
-        }
-        .menu-icon-programs::before {
-            content: "";
-            display: block;
-            width: 6px;
-            height: 4px;
-            background: #000080;
-            margin: 2px;
-        }
+        .menu-icon-programs { background: #C0C0C0; border: 1px solid #000; }
+        .menu-icon-programs::before { content: ""; display: block; width: 6px; height: 4px; background: #000080; margin: 2px; }
 
-        .menu-icon-docs {
-            background: #FFFF80;
-            border: 1px solid #808080;
-        }
+        .menu-icon-docs { background: #FFFF80; border: 1px solid #808080; }
 
-        .menu-icon-settings {
-            background: #C0C0C0;
-            border: 1px solid #808080;
-        }
-        .menu-icon-settings::before {
-            content: "";
-            display: block;
-            width: 10px;
-            height: 3px;
-            background: #808080;
-            margin: 3px 2px;
-        }
+        .menu-icon-settings { background: #C0C0C0; border: 1px solid #808080; }
+        .menu-icon-settings::before { content: ""; display: block; width: 10px; height: 3px; background: #808080; margin: 3px 2px; }
 
-        .menu-icon-find {
-            background: #fff;
-            border: 1px solid #000;
-            position: relative;
-        }
-        .menu-icon-find::after {
-            content: "";
-            position: absolute;
-            bottom: 1px; right: 1px;
-            width: 6px; height: 6px;
-            border: 2px solid #000;
-            border-radius: 50%;
-        }
+        .menu-icon-find { background: #fff; border: 1px solid #000; position: relative; }
+        .menu-icon-find::after { content: ""; position: absolute; bottom: 1px; right: 1px; width: 6px; height: 6px; border: 2px solid #000; border-radius: 50%; }
 
-        .menu-icon-help {
-            background: #FFFF00;
-            border: 1px solid #808080;
-            text-align: center;
-            font-weight: bold;
-            font-size: 11px;
-            line-height: 14px;
-            color: #000;
-        }
+        .menu-icon-help { background: #FFFF00; border: 1px solid #808080; text-align: center; font-weight: bold; font-size: 11px; line-height: 14px; color: #000; }
 
-        .menu-icon-run {
-            background: #C0C0C0;
-            border: 1px solid #808080;
-        }
+        .menu-icon-run { background: #C0C0C0; border: 1px solid #808080; }
 
         .menu-separator {
             border-top: 1px solid #808080;
@@ -679,17 +1087,19 @@
             margin-top: 2px;
         }
 
+        /* ── Hint ── */
         .quick-note {
             position: absolute;
             right: 12px;
-            bottom: 36px;
+            bottom: 38px;
             color: #fff;
-            text-shadow: 1px 1px #000;
+            text-shadow: 1px 1px 2px #000, 1px 1px #000;
             font-size: 11px;
             max-width: 260px;
             text-align: right;
         }
 
+        /* ── Responsive ── */
         @media (max-width: 700px) {
             .window {
                 left: 4px;
@@ -697,52 +1107,66 @@
                 width: calc(100vw - 8px);
                 min-width: auto;
             }
-
             .desktop-icons { display: none; }
             .start-menu { width: calc(100vw - 4px); }
+            .quick-launch { display: none; }
         }
     </style>
 </head>
 <body>
     <div class="desktop">
         <div class="desktop-icons">
-            <div class="icon icon-my-computer"><div class="icon-graphic"></div>My Computer</div>
-            <div class="icon icon-documents"><div class="icon-graphic"></div>My Documents</div>
-            <div class="icon icon-recycle"><div class="icon-graphic"></div>Recycle Bin</div>
-            <div class="icon icon-ie" id="internetExplorerIcon"><div class="icon-graphic"></div>Internet<br>Explorer</div>
-            <div class="icon icon-outlook"><div class="icon-graphic"></div>Outlook Express</div>
+            <div class="icon icon-documents"><div class="icon-graphic"></div><span class="icon-label">My Documents</span></div>
+            <div class="icon icon-online-services"><div class="icon-graphic"></div><span class="icon-label">Online Services</span></div>
+            <div class="icon icon-my-computer"><div class="icon-graphic"></div><span class="icon-label">My Computer</span></div>
+            <div class="icon icon-outlook"><div class="icon-graphic"></div><span class="icon-label">Outlook Express</span></div>
+            <div class="icon icon-network"><div class="icon-graphic"></div><span class="icon-label">My Network Places</span></div>
+            <div class="icon icon-media"><div class="icon-graphic"></div><span class="icon-label">Windows Media Player</span></div>
+            <div class="icon icon-recycle"><div class="icon-graphic"></div><span class="icon-label">Recycle Bin</span></div>
+            <div class="icon icon-connect"><div class="icon-graphic"></div><span class="icon-label">Connect to the Internet</span></div>
+            <div class="icon icon-ie" id="internetExplorerIcon"><div class="icon-graphic"></div><span class="icon-label">Internet Explorer</span></div>
+            <div class="icon icon-msn"><div class="icon-graphic"></div><span class="icon-label">Setup MSN Internet Access</span></div>
+            <div class="icon icon-briefcase"><div class="icon-graphic"></div><span class="icon-label">My Briefcase</span></div>
         </div>
 
         <section class="window hidden" id="ieWindow" aria-label="Internet Explorer window">
-            <div class="titlebar">
+            <div class="titlebar" id="titlebar">
                 <div class="title-left">
                     <span class="title-logo" aria-hidden="true"></span>
-                    <span id="windowTitle">Microsoft Internet Explorer</span>
+                    <span id="windowTitle">about:blank - Microsoft Internet Explorer</span>
                 </div>
-                <div class="window-controls" aria-hidden="true">
-                    <div class="ctrl-btn">_</div>
+                <div class="window-controls">
+                    <div class="ctrl-btn" id="minimizeBtn">_</div>
                     <div class="ctrl-btn">□</div>
-                    <button class="ctrl-btn" id="closeWindowBtn" aria-label="Close Internet Explorer">×</button>
+                    <button class="ctrl-btn" id="closeWindowBtn" aria-label="Close">×</button>
                 </div>
             </div>
 
             <div class="menubar">
-                <span>File</span><span>Edit</span><span>View</span><span>Go</span><span>Favorites</span><span>Help</span>
+                <span>File</span><span>Edit</span><span>View</span><span>Favorites</span><span>Tools</span><span>Help</span>
             </div>
 
             <div class="toolbar">
-                <button id="backBtn">Back</button>
-                <button id="forwardBtn">Forward</button>
-                <button id="stopBtn">Stop</button>
-                <button id="refreshBtn">Refresh</button>
-                <button id="homeBtn">Home</button>
-                <button id="favoritesBtn">Favorites</button>
+                <div class="toolbar-grip"></div>
+                <button class="tb-btn" id="backBtn"><span class="tb-icon tb-icon-back"></span>Back</button>
+                <button class="tb-btn" id="forwardBtn"><span class="tb-icon tb-icon-forward"></span>Forward</button>
+                <button class="tb-btn" id="stopBtn"><span class="tb-icon tb-icon-stop"></span>Stop</button>
+                <button class="tb-btn" id="refreshBtn"><span class="tb-icon tb-icon-refresh"></span>Refresh</button>
+                <button class="tb-btn" id="homeBtn"><span class="tb-icon tb-icon-home"></span>Home</button>
+                <div class="tb-sep"></div>
+                <button class="tb-btn" id="searchBtn"><span class="tb-icon tb-icon-search"></span>Search</button>
+                <button class="tb-btn" id="favoritesBtn"><span class="tb-icon tb-icon-favorites"></span>Favorites</button>
+                <button class="tb-btn" id="historyBtn"><span class="tb-icon tb-icon-history"></span>History</button>
             </div>
 
             <div class="address-row">
+                <div class="toolbar-grip"></div>
                 <label for="addressInput">Address</label>
-                <input id="addressInput" value="https://example.com" aria-label="Address bar" />
-                <button id="goBtn">Go</button>
+                <div class="address-input-wrap">
+                    <span class="address-icon" aria-hidden="true"></span>
+                    <input id="addressInput" value="about:blank" aria-label="Address bar" />
+                </div>
+                <button class="go-btn" id="goBtn">Go</button>
             </div>
 
             <div class="view">
@@ -751,20 +1175,20 @@
 
             <div class="status">
                 <span class="status-left" id="statusText">Done</span>
-                <span class="status-right">Internet</span>
+                <span class="status-right"><span class="status-icon"></span>Internet</span>
             </div>
         </section>
 
-        <p class="quick-note">Some modern sites block iframes, just like old embedded browsers often struggled with newer standards.</p>
+        <p class="quick-note">Double-click Internet Explorer to browse. Some modern sites block iframes.</p>
     </div>
 
     <div class="start-menu" id="startMenu" aria-label="Start menu">
-        <div class="start-rail"><strong>Windows</strong>95</div>
+        <div class="start-rail"><strong>Windows</strong>&nbsp;Me</div>
         <div class="menu-list">
             <div class="menu-item menu-item-arrow"><span class="menu-icon menu-icon-programs"></span>Programs</div>
             <div class="menu-item menu-item-arrow"><span class="menu-icon menu-icon-docs"></span>Documents</div>
             <div class="menu-item menu-item-arrow"><span class="menu-icon menu-icon-settings"></span>Settings</div>
-            <div class="menu-item"><span class="menu-icon menu-icon-find"></span>Find</div>
+            <div class="menu-item"><span class="menu-icon menu-icon-find"></span>Search</div>
             <div class="menu-item"><span class="menu-icon menu-icon-help"></span>Help</div>
             <div class="menu-item"><span class="menu-icon menu-icon-run"></span>Run...</div>
             <div class="menu-separator"></div>
@@ -777,8 +1201,18 @@
             <span class="start-flag"><span class="f1"></span><span class="f2"></span><span class="f3"></span><span class="f4"></span></span>
             Start
         </button>
+        <div class="quick-launch">
+            <span class="ql-btn ql-ie" id="qlIE" title="Launch Internet Explorer"></span>
+            <span class="ql-btn ql-outlook" title="Launch Outlook Express"></span>
+            <span class="ql-btn ql-desktop" title="Show Desktop"></span>
+        </div>
         <div class="task-divider"></div>
-        <button class="task-button" id="taskButton" style="display:none;">Internet Explorer</button>
+        <div class="task-area">
+            <button class="task-button" id="taskButton" style="display:none;">
+                <span class="task-icon"></span>
+                <span>about:blank - Microsoft Int...</span>
+            </button>
+        </div>
         <div class="tray">
             <span class="tray-volume" aria-label="Volume"></span>
             <span id="clock">12:00 PM</span>
@@ -796,26 +1230,45 @@
         const clock = document.getElementById('clock');
         const internetExplorerIcon = document.getElementById('internetExplorerIcon');
         const closeWindowBtn = document.getElementById('closeWindowBtn');
+        const minimizeBtn = document.getElementById('minimizeBtn');
         const taskButton = document.getElementById('taskButton');
+        const taskButtonLabel = taskButton.querySelector('span:last-child');
 
         const historyStack = [];
         let historyIndex = -1;
-
         const homePage = 'https://example.com';
 
         function normalizeUrl(raw) {
             const trimmed = raw.trim();
             if (!trimmed) return homePage;
+            if (trimmed === 'about:blank') return trimmed;
             if (/^https?:\/\//i.test(trimmed)) return trimmed;
-            return `https://${trimmed}`;
+            return 'https://' + trimmed;
+        }
+
+        function truncateTitle(url) {
+            const title = url + ' - Microsoft Internet Explorer';
+            return title;
         }
 
         function navigate(url, pushHistory = true) {
             const finalUrl = normalizeUrl(url);
             statusText.textContent = 'Opening page...';
-            frame.src = finalUrl;
+
+            if (finalUrl === 'about:blank') {
+                frame.src = '';
+                frame.removeAttribute('src');
+            } else {
+                frame.src = finalUrl;
+            }
+
             addressInput.value = finalUrl;
-            windowTitle.textContent = finalUrl + ' - Microsoft Internet Explorer';
+            const title = truncateTitle(finalUrl);
+            windowTitle.textContent = title;
+
+            // Update taskbar button label (truncated)
+            const shortTitle = title.length > 30 ? title.substring(0, 28) + '...' : title;
+            taskButtonLabel.textContent = shortTitle;
 
             if (pushHistory) {
                 historyStack.splice(historyIndex + 1);
@@ -826,10 +1279,13 @@
 
         function openInternetExplorer() {
             ieWindow.classList.remove('hidden');
-            taskButton.style.display = 'block';
+            taskButton.style.display = 'flex';
+            startMenu.classList.remove('open');
 
-            if (!frame.src || frame.src === 'about:blank') {
-                navigate(homePage);
+            if (!frame.src || frame.src === 'about:blank' || frame.src === '') {
+                if (historyStack.length === 0) {
+                    navigate('about:blank');
+                }
             }
         }
 
@@ -843,22 +1299,36 @@
             clock.textContent = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
         }
 
+        // Navigation buttons
         document.getElementById('goBtn').addEventListener('click', () => navigate(addressInput.value));
-        addressInput.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter') navigate(addressInput.value);
-        });
+        addressInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') navigate(addressInput.value); });
 
         document.getElementById('homeBtn').addEventListener('click', () => navigate(homePage));
         document.getElementById('refreshBtn').addEventListener('click', () => {
             statusText.textContent = 'Refreshing...';
-            frame.src = addressInput.value;
+            if (addressInput.value && addressInput.value !== 'about:blank') {
+                frame.src = addressInput.value;
+            }
         });
         document.getElementById('stopBtn').addEventListener('click', () => {
-            frame.src = 'about:blank';
+            window.stop();
             statusText.textContent = 'Stopped';
         });
+
+        document.getElementById('searchBtn').addEventListener('click', () => {
+            navigate('https://www.google.com');
+        });
+
         document.getElementById('favoritesBtn').addEventListener('click', () => {
-            alert('Favorites\n\n• https://example.com\n• https://archive.org\n• https://wikipedia.org');
+            alert('Favorites\n\n\u2022 https://example.com\n\u2022 https://archive.org\n\u2022 https://wikipedia.org');
+        });
+
+        document.getElementById('historyBtn').addEventListener('click', () => {
+            if (historyStack.length === 0) {
+                alert('History is empty.');
+            } else {
+                alert('History\n\n' + historyStack.map((u, i) => (i === historyIndex ? '\u25b6 ' : '  ') + u).join('\n'));
+            }
         });
 
         document.getElementById('backBtn').addEventListener('click', () => {
@@ -875,22 +1345,81 @@
             }
         });
 
-        frame.addEventListener('load', () => {
-            statusText.textContent = 'Done';
-        });
+        frame.addEventListener('load', () => { statusText.textContent = 'Done'; });
 
+        // Open IE from desktop icon or quick launch
         internetExplorerIcon.addEventListener('dblclick', openInternetExplorer);
-        taskButton.addEventListener('click', openInternetExplorer);
+        document.getElementById('qlIE').addEventListener('click', openInternetExplorer);
+
+        // Minimize / close
+        minimizeBtn.addEventListener('click', () => {
+            ieWindow.classList.add('hidden');
+        });
+        taskButton.addEventListener('click', () => {
+            if (ieWindow.classList.contains('hidden')) {
+                ieWindow.classList.remove('hidden');
+            } else {
+                ieWindow.classList.add('hidden');
+            }
+        });
         closeWindowBtn.addEventListener('click', closeInternetExplorer);
 
-        startButton.addEventListener('click', () => {
-            startMenu.classList.toggle('open');
+        // Desktop icon selection
+        document.querySelectorAll('.icon').forEach(icon => {
+            icon.addEventListener('click', (e) => {
+                document.querySelectorAll('.icon').forEach(i => i.classList.remove('selected'));
+                icon.classList.add('selected');
+            });
         });
 
-        document.addEventListener('click', (event) => {
-            const clickedStart = startButton.contains(event.target) || startMenu.contains(event.target);
-            if (!clickedStart) {
+        // Click desktop to deselect
+        document.querySelector('.desktop').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget || e.target.classList.contains('desktop-icons')) {
+                document.querySelectorAll('.icon').forEach(i => i.classList.remove('selected'));
+            }
+        });
+
+        // Start menu
+        startButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            startMenu.classList.toggle('open');
+            startButton.classList.toggle('pressed', startMenu.classList.contains('open'));
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!startButton.contains(e.target) && !startMenu.contains(e.target)) {
                 startMenu.classList.remove('open');
+                startButton.classList.remove('pressed');
+            }
+        });
+
+        // Shut Down menu item
+        document.querySelector('.menu-shutdown').addEventListener('click', () => {
+            startMenu.classList.remove('open');
+            startButton.classList.remove('pressed');
+            document.body.style.background = '#000';
+            document.querySelector('.desktop').style.display = 'none';
+            document.querySelector('.taskbar').style.display = 'none';
+            document.querySelector('.start-menu').style.display = 'none';
+
+            const shutdownMsg = document.createElement('div');
+            shutdownMsg.style.cssText = 'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:#FF8000;font-size:24px;font-family:"MS Sans Serif",sans-serif;background:#000;';
+            shutdownMsg.innerHTML = 'It\'s now safe to turn off<br>your computer.';
+            shutdownMsg.style.textAlign = 'center';
+            document.body.appendChild(shutdownMsg);
+
+            shutdownMsg.addEventListener('click', () => {
+                shutdownMsg.remove();
+                document.body.style.background = '#008080';
+                document.querySelector('.desktop').style.display = '';
+                document.querySelector('.taskbar').style.display = '';
+            });
+        });
+
+        // Show Desktop quick launch button
+        document.querySelector('.ql-desktop').addEventListener('click', () => {
+            if (!ieWindow.classList.contains('hidden')) {
+                ieWindow.classList.add('hidden');
             }
         });
 
