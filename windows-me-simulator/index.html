@@ -78,50 +78,6 @@
 
         /* ── Icon Styles (CSS pixel art) ── */
 
-        /* My Documents - Yellow folder */
-        .icon-documents .icon-graphic {
-            background: #FFFF80;
-            border: 1px solid #808040;
-            border-top: 3px solid #808040;
-            border-radius: 0 2px 2px 2px;
-        }
-        .icon-documents .icon-graphic::before {
-            content: "";
-            position: absolute;
-            top: -3px; left: 0;
-            width: 14px; height: 3px;
-            background: #FFFF80;
-            border: 1px solid #808040;
-            border-bottom: none;
-            border-radius: 2px 2px 0 0;
-        }
-
-        /* Online Services - folder with globe */
-        .icon-online-services .icon-graphic {
-            background: #FFFF80;
-            border: 1px solid #808040;
-            border-top: 3px solid #808040;
-            border-radius: 0 2px 2px 2px;
-        }
-        .icon-online-services .icon-graphic::before {
-            content: "";
-            position: absolute;
-            top: -3px; left: 0;
-            width: 14px; height: 3px;
-            background: #FFFF80;
-            border: 1px solid #808040;
-            border-bottom: none;
-        }
-        .icon-online-services .icon-graphic::after {
-            content: "";
-            position: absolute;
-            bottom: 2px; right: 2px;
-            width: 14px; height: 14px;
-            background: #4080FF;
-            border: 1px solid #003080;
-            border-radius: 50%;
-        }
-
         /* My Computer - monitor */
         .icon-my-computer .icon-graphic {
             background: #C0C0C0;
@@ -141,69 +97,6 @@
             bottom: 2px; left: 8px;
             width: 16px; height: 3px;
             background: #808080;
-        }
-
-        /* Outlook Express - envelope */
-        .icon-outlook .icon-graphic {
-            background: #FFFFCC;
-            border: 2px solid #808000;
-        }
-        .icon-outlook .icon-graphic::before {
-            content: "";
-            position: absolute;
-            top: 6px; left: 3px; right: 3px;
-            height: 14px;
-            background: #fff;
-            border: 1px solid #808000;
-        }
-        .icon-outlook .icon-graphic::after {
-            content: "";
-            position: absolute;
-            top: 6px; left: 3px;
-            width: 0; height: 0;
-            border-left: 13px solid transparent;
-            border-right: 13px solid transparent;
-            border-top: 10px solid #808000;
-        }
-
-        /* My Network Places */
-        .icon-network .icon-graphic {
-            background: transparent;
-            border: none;
-        }
-        .icon-network .icon-graphic::before {
-            content: "";
-            position: absolute;
-            top: 4px; left: 2px;
-            width: 12px; height: 10px;
-            background: #C0C0C0;
-            border: 2px solid #000;
-            box-shadow: 14px 0 0 0 #C0C0C0, 14px 0 0 2px #000;
-        }
-        .icon-network .icon-graphic::after {
-            content: "";
-            position: absolute;
-            bottom: 4px; left: 4px;
-            width: 24px; height: 2px;
-            background: #000;
-            box-shadow: 0 4px 0 0 #000;
-        }
-
-        /* Windows Media Player */
-        .icon-media .icon-graphic {
-            background: #000;
-            border: 2px solid #404040;
-            border-radius: 3px;
-        }
-        .icon-media .icon-graphic::before {
-            content: "";
-            position: absolute;
-            top: 50%; left: 55%;
-            transform: translate(-50%, -50%);
-            width: 0; height: 0;
-            border-top: 8px solid transparent;
-            border-bottom: 8px solid transparent;
-            border-left: 12px solid #FF8000;
         }
 
         /* Recycle Bin */
@@ -229,29 +122,6 @@
             border: 2px solid #000;
         }
 
-        /* Connect to Internet */
-        .icon-connect .icon-graphic {
-            background: transparent;
-            border: none;
-        }
-        .icon-connect .icon-graphic::before {
-            content: "";
-            position: absolute;
-            top: 2px; left: 4px;
-            width: 24px; height: 24px;
-            background: #4080FF;
-            border: 2px solid #003080;
-            border-radius: 50%;
-        }
-        .icon-connect .icon-graphic::after {
-            content: "";
-            position: absolute;
-            bottom: 2px; right: 2px;
-            width: 12px; height: 8px;
-            background: #C0C0C0;
-            border: 1px solid #000;
-        }
-
         /* Internet Explorer */
         .icon-ie .icon-graphic {
             background: #fff;
@@ -271,49 +141,259 @@
             line-height: 1;
         }
 
-        /* Setup MSN */
-        .icon-msn .icon-graphic {
-            background: #fff;
-            border: 2px solid #000;
+        /* ── Experiment App Icons ── */
+
+        /* ASCII Art Palette - paint palette */
+        .icon-ascii-palette .icon-graphic {
+            background: #F0E8D0;
+            border: 2px solid #806040;
+            border-radius: 50% 50% 50% 10%;
         }
-        .icon-msn .icon-graphic::before {
+        .icon-ascii-palette .icon-graphic::before {
             content: "";
             position: absolute;
-            top: 4px; left: 3px;
-            width: 10px; height: 16px;
-            background: #FF6600;
-            border-radius: 50% 50% 0 0;
+            top: 4px; left: 4px;
+            width: 8px; height: 8px;
+            background: #FF4040;
+            border-radius: 50%;
+            box-shadow: 12px 0 0 0 #4040FF, 6px 11px 0 0 #40C040;
         }
-        .icon-msn .icon-graphic::after {
+        .icon-ascii-palette .icon-graphic::after {
             content: "";
             position: absolute;
-            top: 6px; right: 3px;
-            width: 10px; height: 16px;
-            background: #00CC00;
-            border-radius: 50% 50% 0 0;
+            bottom: 2px; right: 2px;
+            width: 5px; height: 12px;
+            background: #804020;
+            border-radius: 1px 1px 3px 3px;
+            transform: rotate(-25deg);
         }
 
-        /* My Briefcase */
-        .icon-briefcase .icon-graphic {
-            background: #808080;
+        /* ASCII Runner - terminal/game */
+        .icon-ascii-runner .icon-graphic {
+            background: #000;
             border: 2px solid #404040;
-            border-radius: 0 0 2px 2px;
+            border-radius: 2px;
         }
-        .icon-briefcase .icon-graphic::before {
+        .icon-ascii-runner .icon-graphic::before {
+            content: ">";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -55%);
+            font-size: 18px;
+            color: #00FF00;
+            font-weight: bold;
+            font-family: "Courier New", monospace;
+        }
+        .icon-ascii-runner .icon-graphic::after {
             content: "";
             position: absolute;
-            top: -4px; left: 8px;
-            width: 12px; height: 6px;
-            border: 2px solid #404040;
-            border-bottom: none;
+            bottom: 3px; left: 3px; right: 3px;
+            height: 2px;
+            background: #00FF00;
+        }
+
+        /* Hello World - speech bubble */
+        .icon-hello-world .icon-graphic {
+            background: #FFFFCC;
+            border: 2px solid #808000;
+            border-radius: 4px;
+        }
+        .icon-hello-world .icon-graphic::before {
+            content: "Hi!";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -60%);
+            font-size: 11px;
+            color: #000080;
+            font-weight: bold;
+            font-family: "MS Sans Serif", Arial, sans-serif;
+        }
+        .icon-hello-world .icon-graphic::after {
+            content: "";
+            position: absolute;
+            bottom: -5px; left: 6px;
+            width: 0; height: 0;
+            border-left: 5px solid #808000;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #808000;
+        }
+
+        /* Local Weather - sun over sky */
+        .icon-local-weather .icon-graphic {
+            background: #87CEEB;
+            border: 2px solid #4080FF;
+            border-radius: 2px;
+        }
+        .icon-local-weather .icon-graphic::before {
+            content: "";
+            position: absolute;
+            top: 3px; left: 8px;
+            width: 12px; height: 12px;
+            background: #FFCC00;
+            border-radius: 50%;
+            border: 2px solid #FF8000;
+        }
+        .icon-local-weather .icon-graphic::after {
+            content: "";
+            position: absolute;
+            bottom: 3px; left: 1px; right: 1px;
+            height: 9px;
+            background: #fff;
+            border-radius: 8px 8px 0 0;
+        }
+
+        /* Location Scene Generator - map pin */
+        .icon-location-scene .icon-graphic {
             background: transparent;
+            border: none;
         }
-        .icon-briefcase .icon-graphic::after {
+        .icon-location-scene .icon-graphic::before {
             content: "";
             position: absolute;
-            top: 8px; left: 6px;
-            width: 16px; height: 2px;
+            top: 1px; left: 7px;
+            width: 16px; height: 16px;
+            background: #FF4040;
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            border: 2px solid #CC0000;
+        }
+        .icon-location-scene .icon-graphic::after {
+            content: "";
+            position: absolute;
+            top: 19px; left: 13px;
+            width: 4px; height: 10px;
+            background: #CC0000;
+            border-radius: 0 0 3px 3px;
+        }
+
+        /* AI Image Generation - dark canvas with star */
+        .icon-ai-image .icon-graphic {
+            background: #1A1A2E;
+            border: 2px solid #444;
+            border-radius: 3px;
+        }
+        .icon-ai-image .icon-graphic::before {
+            content: "✦";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+            color: #FFD700;
+        }
+        .icon-ai-image .icon-graphic::after {
+            content: "";
+            position: absolute;
+            bottom: 3px; right: 3px;
+            width: 8px; height: 8px;
+            background: #FF6060;
+            border-radius: 50%;
+        }
+
+        /* Platformer - game controller */
+        .icon-platformer .icon-graphic {
             background: #404040;
+            border: 2px solid #000;
+            border-radius: 6px;
+        }
+        .icon-platformer .icon-graphic::before {
+            content: "";
+            position: absolute;
+            top: 8px; left: 5px;
+            width: 6px; height: 10px;
+            border: 2px solid #C0C0C0;
+            border-radius: 1px;
+        }
+        .icon-platformer .icon-graphic::after {
+            content: "";
+            position: absolute;
+            top: 11px; right: 5px;
+            width: 6px; height: 6px;
+            background: #CC2020;
+            border-radius: 50%;
+            box-shadow: -8px 0 0 0 #2060CC;
+        }
+
+        /* Valentine's Card - heart */
+        .icon-valentines .icon-graphic {
+            background: #FFF0F5;
+            border: 2px solid #CC0044;
+            border-radius: 2px;
+        }
+        .icon-valentines .icon-graphic::before {
+            content: "♥";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            color: #CC0044;
+        }
+
+        /* Weather Image (Netlify) - cloud with rain */
+        .icon-weather-netlify .icon-graphic {
+            background: #87CEEB;
+            border: 2px solid #4080FF;
+            border-radius: 2px;
+        }
+        .icon-weather-netlify .icon-graphic::before {
+            content: "";
+            position: absolute;
+            top: 4px; left: 1px; right: 1px;
+            height: 12px;
+            background: #fff;
+            border-radius: 10px;
+            border: 1px solid #A0A0A0;
+        }
+        .icon-weather-netlify .icon-graphic::after {
+            content: "";
+            position: absolute;
+            bottom: 3px; left: 6px;
+            width: 3px; height: 7px;
+            background: #4080FF;
+            border-radius: 0 0 2px 2px;
+            box-shadow: 6px 0 0 0 #4080FF, 12px 0 0 0 #4080FF;
+        }
+
+        /* Weather to Image - cloud above image frame */
+        .icon-weather-to-image .icon-graphic {
+            background: #E8F4FF;
+            border: 2px solid #4080FF;
+            border-radius: 2px;
+        }
+        .icon-weather-to-image .icon-graphic::before {
+            content: "";
+            position: absolute;
+            top: 2px; left: 2px; right: 2px;
+            height: 10px;
+            background: #C8E0F8;
+            border-radius: 8px;
+            border: 1px solid #6090C0;
+        }
+        .icon-weather-to-image .icon-graphic::after {
+            content: "";
+            position: absolute;
+            bottom: 2px; left: 3px; right: 3px;
+            height: 12px;
+            background: #fff;
+            border: 2px solid #808080;
+        }
+
+        /* ── App Window (no address bar) ── */
+        .app-title-logo {
+            width: 16px;
+            height: 16px;
+            background: #FFFF80;
+            border: 1px solid #808040;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .app-title-logo::before {
+            content: "";
+            position: absolute;
+            top: -3px; left: 0;
+            width: 8px; height: 3px;
+            background: #FFFF80;
+            border: 1px solid #808040;
+            border-bottom: none;
         }
 
         /* ── IE Window ── */
@@ -1250,17 +1330,19 @@
 <body>
     <div class="desktop">
         <div class="desktop-icons">
-            <div class="icon icon-documents"><div class="icon-graphic"></div><span class="icon-label">My Documents</span></div>
-            <div class="icon icon-online-services"><div class="icon-graphic"></div><span class="icon-label">Online Services</span></div>
             <div class="icon icon-my-computer"><div class="icon-graphic"></div><span class="icon-label">My Computer</span></div>
-            <div class="icon icon-outlook"><div class="icon-graphic"></div><span class="icon-label">Outlook Express</span></div>
-            <div class="icon icon-network"><div class="icon-graphic"></div><span class="icon-label">My Network Places</span></div>
-            <div class="icon icon-media"><div class="icon-graphic"></div><span class="icon-label">Windows Media Player</span></div>
-            <div class="icon icon-recycle"><div class="icon-graphic"></div><span class="icon-label">Recycle Bin</span></div>
-            <div class="icon icon-connect"><div class="icon-graphic"></div><span class="icon-label">Connect to the Internet</span></div>
             <div class="icon icon-ie" id="internetExplorerIcon"><div class="icon-graphic"></div><span class="icon-label">Internet Explorer</span></div>
-            <div class="icon icon-msn"><div class="icon-graphic"></div><span class="icon-label">Setup MSN Internet Access</span></div>
-            <div class="icon icon-briefcase"><div class="icon-graphic"></div><span class="icon-label">My Briefcase</span></div>
+            <div class="icon icon-recycle"><div class="icon-graphic"></div><span class="icon-label">Recycle Bin</span></div>
+            <div class="icon icon-ascii-palette" id="iconAsciiArtPalette"><div class="icon-graphic"></div><span class="icon-label">ASCII Art Palette</span></div>
+            <div class="icon icon-ascii-runner" id="iconAsciiRunner"><div class="icon-graphic"></div><span class="icon-label">ASCII Runner</span></div>
+            <div class="icon icon-hello-world" id="iconHelloWorld"><div class="icon-graphic"></div><span class="icon-label">Hello World</span></div>
+            <div class="icon icon-local-weather" id="iconLocalWeather"><div class="icon-graphic"></div><span class="icon-label">Local Weather</span></div>
+            <div class="icon icon-location-scene" id="iconLocationScene"><div class="icon-graphic"></div><span class="icon-label">Location Scene</span></div>
+            <div class="icon icon-ai-image" id="iconAIImage"><div class="icon-graphic"></div><span class="icon-label">AI Image Gen</span></div>
+            <div class="icon icon-platformer" id="iconPlatformer"><div class="icon-graphic"></div><span class="icon-label">Platformer</span></div>
+            <div class="icon icon-valentines" id="iconValentines"><div class="icon-graphic"></div><span class="icon-label">Valentine's Card</span></div>
+            <div class="icon icon-weather-netlify" id="iconWeatherNetlify"><div class="icon-graphic"></div><span class="icon-label">Weather Image</span></div>
+            <div class="icon icon-weather-to-image" id="iconWeatherToImage"><div class="icon-graphic"></div><span class="icon-label">Weather to Image</span></div>
         </div>
 
         <section class="window hidden" id="ieWindow" aria-label="Internet Explorer window">
@@ -1313,6 +1395,32 @@
             </div>
         </section>
 
+        <section class="window app-window hidden" id="appWindow" aria-label="Application window" style="left: clamp(110px, 15vw, 190px); top: 28px;">
+            <div class="titlebar" id="appTitlebar">
+                <div class="title-left">
+                    <span class="app-title-logo" aria-hidden="true"></span>
+                    <span id="appWindowTitle">Application</span>
+                </div>
+                <div class="window-controls">
+                    <div class="ctrl-btn" id="appMinimizeBtn">_</div>
+                    <div class="ctrl-btn">□</div>
+                    <button class="ctrl-btn" id="appCloseBtn" aria-label="Close">×</button>
+                </div>
+            </div>
+
+            <div class="menubar">
+                <span>File</span><span>View</span><span>Help</span>
+            </div>
+
+            <div class="view">
+                <iframe id="appFrame" title="Application content" referrerpolicy="no-referrer"></iframe>
+            </div>
+
+            <div class="status">
+                <span class="status-left" id="appStatusText">Done</span>
+            </div>
+        </section>
+
         <p class="quick-note">Double-click (or tap) Internet Explorer to browse. Some modern sites block iframes.</p>
     </div>
 
@@ -1345,6 +1453,10 @@
             <button class="task-button" id="taskButton" style="display:none;">
                 <span class="task-icon"></span>
                 <span>about:blank - Microsoft Int...</span>
+            </button>
+            <button class="task-button" id="appTaskButton" style="display:none;">
+                <span class="task-icon" style="background:#FFFF80;border:1px solid #808040;"></span>
+                <span id="appTaskLabel">Application</span>
             </button>
         </div>
         <div class="tray">
@@ -1481,13 +1593,73 @@
 
         frame.addEventListener('load', () => { statusText.textContent = 'Done'; });
 
+        // App Window
+        const appWindow = document.getElementById('appWindow');
+        const appFrame = document.getElementById('appFrame');
+        const appWindowTitle = document.getElementById('appWindowTitle');
+        const appStatusText = document.getElementById('appStatusText');
+        const appMinimizeBtn = document.getElementById('appMinimizeBtn');
+        const appCloseBtn = document.getElementById('appCloseBtn');
+        const appTaskButton = document.getElementById('appTaskButton');
+        const appTaskLabel = document.getElementById('appTaskLabel');
+
+        function openApp(title, url) {
+            appWindowTitle.textContent = title;
+            appFrame.src = url;
+            appStatusText.textContent = 'Opening...';
+            appWindow.classList.remove('hidden');
+            appTaskButton.style.display = 'flex';
+            appTaskLabel.textContent = title.length > 22 ? title.substring(0, 20) + '...' : title;
+            startMenu.classList.remove('open');
+        }
+
+        function closeApp() {
+            appWindow.classList.add('hidden');
+            appTaskButton.style.display = 'none';
+            appFrame.src = '';
+        }
+
+        appFrame.addEventListener('load', () => { appStatusText.textContent = 'Done'; });
+
+        appMinimizeBtn.addEventListener('click', () => { appWindow.classList.add('hidden'); });
+        appCloseBtn.addEventListener('click', closeApp);
+        appTaskButton.addEventListener('click', () => {
+            if (appWindow.classList.contains('hidden')) {
+                appWindow.classList.remove('hidden');
+            } else {
+                appWindow.classList.add('hidden');
+            }
+        });
+
         // Open IE from desktop icon — single tap on touch, double-click on desktop
-        if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        const appEventType = isTouchDevice ? 'click' : 'dblclick';
+
+        if (isTouchDevice) {
             internetExplorerIcon.addEventListener('click', openInternetExplorer);
         } else {
             internetExplorerIcon.addEventListener('dblclick', openInternetExplorer);
         }
         document.getElementById('qlIE').addEventListener('click', openInternetExplorer);
+
+        // Experiment app icons
+        const experimentApps = [
+            { id: 'iconAsciiArtPalette', title: 'ASCII Art Palette', url: '../ascii-art-palette/index.html' },
+            { id: 'iconAsciiRunner',     title: 'ASCII Runner',      url: '../ascii-runner/index.html' },
+            { id: 'iconHelloWorld',      title: 'Hello World',       url: '../hello-world/index.html' },
+            { id: 'iconLocalWeather',    title: 'Local Weather',     url: '../local-weather/index.html' },
+            { id: 'iconLocationScene',   title: 'Location Scene Generator', url: '../location-scene-generator/index.html' },
+            { id: 'iconAIImage',         title: 'AI Image Generation', url: '../openai-image-generation/index.html' },
+            { id: 'iconPlatformer',      title: 'Platformer',        url: '../platformer/index.html' },
+            { id: 'iconValentines',      title: "Valentine's Card",  url: '../valentines-card/index.html' },
+            { id: 'iconWeatherNetlify',  title: 'Weather Image',     url: '../weather-image-netlify/index.html' },
+            { id: 'iconWeatherToImage',  title: 'Weather to Image',  url: '../weather-to-image/index.html' },
+        ];
+
+        experimentApps.forEach(({ id, title, url }) => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener(appEventType, () => openApp(title, url));
+        });
 
         // Minimize / close
         minimizeBtn.addEventListener('click', () => {
@@ -1558,6 +1730,9 @@
         document.querySelector('.ql-desktop').addEventListener('click', () => {
             if (!ieWindow.classList.contains('hidden')) {
                 ieWindow.classList.add('hidden');
+            }
+            if (!appWindow.classList.contains('hidden')) {
+                appWindow.classList.add('hidden');
             }
         });
 
