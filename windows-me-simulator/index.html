@@ -1101,15 +1101,149 @@
 
         /* ── Responsive ── */
         @media (max-width: 700px) {
-            .window {
-                left: 4px;
-                top: 4px;
-                width: calc(100vw - 8px);
-                min-width: auto;
+            /* Desktop padding accounts for taller taskbar */
+            .desktop {
+                padding-bottom: 48px;
             }
-            .desktop-icons { display: none; }
-            .start-menu { width: calc(100vw - 4px); }
-            .quick-launch { display: none; }
+
+            /* Show icons in horizontal rows instead of vertical columns */
+            .desktop-icons {
+                flex-direction: row;
+                flex-wrap: wrap;
+                height: auto;
+                max-height: calc(100vh - 50px);
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                gap: 2px;
+                padding: 4px;
+                align-content: flex-start;
+            }
+
+            .icon {
+                width: 72px;
+                padding: 6px 2px;
+            }
+
+            /* Window fills full screen (minus taskbar) */
+            .window {
+                left: 0;
+                top: 0;
+                width: 100vw;
+                height: calc(100vh - 44px);
+                min-width: 0;
+                min-height: 0;
+            }
+
+            /* Taller titlebar for easier touch on close/minimize */
+            .titlebar {
+                height: 30px;
+            }
+
+            /* Larger control buttons for touch */
+            .ctrl-btn {
+                width: 26px;
+                height: 24px;
+                font-size: 14px;
+            }
+
+            /* Hide menubar to save vertical space */
+            .menubar {
+                display: none;
+            }
+
+            /* Toolbar scrolls horizontally */
+            .toolbar {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                flex-wrap: nowrap;
+            }
+            .toolbar::-webkit-scrollbar { display: none; }
+
+            /* Larger toolbar buttons for touch targets */
+            .tb-btn {
+                min-width: 52px;
+                height: 44px;
+                flex-shrink: 0;
+            }
+
+            /* Address row - compact for mobile */
+            .address-row label {
+                display: none;
+            }
+            .address-row .toolbar-grip {
+                display: none;
+            }
+            .address-row input {
+                height: 34px;
+                font-size: 16px; /* 16px prevents auto-zoom on iOS */
+                padding: 0 4px 0 22px;
+            }
+            .address-row .go-btn {
+                height: 34px;
+                min-width: 48px;
+                padding: 0 8px;
+            }
+
+            /* Taskbar height increased for touch targets */
+            .taskbar {
+                height: 44px;
+            }
+
+            /* Larger start button */
+            .start-btn {
+                height: 38px;
+                font-size: 13px;
+                padding: 0 8px;
+            }
+
+            /* Show quick launch on mobile with larger buttons */
+            .quick-launch {
+                display: flex;
+            }
+            .ql-btn {
+                width: 32px;
+                height: 32px;
+            }
+
+            /* Task button */
+            .task-button {
+                height: 36px;
+                min-width: 80px;
+                max-width: 150px;
+                font-size: 11px;
+            }
+
+            /* Tray */
+            .tray {
+                height: 38px;
+                font-size: 12px;
+                padding: 0 6px;
+                gap: 4px;
+            }
+
+            /* Start menu */
+            .start-menu {
+                width: calc(100vw - 4px);
+                bottom: 44px;
+            }
+
+            /* Larger menu items for touch */
+            .menu-item {
+                padding: 10px 16px 10px 8px;
+                font-size: 14px;
+            }
+            .menu-icon {
+                width: 20px;
+                height: 20px;
+            }
+
+            /* Move hint above taller taskbar */
+            .quick-note {
+                bottom: 52px;
+                font-size: 11px;
+                max-width: 200px;
+            }
         }
     </style>
 </head>
@@ -1179,7 +1313,7 @@
             </div>
         </section>
 
-        <p class="quick-note">Double-click Internet Explorer to browse. Some modern sites block iframes.</p>
+        <p class="quick-note">Double-click (or tap) Internet Explorer to browse. Some modern sites block iframes.</p>
     </div>
 
     <div class="start-menu" id="startMenu" aria-label="Start menu">
@@ -1347,8 +1481,12 @@
 
         frame.addEventListener('load', () => { statusText.textContent = 'Done'; });
 
-        // Open IE from desktop icon or quick launch
-        internetExplorerIcon.addEventListener('dblclick', openInternetExplorer);
+        // Open IE from desktop icon — single tap on touch, double-click on desktop
+        if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+            internetExplorerIcon.addEventListener('click', openInternetExplorer);
+        } else {
+            internetExplorerIcon.addEventListener('dblclick', openInternetExplorer);
+        }
         document.getElementById('qlIE').addEventListener('click', openInternetExplorer);
 
         // Minimize / close
