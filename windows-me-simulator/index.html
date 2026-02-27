@@ -16,6 +16,132 @@
             font-size: 11px;
         }
 
+        /* ── Boot Screen ── */
+        .boot-screen {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .boot-screen.hidden { display: none; }
+
+        .boot-bios {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            color: #AAAAAA;
+            font-family: "Courier New", monospace;
+            font-size: 14px;
+            padding: 20px;
+            white-space: pre-line;
+            z-index: 10000;
+        }
+        .boot-bios.hidden { display: none; }
+
+        .boot-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .boot-clouds {
+            width: 400px;
+            height: 200px;
+            background: linear-gradient(180deg, #000033 0%, #000066 20%, #003399 40%, #0066CC 55%, #3399FF 70%, #66CCFF 85%, #99DDFF 100%);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        .boot-clouds::before {
+            content: "";
+            position: absolute;
+            bottom: 30px;
+            left: 20px;
+            width: 100px;
+            height: 40px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 20px;
+            box-shadow: 150px -20px 0 10px rgba(255,255,255,0.2), 80px 10px 0 5px rgba(255,255,255,0.25);
+        }
+
+        .boot-title {
+            color: #fff;
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+        .boot-title span {
+            color: #FFD700;
+            font-style: italic;
+        }
+
+        .boot-subtitle {
+            color: #C0C0C0;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .boot-progress-container {
+            width: 300px;
+            height: 20px;
+            background: #000;
+            border: 2px solid #333;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        .boot-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #0040A0, #0070D0, #0040A0);
+            transition: width 0.3s;
+        }
+
+        .boot-status {
+            color: #808080;
+            font-size: 11px;
+            margin-top: 8px;
+        }
+
+        /* ── BSOD ── */
+        .bsod {
+            position: fixed;
+            inset: 0;
+            background: #0000AA;
+            color: #fff;
+            font-family: "Lucida Console", "Courier New", monospace;
+            font-size: 14px;
+            padding: 40px;
+            z-index: 99999;
+            display: none;
+            cursor: default;
+            line-height: 1.6;
+        }
+        .bsod.active { display: block; }
+        .bsod-header {
+            background: #AAAAAA;
+            color: #0000AA;
+            display: inline;
+            padding: 0 8px;
+            font-weight: bold;
+        }
+        .bsod pre {
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-family: inherit;
+        }
+
+        /* ── Loading cursor ── */
+        body.loading, body.loading * {
+            cursor: wait !important;
+        }
+
         /* ── Desktop ── */
         .desktop {
             position: fixed;
@@ -273,7 +399,7 @@
             border-radius: 3px;
         }
         .icon-ai-image .icon-graphic::before {
-            content: "✦";
+            content: "\2726";
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
@@ -320,7 +446,7 @@
             border-radius: 2px;
         }
         .icon-valentines .icon-graphic::before {
-            content: "♥";
+            content: "\2665";
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
@@ -430,6 +556,7 @@
             padding: 0 3px;
             font-size: 11px;
             font-weight: bold;
+            cursor: default;
         }
 
         .titlebar.inactive {
@@ -620,7 +747,7 @@
         }
 
         .tb-icon-stop::before {
-            content: "×";
+            content: "\00d7";
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
@@ -684,7 +811,7 @@
         }
 
         .tb-icon-favorites::before {
-            content: "★";
+            content: "\2605";
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
@@ -1122,6 +1249,7 @@
             font-size: 11px;
             cursor: default;
             white-space: nowrap;
+            position: relative;
         }
         .menu-item:hover {
             background: #000080;
@@ -1156,7 +1284,7 @@
         }
 
         .menu-item-arrow::after {
-            content: "▶";
+            content: "\25b6";
             font-size: 8px;
             margin-left: auto;
         }
@@ -1165,6 +1293,387 @@
             border-top: 2px solid #808080;
             padding-top: 4px;
             margin-top: 2px;
+        }
+
+        /* ── Programs Submenu ── */
+        .programs-submenu {
+            position: fixed;
+            left: 222px;
+            width: 200px;
+            background: #C0C0C0;
+            border-top: 2px solid #fff;
+            border-left: 2px solid #fff;
+            border-bottom: 2px solid #808080;
+            border-right: 2px solid #808080;
+            display: none;
+            z-index: 26;
+            padding: 2px 0;
+        }
+        .programs-submenu.open { display: block; }
+
+        .submenu-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 16px 5px 8px;
+            font-size: 11px;
+            cursor: default;
+            white-space: nowrap;
+        }
+        .submenu-item:hover {
+            background: #000080;
+            color: #fff;
+        }
+
+        .submenu-icon {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        /* ── Right-click context menu ── */
+        .context-menu {
+            position: fixed;
+            background: #C0C0C0;
+            border-top: 2px solid #fff;
+            border-left: 2px solid #fff;
+            border-bottom: 2px solid #808080;
+            border-right: 2px solid #808080;
+            min-width: 160px;
+            padding: 2px 0;
+            z-index: 30;
+            display: none;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        }
+        .context-menu.open { display: block; }
+        .context-menu-item {
+            padding: 4px 24px 4px 24px;
+            font-size: 11px;
+            cursor: default;
+            white-space: nowrap;
+        }
+        .context-menu-item:hover {
+            background: #000080;
+            color: #fff;
+        }
+        .context-menu-item.disabled {
+            color: #808080;
+        }
+        .context-menu-item.disabled:hover {
+            background: transparent;
+            color: #808080;
+        }
+        .context-menu-sep {
+            border-top: 1px solid #808080;
+            border-bottom: 1px solid #fff;
+            margin: 3px 2px;
+        }
+        .context-menu-item .check-mark {
+            margin-left: -16px;
+            margin-right: 4px;
+        }
+
+        /* ── Dialog Box (Win32 style) ── */
+        .dialog-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: none;
+        }
+        .dialog-overlay.active { display: flex; align-items: center; justify-content: center; }
+
+        .dialog-box {
+            background: #C0C0C0;
+            border-top: 2px solid #fff;
+            border-left: 2px solid #fff;
+            border-bottom: 2px solid #000;
+            border-right: 2px solid #000;
+            box-shadow: inset 1px 1px 0 #DFDFDF, inset -1px -1px 0 #808080;
+            min-width: 340px;
+            max-width: 480px;
+            padding: 3px;
+        }
+
+        .dialog-titlebar {
+            height: 22px;
+            background: linear-gradient(to right, #0A246A, #3A6EA5);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 3px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .dialog-body {
+            padding: 12px 16px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .dialog-icon {
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .dialog-icon-error {
+            background: #FF0000;
+            border-radius: 50%;
+            border: 2px solid #CC0000;
+        }
+        .dialog-icon-error::before {
+            content: "\00d7";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .dialog-icon-warning {
+            width: 0;
+            height: 0;
+            border-left: 16px solid transparent;
+            border-right: 16px solid transparent;
+            border-bottom: 28px solid #FFFF00;
+        }
+        .dialog-icon-warning::before {
+            content: "!";
+            position: absolute;
+            bottom: -26px; left: 50%;
+            transform: translateX(-50%);
+            color: #000;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .dialog-icon-info {
+            background: #fff;
+            border: 2px solid #0060C0;
+            border-radius: 50%;
+        }
+        .dialog-icon-info::before {
+            content: "i";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: #0060C0;
+            font-size: 18px;
+            font-weight: bold;
+            font-family: "Times New Roman", serif;
+            font-style: italic;
+        }
+
+        .dialog-text {
+            font-size: 11px;
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        .dialog-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 16px 12px;
+        }
+
+        .dialog-btn {
+            min-width: 75px;
+            height: 23px;
+            background: #C0C0C0;
+            border-top: 2px solid #fff;
+            border-left: 2px solid #fff;
+            border-bottom: 2px solid #808080;
+            border-right: 2px solid #808080;
+            font-size: 11px;
+            font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif;
+            cursor: default;
+            padding: 0 8px;
+        }
+        .dialog-btn:active {
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-bottom: 2px solid #fff;
+            border-right: 2px solid #fff;
+        }
+        .dialog-btn:focus {
+            outline: 1px dotted #000;
+            outline-offset: -4px;
+        }
+
+        /* ── Run Dialog ── */
+        .run-dialog .dialog-body {
+            flex-direction: column;
+            gap: 8px;
+        }
+        .run-dialog .run-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .run-dialog .run-icon-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .run-dialog input {
+            flex: 1;
+            height: 22px;
+            border: 2px inset #C0C0C0;
+            padding: 0 4px;
+            font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif;
+            font-size: 11px;
+            background: #fff;
+            outline: none;
+        }
+
+        /* ── Notepad Window ── */
+        .notepad-window {
+            min-width: 380px;
+            min-height: 280px;
+        }
+        .notepad-textarea {
+            width: 100%;
+            height: 100%;
+            border: none;
+            resize: none;
+            font-family: "Courier New", "Lucida Console", monospace;
+            font-size: 13px;
+            padding: 2px 4px;
+            outline: none;
+            background: #fff;
+            color: #000;
+        }
+
+        /* ── My Computer / Folder View ── */
+        .folder-view {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 12px;
+            align-content: flex-start;
+            overflow-y: auto;
+            height: 100%;
+            background: #fff;
+        }
+        .folder-item {
+            width: 70px;
+            text-align: center;
+            padding: 4px;
+            cursor: default;
+            font-size: 11px;
+        }
+        .folder-item:hover {
+            background: #000080;
+            color: #fff;
+        }
+        .folder-item-icon {
+            width: 32px;
+            height: 32px;
+            margin: 0 auto 4px;
+            position: relative;
+        }
+
+        /* Drive icons */
+        .drive-icon-floppy {
+            background: #404040;
+            border: 2px solid #000;
+            border-radius: 2px 2px 0 0;
+        }
+        .drive-icon-floppy::before {
+            content: "";
+            position: absolute;
+            top: 2px; left: 6px;
+            width: 14px; height: 8px;
+            background: #C0C0C0;
+            border: 1px solid #808080;
+        }
+        .drive-icon-floppy::after {
+            content: "";
+            position: absolute;
+            bottom: 2px; left: 4px;
+            width: 20px; height: 10px;
+            background: #808080;
+            border-radius: 2px;
+        }
+
+        .drive-icon-hdd {
+            background: #C0C0C0;
+            border: 2px solid #808080;
+        }
+        .drive-icon-hdd::before {
+            content: "";
+            position: absolute;
+            top: 4px; left: 4px; right: 4px;
+            height: 10px;
+            background: #E0E0E0;
+            border: 1px solid #808080;
+        }
+        .drive-icon-hdd::after {
+            content: "";
+            position: absolute;
+            bottom: 6px; right: 6px;
+            width: 6px; height: 6px;
+            background: #00CC00;
+            border-radius: 50%;
+        }
+
+        .drive-icon-cdrom {
+            background: #E0E0E0;
+            border: 2px solid #808080;
+            border-radius: 50%;
+        }
+        .drive-icon-cdrom::before {
+            content: "";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px; height: 8px;
+            background: #C0C0C0;
+            border: 2px solid #A0A0A0;
+            border-radius: 50%;
+        }
+
+        .folder-icon-cp {
+            background: #C0C0C0;
+            border: 2px solid #808080;
+        }
+        .folder-icon-cp::before {
+            content: "";
+            position: absolute;
+            top: 4px; left: 4px;
+            width: 10px; height: 10px;
+            background: #808080;
+            border-radius: 50%;
+        }
+        .folder-icon-cp::after {
+            content: "";
+            position: absolute;
+            bottom: 4px; right: 4px;
+            width: 8px; height: 4px;
+            background: #808080;
+        }
+
+        .folder-icon-folder {
+            background: #FFCC00;
+            border: 2px solid #CC9900;
+            border-radius: 0 2px 2px 2px;
+        }
+        .folder-icon-folder::before {
+            content: "";
+            position: absolute;
+            top: -5px; left: 0;
+            width: 12px; height: 5px;
+            background: #FFCC00;
+            border: 2px solid #CC9900;
+            border-bottom: none;
+            border-radius: 2px 2px 0 0;
         }
 
         /* ── Hint ── */
@@ -1179,14 +1688,24 @@
             text-align: right;
         }
 
+        /* ── Clock tooltip ── */
+        .clock-tooltip {
+            position: fixed;
+            background: #FFFFCC;
+            border: 1px solid #000;
+            padding: 2px 6px;
+            font-size: 11px;
+            z-index: 50;
+            display: none;
+            white-space: nowrap;
+        }
+
         /* ── Responsive ── */
         @media (max-width: 700px) {
-            /* Desktop padding accounts for taller taskbar */
             .desktop {
                 padding-bottom: 48px;
             }
 
-            /* Show icons in horizontal rows instead of vertical columns */
             .desktop-icons {
                 flex-direction: row;
                 flex-wrap: wrap;
@@ -1204,34 +1723,29 @@
                 padding: 6px 2px;
             }
 
-            /* Window fills full screen (minus taskbar) */
             .window {
-                left: 0;
-                top: 0;
-                width: 100vw;
-                height: calc(100vh - 44px);
+                left: 0 !important;
+                top: 0 !important;
+                width: 100vw !important;
+                height: calc(100vh - 44px) !important;
                 min-width: 0;
                 min-height: 0;
             }
 
-            /* Taller titlebar for easier touch on close/minimize */
             .titlebar {
                 height: 30px;
             }
 
-            /* Larger control buttons for touch */
             .ctrl-btn {
                 width: 26px;
                 height: 24px;
                 font-size: 14px;
             }
 
-            /* Hide menubar to save vertical space */
             .menubar {
                 display: none;
             }
 
-            /* Toolbar scrolls horizontally */
             .toolbar {
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
@@ -1240,14 +1754,12 @@
             }
             .toolbar::-webkit-scrollbar { display: none; }
 
-            /* Larger toolbar buttons for touch targets */
             .tb-btn {
                 min-width: 52px;
                 height: 44px;
                 flex-shrink: 0;
             }
 
-            /* Address row - compact for mobile */
             .address-row label {
                 display: none;
             }
@@ -1256,7 +1768,7 @@
             }
             .address-row input {
                 height: 34px;
-                font-size: 16px; /* 16px prevents auto-zoom on iOS */
+                font-size: 16px;
                 padding: 0 4px 0 22px;
             }
             .address-row .go-btn {
@@ -1265,19 +1777,16 @@
                 padding: 0 8px;
             }
 
-            /* Taskbar height increased for touch targets */
             .taskbar {
                 height: 44px;
             }
 
-            /* Larger start button */
             .start-btn {
                 height: 38px;
                 font-size: 13px;
                 padding: 0 8px;
             }
 
-            /* Show quick launch on mobile with larger buttons */
             .quick-launch {
                 display: flex;
             }
@@ -1286,7 +1795,6 @@
                 height: 32px;
             }
 
-            /* Task button */
             .task-button {
                 height: 36px;
                 min-width: 80px;
@@ -1294,7 +1802,6 @@
                 font-size: 11px;
             }
 
-            /* Tray */
             .tray {
                 height: 38px;
                 font-size: 12px;
@@ -1302,13 +1809,11 @@
                 gap: 4px;
             }
 
-            /* Start menu */
             .start-menu {
                 width: calc(100vw - 4px);
                 bottom: 44px;
             }
 
-            /* Larger menu items for touch */
             .menu-item {
                 padding: 10px 16px 10px 8px;
                 font-size: 14px;
@@ -1318,21 +1823,88 @@
                 height: 20px;
             }
 
-            /* Move hint above taller taskbar */
             .quick-note {
                 bottom: 52px;
                 font-size: 11px;
                 max-width: 200px;
             }
+
+            .programs-submenu {
+                left: 0 !important;
+                width: calc(100vw - 4px);
+            }
         }
     </style>
 </head>
 <body>
-    <div class="desktop">
+
+    <!-- Boot BIOS screen -->
+    <div class="boot-bios" id="bootBios">
+Award Modular BIOS v6.00PG, An Energy Star Ally
+Copyright (C) 1984-2000, Award Software, Inc.
+
+Intel Pentium III 800MHz Processor
+Memory Test: <span id="biosMemory">0</span>K OK
+
+Detecting Primary Master... WDC AC310200R
+Detecting Primary Slave... GENERIC CD-ROM
+Detecting Secondary Master... None
+Detecting Secondary Slave... None
+
+<span id="biosStatus">Initializing Plug and Play Cards...</span>
+    </div>
+
+    <!-- Boot splash screen -->
+    <div class="boot-screen hidden" id="bootScreen">
+        <div class="boot-logo">
+            <div class="boot-clouds"></div>
+            <div class="boot-title">Microsoft<br><span>Windows Me</span></div>
+            <div class="boot-subtitle">Millennium Edition</div>
+            <div class="boot-progress-container">
+                <div class="boot-progress-bar" id="bootProgress"></div>
+            </div>
+            <div class="boot-status" id="bootStatus">Loading Windows...</div>
+        </div>
+    </div>
+
+    <!-- BSOD -->
+    <div class="bsod" id="bsod">
+        <span class="bsod-header"> Windows </span>
+<pre id="bsodText">
+An exception 0E has occurred at 0028:C0011E36 in VxD VMM(01) +
+00010E36. This was called from 0028:C001747B in VxD VMM(01) +
+0001647B. It may be possible to continue normally.
+
+* Press any key to attempt to continue.
+* Press CTRL+ALT+DEL to restart your computer. You will
+  lose any unsaved information in all applications.
+
+Press any key to continue _</pre>
+    </div>
+
+    <!-- Clock tooltip -->
+    <div class="clock-tooltip" id="clockTooltip"></div>
+
+    <!-- Right-click context menu -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-menu-item" data-action="arrange">Arrange Icons</div>
+        <div class="context-menu-item" data-action="lineup">Line Up Icons</div>
+        <div class="context-menu-sep"></div>
+        <div class="context-menu-item" data-action="refresh">Refresh</div>
+        <div class="context-menu-sep"></div>
+        <div class="context-menu-item disabled" data-action="paste">Paste</div>
+        <div class="context-menu-item disabled" data-action="paste-shortcut">Paste Shortcut</div>
+        <div class="context-menu-sep"></div>
+        <div class="context-menu-item" data-action="new">New &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &#9654;</div>
+        <div class="context-menu-sep"></div>
+        <div class="context-menu-item" data-action="properties">Properties</div>
+    </div>
+
+    <div class="desktop" id="theDesktop">
         <div class="desktop-icons">
-            <div class="icon icon-my-computer"><div class="icon-graphic"></div><span class="icon-label">My Computer</span></div>
+            <div class="icon icon-my-computer" id="iconMyComputer"><div class="icon-graphic"></div><span class="icon-label">My Computer</span></div>
             <div class="icon icon-ie" id="internetExplorerIcon"><div class="icon-graphic"></div><span class="icon-label">Internet Explorer</span></div>
-            <div class="icon icon-recycle"><div class="icon-graphic"></div><span class="icon-label">Recycle Bin</span></div>
+            <div class="icon icon-recycle" id="iconRecycleBin"><div class="icon-graphic"></div><span class="icon-label">Recycle Bin</span></div>
             <div class="icon icon-ascii-palette" id="iconAsciiArtPalette"><div class="icon-graphic"></div><span class="icon-label">ASCII Art Palette</span></div>
             <div class="icon icon-ascii-runner" id="iconAsciiRunner"><div class="icon-graphic"></div><span class="icon-label">ASCII Runner</span></div>
             <div class="icon icon-hello-world" id="iconHelloWorld"><div class="icon-graphic"></div><span class="icon-label">Hello World</span></div>
@@ -1345,6 +1917,7 @@
             <div class="icon icon-weather-to-image" id="iconWeatherToImage"><div class="icon-graphic"></div><span class="icon-label">Weather to Image</span></div>
         </div>
 
+        <!-- IE Window -->
         <section class="window hidden" id="ieWindow" aria-label="Internet Explorer window">
             <div class="titlebar" id="titlebar">
                 <div class="title-left">
@@ -1353,8 +1926,8 @@
                 </div>
                 <div class="window-controls">
                     <div class="ctrl-btn" id="minimizeBtn">_</div>
-                    <div class="ctrl-btn">□</div>
-                    <button class="ctrl-btn" id="closeWindowBtn" aria-label="Close">×</button>
+                    <div class="ctrl-btn" id="maximizeIeBtn">&square;</div>
+                    <button class="ctrl-btn" id="closeWindowBtn" aria-label="Close">&times;</button>
                 </div>
             </div>
 
@@ -1395,6 +1968,7 @@
             </div>
         </section>
 
+        <!-- App Window (for experiment apps) -->
         <section class="window app-window hidden" id="appWindow" aria-label="Application window" style="left: clamp(110px, 15vw, 190px); top: 28px;">
             <div class="titlebar" id="appTitlebar">
                 <div class="title-left">
@@ -1403,8 +1977,8 @@
                 </div>
                 <div class="window-controls">
                     <div class="ctrl-btn" id="appMinimizeBtn">_</div>
-                    <div class="ctrl-btn">□</div>
-                    <button class="ctrl-btn" id="appCloseBtn" aria-label="Close">×</button>
+                    <div class="ctrl-btn">&square;</div>
+                    <button class="ctrl-btn" id="appCloseBtn" aria-label="Close">&times;</button>
                 </div>
             </div>
 
@@ -1421,24 +1995,178 @@
             </div>
         </section>
 
+        <!-- My Computer Window -->
+        <section class="window hidden" id="myComputerWindow" aria-label="My Computer" style="left: clamp(80px, 10vw, 140px); top: 20px; width: min(600px, calc(100vw - 100px)); height: min(420px, calc(100vh - 60px));">
+            <div class="titlebar" id="myComputerTitlebar">
+                <div class="title-left">
+                    <span class="app-title-logo" aria-hidden="true" style="background:#C0C0C0;border-color:#808080;"></span>
+                    <span>My Computer</span>
+                </div>
+                <div class="window-controls">
+                    <div class="ctrl-btn" id="myComputerMinBtn">_</div>
+                    <div class="ctrl-btn">&square;</div>
+                    <button class="ctrl-btn" id="myComputerCloseBtn" aria-label="Close">&times;</button>
+                </div>
+            </div>
+            <div class="menubar"><span>File</span><span>Edit</span><span>View</span><span>Favorites</span><span>Tools</span><span>Help</span></div>
+            <div class="view" style="overflow-y:auto;">
+                <div class="folder-view">
+                    <div class="folder-item" id="driveA">
+                        <div class="folder-item-icon drive-icon-floppy"></div>
+                        <div>3&frac12; Floppy (A:)</div>
+                    </div>
+                    <div class="folder-item" id="driveC">
+                        <div class="folder-item-icon drive-icon-hdd"></div>
+                        <div>Local Disk (C:)</div>
+                    </div>
+                    <div class="folder-item" id="driveD">
+                        <div class="folder-item-icon drive-icon-cdrom"></div>
+                        <div>CD-ROM (D:)</div>
+                    </div>
+                    <div class="folder-item">
+                        <div class="folder-item-icon folder-icon-cp"></div>
+                        <div>Control Panel</div>
+                    </div>
+                    <div class="folder-item">
+                        <div class="folder-item-icon folder-icon-folder"></div>
+                        <div>My Documents</div>
+                    </div>
+                    <div class="folder-item">
+                        <div class="folder-item-icon folder-icon-folder"></div>
+                        <div>Shared Documents</div>
+                    </div>
+                </div>
+            </div>
+            <div class="status">
+                <span class="status-left">6 object(s)</span>
+                <span class="status-right">My Computer</span>
+            </div>
+        </section>
+
+        <!-- Notepad Window -->
+        <section class="window notepad-window hidden" id="notepadWindow" aria-label="Notepad" style="left: clamp(120px, 14vw, 200px); top: 30px; width: min(640px, calc(100vw - 100px)); height: min(440px, calc(100vh - 60px));">
+            <div class="titlebar" id="notepadTitlebar">
+                <div class="title-left">
+                    <span class="app-title-logo" aria-hidden="true" style="background:#fff;border-color:#808080;"></span>
+                    <span id="notepadTitle">Untitled - Notepad</span>
+                </div>
+                <div class="window-controls">
+                    <div class="ctrl-btn" id="notepadMinBtn">_</div>
+                    <div class="ctrl-btn">&square;</div>
+                    <button class="ctrl-btn" id="notepadCloseBtn" aria-label="Close">&times;</button>
+                </div>
+            </div>
+            <div class="menubar">
+                <span id="notepadFileMenu">File</span><span>Edit</span><span>Search</span><span>Help</span>
+            </div>
+            <div class="view">
+                <textarea class="notepad-textarea" id="notepadText" spellcheck="false"></textarea>
+            </div>
+        </section>
+
+        <!-- Recycle Bin Window -->
+        <section class="window hidden" id="recycleBinWindow" aria-label="Recycle Bin" style="left: clamp(100px, 12vw, 180px); top: 24px; width: min(550px, calc(100vw - 100px)); height: min(380px, calc(100vh - 60px));">
+            <div class="titlebar" id="recycleBinTitlebar">
+                <div class="title-left">
+                    <span class="app-title-logo" aria-hidden="true" style="background:#C0C0C0;border-color:#808080;"></span>
+                    <span>Recycle Bin</span>
+                </div>
+                <div class="window-controls">
+                    <div class="ctrl-btn" id="recycleBinMinBtn">_</div>
+                    <div class="ctrl-btn">&square;</div>
+                    <button class="ctrl-btn" id="recycleBinCloseBtn" aria-label="Close">&times;</button>
+                </div>
+            </div>
+            <div class="menubar"><span>File</span><span>Edit</span><span>View</span><span>Help</span></div>
+            <div class="view" style="overflow-y:auto;">
+                <div class="folder-view" style="align-items:center;justify-content:center;color:#808080;font-size:11px;">
+                    <div style="text-align:center;padding:40px;">
+                        <div style="font-size:14px;margin-bottom:8px;">Recycle Bin is empty.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="status">
+                <span class="status-left">0 object(s)</span>
+            </div>
+        </section>
+
         <p class="quick-note">Double-click (or tap) Internet Explorer to browse. Some modern sites block iframes.</p>
     </div>
 
-    <div class="start-menu" id="startMenu" aria-label="Start menu">
-        <div class="start-rail"><strong>Windows</strong>&nbsp;Me</div>
-        <div class="menu-list">
-            <div class="menu-item menu-item-arrow"><span class="menu-icon menu-icon-programs"></span>Programs</div>
-            <div class="menu-item menu-item-arrow"><span class="menu-icon menu-icon-docs"></span>Documents</div>
-            <div class="menu-item menu-item-arrow"><span class="menu-icon menu-icon-settings"></span>Settings</div>
-            <div class="menu-item"><span class="menu-icon menu-icon-find"></span>Search</div>
-            <div class="menu-item"><span class="menu-icon menu-icon-help"></span>Help</div>
-            <div class="menu-item"><span class="menu-icon menu-icon-run"></span>Run...</div>
-            <div class="menu-separator"></div>
-            <div class="menu-item menu-shutdown"><span class="menu-icon"></span>Shut Down...</div>
+    <!-- Run Dialog -->
+    <div class="dialog-overlay run-dialog" id="runDialog">
+        <div class="dialog-box" style="min-width:380px;">
+            <div class="dialog-titlebar">
+                <span>Run</span>
+                <button class="ctrl-btn" id="runCloseBtn" aria-label="Close">&times;</button>
+            </div>
+            <div class="dialog-body">
+                <div class="run-icon-area">
+                    <div class="dialog-icon" style="background:#C0C0C0;border:2px solid #808080;border-radius:2px;">
+                        <div style="position:absolute;top:4px;left:4px;right:4px;height:10px;background:#000080;"></div>
+                        <div style="position:absolute;bottom:4px;left:4px;width:12px;height:8px;background:#fff;border:1px solid #808080;"></div>
+                    </div>
+                    <div class="dialog-text">Type the name of a program, folder, document, or Internet resource, and Windows will open it for you.</div>
+                </div>
+                <div class="run-row">
+                    <label>Open:</label>
+                    <input type="text" id="runInput" />
+                </div>
+            </div>
+            <div class="dialog-buttons">
+                <button class="dialog-btn" id="runOkBtn">OK</button>
+                <button class="dialog-btn" id="runCancelBtn">Cancel</button>
+                <button class="dialog-btn">Browse...</button>
+            </div>
         </div>
     </div>
 
-    <div class="taskbar">
+    <!-- Error / Info Dialog -->
+    <div class="dialog-overlay" id="errorDialog">
+        <div class="dialog-box">
+            <div class="dialog-titlebar">
+                <span id="errorDialogTitle">Windows</span>
+                <button class="ctrl-btn" id="errorCloseBtn" aria-label="Close">&times;</button>
+            </div>
+            <div class="dialog-body">
+                <div class="dialog-icon dialog-icon-error" id="errorDialogIcon"></div>
+                <div class="dialog-text" id="errorDialogText">An error has occurred.</div>
+            </div>
+            <div class="dialog-buttons">
+                <button class="dialog-btn" id="errorOkBtn">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Start Menu -->
+    <div class="start-menu" id="startMenu" aria-label="Start menu">
+        <div class="start-rail"><strong>Windows</strong>&nbsp;Me</div>
+        <div class="menu-list">
+            <div class="menu-item menu-item-arrow" id="menuPrograms"><span class="menu-icon menu-icon-programs"></span>Programs</div>
+            <div class="menu-item menu-item-arrow"><span class="menu-icon menu-icon-docs"></span>Documents</div>
+            <div class="menu-item menu-item-arrow"><span class="menu-icon menu-icon-settings"></span>Settings</div>
+            <div class="menu-item"><span class="menu-icon menu-icon-find"></span>Search</div>
+            <div class="menu-item" id="menuHelp"><span class="menu-icon menu-icon-help"></span>Help</div>
+            <div class="menu-item" id="menuRun"><span class="menu-icon menu-icon-run"></span>Run...</div>
+            <div class="menu-separator"></div>
+            <div class="menu-item menu-shutdown" id="menuShutdown"><span class="menu-icon"></span>Shut Down...</div>
+        </div>
+    </div>
+
+    <!-- Programs Submenu -->
+    <div class="programs-submenu" id="programsSubmenu">
+        <div class="submenu-item" id="subAccessories"><span class="submenu-icon" style="background:#FFCC00;border:1px solid #CC9900;border-radius:0 2px 2px 2px;"></span>Accessories &nbsp; &nbsp; &#9654;</div>
+        <div class="submenu-item" id="subGames"><span class="submenu-icon" style="background:#C0C0C0;border:1px solid #808080;"></span>Games &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &#9654;</div>
+        <div class="submenu-item" id="subStartup"><span class="submenu-icon" style="background:#FFCC00;border:1px solid #CC9900;border-radius:0 2px 2px 2px;"></span>StartUp</div>
+        <div class="context-menu-sep"></div>
+        <div class="submenu-item" id="subIE"><span class="submenu-icon" style="background:#fff;border:1px solid #0060C0;border-radius:1px;font-style:italic;font-family:serif;color:#0060C0;font-size:11px;text-align:center;line-height:14px;font-weight:bold;">e</span>Internet Explorer</div>
+        <div class="submenu-item" id="subOutlook"><span class="submenu-icon" style="background:#FFFFCC;border:1px solid #808000;"></span>Outlook Express</div>
+        <div class="submenu-item" id="subNotepad"><span class="submenu-icon" style="background:#fff;border:1px solid #808080;"></span>Notepad</div>
+        <div class="submenu-item" id="subWMP"><span class="submenu-icon" style="background:#FF8000;border:1px solid #CC6600;border-radius:50%;"></span>Windows Media Player</div>
+    </div>
+
+    <!-- Taskbar -->
+    <div class="taskbar" id="theTaskbar">
         <button class="start-btn" id="startButton">
             <span class="start-flag"><span class="f1"></span><span class="f2"></span><span class="f3"></span><span class="f4"></span></span>
             Start
@@ -1449,7 +2177,7 @@
             <span class="ql-btn ql-desktop" title="Show Desktop"></span>
         </div>
         <div class="task-divider"></div>
-        <div class="task-area">
+        <div class="task-area" id="taskArea">
             <button class="task-button" id="taskButton" style="display:none;">
                 <span class="task-icon"></span>
                 <span>about:blank - Microsoft Int...</span>
@@ -1458,14 +2186,329 @@
                 <span class="task-icon" style="background:#FFFF80;border:1px solid #808040;"></span>
                 <span id="appTaskLabel">Application</span>
             </button>
+            <button class="task-button" id="myComputerTaskBtn" style="display:none;">
+                <span class="task-icon" style="background:#C0C0C0;border:1px solid #808080;"></span>
+                <span>My Computer</span>
+            </button>
+            <button class="task-button" id="notepadTaskBtn" style="display:none;">
+                <span class="task-icon" style="background:#fff;border:1px solid #808080;"></span>
+                <span>Notepad</span>
+            </button>
+            <button class="task-button" id="recycleBinTaskBtn" style="display:none;">
+                <span class="task-icon" style="background:#C0C0C0;border:1px solid #808080;"></span>
+                <span>Recycle Bin</span>
+            </button>
         </div>
         <div class="tray">
-            <span class="tray-volume" aria-label="Volume"></span>
+            <span class="tray-volume" aria-label="Volume" id="trayVolume"></span>
             <span id="clock">12:00 PM</span>
         </div>
     </div>
 
     <script>
+        // ══════════════════════════════════════════════
+        // Sound System (Web Audio API)
+        // ══════════════════════════════════════════════
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+        function ensureAudio() {
+            if (!audioCtx) audioCtx = new AudioCtx();
+            return audioCtx;
+        }
+
+        function playBeep(freq, duration, type) {
+            try {
+                const ctx = ensureAudio();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = type || 'square';
+                osc.frequency.value = freq;
+                gain.gain.value = 0.08;
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        function playStartupSound() {
+            try {
+                const ctx = ensureAudio();
+                const notes = [523, 659, 784, 1047];
+                notes.forEach((freq, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.value = freq;
+                    gain.gain.value = 0;
+                    gain.gain.linearRampToValueAtTime(0.12, ctx.currentTime + i * 0.3 + 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.3 + 0.6);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(ctx.currentTime + i * 0.3);
+                    osc.stop(ctx.currentTime + i * 0.3 + 0.7);
+                });
+            } catch(e) {}
+        }
+
+        function playErrorSound() {
+            playBeep(400, 0.15, 'square');
+            setTimeout(() => playBeep(300, 0.2, 'square'), 160);
+        }
+
+        function playClickSound() {
+            playBeep(800, 0.03, 'square');
+        }
+
+        // ══════════════════════════════════════════════
+        // Boot Sequence
+        // ══════════════════════════════════════════════
+        const bootBios = document.getElementById('bootBios');
+        const bootScreen = document.getElementById('bootScreen');
+        const bootProgress = document.getElementById('bootProgress');
+        const bootStatus = document.getElementById('bootStatus');
+        const biosMemory = document.getElementById('biosMemory');
+        const biosStatus = document.getElementById('biosStatus');
+        const theDesktop = document.getElementById('theDesktop');
+        const theTaskbar = document.getElementById('theTaskbar');
+
+        // Hide desktop & taskbar during boot
+        theDesktop.style.display = 'none';
+        theTaskbar.style.display = 'none';
+        document.getElementById('startMenu').style.display = 'none';
+
+        let bootDone = false;
+
+        function runBootSequence() {
+            // Phase 1: BIOS POST
+            let memCount = 0;
+            const memTarget = 262144; // 256 MB in KB
+            const memInterval = setInterval(() => {
+                memCount += 32768;
+                if (memCount >= memTarget) {
+                    memCount = memTarget;
+                    clearInterval(memInterval);
+                    biosMemory.textContent = memCount.toLocaleString();
+                    biosStatus.textContent = 'Press DEL to enter SETUP, ESC to skip memory test';
+                    setTimeout(() => {
+                        biosStatus.textContent = 'Starting Windows Me...';
+                        setTimeout(showSplashScreen, 600);
+                    }, 500);
+                } else {
+                    biosMemory.textContent = memCount.toLocaleString();
+                }
+            }, 80);
+        }
+
+        function showSplashScreen() {
+            bootBios.classList.add('hidden');
+            bootScreen.classList.remove('hidden');
+
+            const bootMessages = [
+                'Loading Windows...',
+                'Loading system files...',
+                'Initializing device drivers...',
+                'Loading Registry...',
+                'Preparing network connections...',
+                'Loading your personal settings...',
+                'Applying computer settings...'
+            ];
+
+            let progress = 0;
+            let msgIdx = 0;
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 8 + 2;
+                if (progress > 100) progress = 100;
+                bootProgress.style.width = progress + '%';
+
+                if (progress > (msgIdx + 1) * 14 && msgIdx < bootMessages.length - 1) {
+                    msgIdx++;
+                    bootStatus.textContent = bootMessages[msgIdx];
+                }
+
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    setTimeout(finishBoot, 400);
+                }
+            }, 150);
+        }
+
+        function finishBoot() {
+            bootScreen.classList.add('hidden');
+            theDesktop.style.display = '';
+            theTaskbar.style.display = '';
+            document.getElementById('startMenu').style.display = '';
+            bootDone = true;
+
+            // Trigger startup sound after user interaction enables audio
+            playStartupSound();
+
+            // Schedule random events
+            scheduleRandomBSOD();
+            scheduleRandomError();
+        }
+
+        // Start boot on load
+        setTimeout(runBootSequence, 300);
+
+        // ══════════════════════════════════════════════
+        // BSOD System
+        // ══════════════════════════════════════════════
+        const bsod = document.getElementById('bsod');
+        const bsodText = document.getElementById('bsodText');
+
+        const bsodMessages = [
+            'An exception 0E has occurred at 0028:C0011E36 in VxD VMM(01) +\n00010E36. This was called from 0028:C001747B in VxD VMM(01) +\n0001647B. It may be possible to continue normally.\n\n* Press any key to attempt to continue.\n* Press CTRL+ALT+DEL to restart your computer. You will\n  lose any unsaved information in all applications.\n\nPress any key to continue _',
+            'A fatal exception 0D has occurred at 0028:C0034B80 in VxD VWIN32(05) +\n00002E80. The current application will be terminated.\n\n* Press any key to terminate the current application.\n* Press CTRL+ALT+DEL to restart your computer. You will\n  lose any unsaved information in all applications.\n\nPress any key to continue _',
+            'EXPLORER caused an invalid page fault in\nmodule KERNEL32.DLL at 0177:BFF9DB61.\n\nRegisters:\nEAX=C0045200 CS=0177 EIP=BFF9DB61 EFLGS=00010216\nEBX=007D4E38 SS=017F ESP=006DF3FC EBP=006DF42C\nECX=006DF4B0 DS=017F ESI=816BD210 FS=455F\nEDX=006DF440 ES=017F EDI=006DF4B0 GS=0000\n\nPress any key to continue _',
+            'Windows protection error. You need to restart\nyour computer.\n\nSystem halted.',
+            'MSGSRV32 caused a General Protection Fault in\nmodule USER.EXE at 0004:00003FFC.\n\n* Press any key to terminate the current application.\n* Press CTRL+ALT+DEL to restart your computer.\n\nPress any key to continue _'
+        ];
+
+        let bsodActive = false;
+
+        function triggerBSOD() {
+            if (bsodActive) return;
+            bsodActive = true;
+            bsodText.textContent = bsodMessages[Math.floor(Math.random() * bsodMessages.length)];
+            bsod.classList.add('active');
+            playBeep(200, 0.5, 'sawtooth');
+        }
+
+        function dismissBSOD() {
+            bsod.classList.remove('active');
+            bsodActive = false;
+            scheduleRandomBSOD();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (bsodActive) { dismissBSOD(); }
+        });
+        bsod.addEventListener('click', dismissBSOD);
+
+        function scheduleRandomBSOD() {
+            // Random BSOD every 2-6 minutes
+            const delay = (120 + Math.random() * 240) * 1000;
+            setTimeout(() => {
+                if (bootDone && !bsodActive) triggerBSOD();
+            }, delay);
+        }
+
+        // ══════════════════════════════════════════════
+        // Random Error Dialogs
+        // ══════════════════════════════════════════════
+        const errorDialog = document.getElementById('errorDialog');
+        const errorDialogTitle = document.getElementById('errorDialogTitle');
+        const errorDialogText = document.getElementById('errorDialogText');
+        const errorDialogIcon = document.getElementById('errorDialogIcon');
+
+        const randomErrors = [
+            { title: 'Explorer', text: 'This program has performed an illegal operation and will be shut down. If the problem persists, contact the program vendor.', icon: 'error' },
+            { title: 'Windows', text: 'Not enough memory to complete this operation. Close some programs and try again.', icon: 'warning' },
+            { title: 'RUNDLL32', text: 'Error in MMSYSTEM.DLL. Missing entry: SndPlaySoundA', icon: 'error' },
+            { title: 'DrWatson Postmortem Debugger', text: 'An application error has occurred and an application error log is being generated.\n\nException: access violation (0xc0000005), Address: 0x77f9f3d1', icon: 'error' },
+            { title: 'Windows Update', text: 'Windows Update has encountered an error and needs to close. We are sorry for the inconvenience. Error code: 0x80072EFD', icon: 'warning' },
+            { title: 'System Resources', text: 'Warning: Your system is running low on system resources. To correct this, close some windows.', icon: 'warning' },
+            { title: 'Internet Explorer', text: 'Internet Explorer has encountered a problem and needs to close. We are sorry for the inconvenience.', icon: 'error' },
+            { title: 'Disk Cleanup', text: 'The disk cleanup utility could not free any space. Your hard drive may be full.', icon: 'info' }
+        ];
+
+        function showErrorDialog(err) {
+            errorDialogTitle.textContent = err.title;
+            errorDialogText.textContent = err.text;
+            errorDialogIcon.className = 'dialog-icon dialog-icon-' + err.icon;
+            errorDialog.classList.add('active');
+            playErrorSound();
+        }
+
+        function closeErrorDialog() {
+            errorDialog.classList.remove('active');
+        }
+
+        document.getElementById('errorOkBtn').addEventListener('click', closeErrorDialog);
+        document.getElementById('errorCloseBtn').addEventListener('click', closeErrorDialog);
+
+        function scheduleRandomError() {
+            const delay = (60 + Math.random() * 180) * 1000;
+            setTimeout(() => {
+                if (bootDone && !bsodActive && !errorDialog.classList.contains('active')) {
+                    const err = randomErrors[Math.floor(Math.random() * randomErrors.length)];
+                    showErrorDialog(err);
+                }
+                scheduleRandomError();
+            }, delay);
+        }
+
+        // ══════════════════════════════════════════════
+        // Window Management & Z-Order
+        // ══════════════════════════════════════════════
+        let topZIndex = 10;
+
+        function bringToFront(windowEl) {
+            topZIndex++;
+            windowEl.style.zIndex = topZIndex;
+
+            // Update titlebars: active/inactive
+            document.querySelectorAll('.window:not(.hidden)').forEach(w => {
+                const tb = w.querySelector('.titlebar');
+                if (tb) {
+                    if (w === windowEl) {
+                        tb.classList.remove('inactive');
+                    } else {
+                        tb.classList.add('inactive');
+                    }
+                }
+            });
+        }
+
+        // Click any window to bring to front
+        document.querySelectorAll('.window').forEach(w => {
+            w.addEventListener('mousedown', () => bringToFront(w));
+        });
+
+        // ══════════════════════════════════════════════
+        // Window Dragging
+        // ══════════════════════════════════════════════
+        function makeDraggable(titlebarEl, windowEl) {
+            let isDragging = false;
+            let startX, startY, origLeft, origTop;
+
+            titlebarEl.addEventListener('mousedown', (e) => {
+                if (e.target.classList.contains('ctrl-btn')) return;
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                const rect = windowEl.getBoundingClientRect();
+                origLeft = rect.left;
+                origTop = rect.top;
+                bringToFront(windowEl);
+                e.preventDefault();
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                windowEl.style.left = (origLeft + dx) + 'px';
+                windowEl.style.top = (origTop + dy) + 'px';
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+        }
+
+        // Make all windows draggable
+        makeDraggable(document.getElementById('titlebar'), document.getElementById('ieWindow'));
+        makeDraggable(document.getElementById('appTitlebar'), document.getElementById('appWindow'));
+        makeDraggable(document.getElementById('myComputerTitlebar'), document.getElementById('myComputerWindow'));
+        makeDraggable(document.getElementById('notepadTitlebar'), document.getElementById('notepadWindow'));
+        makeDraggable(document.getElementById('recycleBinTitlebar'), document.getElementById('recycleBinWindow'));
+
+        // ══════════════════════════════════════════════
+        // IE Window
+        // ══════════════════════════════════════════════
         const frame = document.getElementById('browserFrame');
         const ieWindow = document.getElementById('ieWindow');
         const addressInput = document.getElementById('addressInput');
@@ -1493,13 +2536,13 @@
         }
 
         function truncateTitle(url) {
-            const title = url + ' - Microsoft Internet Explorer';
-            return title;
+            return url + ' - Microsoft Internet Explorer';
         }
 
         function navigate(url, pushHistory = true) {
             const finalUrl = normalizeUrl(url);
             statusText.textContent = 'Opening page...';
+            body_loading(true);
 
             if (finalUrl === 'about:blank') {
                 frame.src = '';
@@ -1512,7 +2555,6 @@
             const title = truncateTitle(finalUrl);
             windowTitle.textContent = title;
 
-            // Update taskbar button label (truncated)
             const shortTitle = title.length > 30 ? title.substring(0, 28) + '...' : title;
             taskButtonLabel.textContent = shortTitle;
 
@@ -1523,10 +2565,22 @@
             }
         }
 
+        function body_loading(on) {
+            if (on) {
+                document.body.classList.add('loading');
+                setTimeout(() => document.body.classList.remove('loading'), 2000);
+            } else {
+                document.body.classList.remove('loading');
+            }
+        }
+
         function openInternetExplorer() {
             ieWindow.classList.remove('hidden');
             taskButton.style.display = 'flex';
             startMenu.classList.remove('open');
+            startButton.classList.remove('pressed');
+            bringToFront(ieWindow);
+            playClickSound();
 
             if (!frame.src || frame.src === 'about:blank' || frame.src === '') {
                 if (historyStack.length === 0) {
@@ -1591,9 +2645,14 @@
             }
         });
 
-        frame.addEventListener('load', () => { statusText.textContent = 'Done'; });
+        frame.addEventListener('load', () => {
+            statusText.textContent = 'Done';
+            body_loading(false);
+        });
 
-        // App Window
+        // ══════════════════════════════════════════════
+        // App Window (experiment apps)
+        // ══════════════════════════════════════════════
         const appWindow = document.getElementById('appWindow');
         const appFrame = document.getElementById('appFrame');
         const appWindowTitle = document.getElementById('appWindowTitle');
@@ -1611,6 +2670,11 @@
             appTaskButton.style.display = 'flex';
             appTaskLabel.textContent = title.length > 22 ? title.substring(0, 20) + '...' : title;
             startMenu.classList.remove('open');
+            startButton.classList.remove('pressed');
+            closeProgramsSubmenu();
+            bringToFront(appWindow);
+            body_loading(true);
+            playClickSound();
         }
 
         function closeApp() {
@@ -1619,19 +2683,132 @@
             appFrame.src = '';
         }
 
-        appFrame.addEventListener('load', () => { appStatusText.textContent = 'Done'; });
+        appFrame.addEventListener('load', () => {
+            appStatusText.textContent = 'Done';
+            body_loading(false);
+        });
 
         appMinimizeBtn.addEventListener('click', () => { appWindow.classList.add('hidden'); });
         appCloseBtn.addEventListener('click', closeApp);
         appTaskButton.addEventListener('click', () => {
             if (appWindow.classList.contains('hidden')) {
                 appWindow.classList.remove('hidden');
+                bringToFront(appWindow);
             } else {
                 appWindow.classList.add('hidden');
             }
         });
 
-        // Open IE from desktop icon — single tap on touch, double-click on desktop
+        // ══════════════════════════════════════════════
+        // My Computer Window
+        // ══════════════════════════════════════════════
+        const myComputerWindow = document.getElementById('myComputerWindow');
+        const myComputerTaskBtn = document.getElementById('myComputerTaskBtn');
+
+        function openMyComputer() {
+            myComputerWindow.classList.remove('hidden');
+            myComputerTaskBtn.style.display = 'flex';
+            startMenu.classList.remove('open');
+            startButton.classList.remove('pressed');
+            bringToFront(myComputerWindow);
+            playClickSound();
+        }
+
+        function closeMyComputer() {
+            myComputerWindow.classList.add('hidden');
+            myComputerTaskBtn.style.display = 'none';
+        }
+
+        document.getElementById('myComputerCloseBtn').addEventListener('click', closeMyComputer);
+        document.getElementById('myComputerMinBtn').addEventListener('click', () => myComputerWindow.classList.add('hidden'));
+        myComputerTaskBtn.addEventListener('click', () => {
+            if (myComputerWindow.classList.contains('hidden')) {
+                myComputerWindow.classList.remove('hidden');
+                bringToFront(myComputerWindow);
+            } else {
+                myComputerWindow.classList.add('hidden');
+            }
+        });
+
+        // Drive click actions
+        document.getElementById('driveA').addEventListener('dblclick', () => {
+            showErrorDialog({ title: 'A:\\', text: 'A:\\ is not accessible.\n\nThe device is not ready.', icon: 'error' });
+        });
+        document.getElementById('driveC').addEventListener('dblclick', () => {
+            showErrorDialog({ title: 'Local Disk (C:)', text: 'Access to C:\\ is restricted by system policy.\n\nContact your system administrator.', icon: 'warning' });
+        });
+        document.getElementById('driveD').addEventListener('dblclick', () => {
+            showErrorDialog({ title: 'D:\\', text: 'D:\\ is not accessible.\n\nPlease insert a disc into drive D:.', icon: 'error' });
+        });
+
+        // ══════════════════════════════════════════════
+        // Notepad
+        // ══════════════════════════════════════════════
+        const notepadWindow = document.getElementById('notepadWindow');
+        const notepadTaskBtn = document.getElementById('notepadTaskBtn');
+        const notepadText = document.getElementById('notepadText');
+
+        function openNotepad() {
+            notepadWindow.classList.remove('hidden');
+            notepadTaskBtn.style.display = 'flex';
+            startMenu.classList.remove('open');
+            startButton.classList.remove('pressed');
+            closeProgramsSubmenu();
+            bringToFront(notepadWindow);
+            playClickSound();
+            notepadText.focus();
+        }
+
+        function closeNotepad() {
+            notepadWindow.classList.add('hidden');
+            notepadTaskBtn.style.display = 'none';
+        }
+
+        document.getElementById('notepadCloseBtn').addEventListener('click', closeNotepad);
+        document.getElementById('notepadMinBtn').addEventListener('click', () => notepadWindow.classList.add('hidden'));
+        notepadTaskBtn.addEventListener('click', () => {
+            if (notepadWindow.classList.contains('hidden')) {
+                notepadWindow.classList.remove('hidden');
+                bringToFront(notepadWindow);
+            } else {
+                notepadWindow.classList.add('hidden');
+            }
+        });
+
+        // ══════════════════════════════════════════════
+        // Recycle Bin
+        // ══════════════════════════════════════════════
+        const recycleBinWindow = document.getElementById('recycleBinWindow');
+        const recycleBinTaskBtn = document.getElementById('recycleBinTaskBtn');
+
+        function openRecycleBin() {
+            recycleBinWindow.classList.remove('hidden');
+            recycleBinTaskBtn.style.display = 'flex';
+            startMenu.classList.remove('open');
+            startButton.classList.remove('pressed');
+            bringToFront(recycleBinWindow);
+            playClickSound();
+        }
+
+        function closeRecycleBin() {
+            recycleBinWindow.classList.add('hidden');
+            recycleBinTaskBtn.style.display = 'none';
+        }
+
+        document.getElementById('recycleBinCloseBtn').addEventListener('click', closeRecycleBin);
+        document.getElementById('recycleBinMinBtn').addEventListener('click', () => recycleBinWindow.classList.add('hidden'));
+        recycleBinTaskBtn.addEventListener('click', () => {
+            if (recycleBinWindow.classList.contains('hidden')) {
+                recycleBinWindow.classList.remove('hidden');
+                bringToFront(recycleBinWindow);
+            } else {
+                recycleBinWindow.classList.add('hidden');
+            }
+        });
+
+        // ══════════════════════════════════════════════
+        // Desktop Icons - open on double-click (or tap)
+        // ══════════════════════════════════════════════
         const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
         const appEventType = isTouchDevice ? 'click' : 'dblclick';
 
@@ -1640,6 +2817,9 @@
         } else {
             internetExplorerIcon.addEventListener('dblclick', openInternetExplorer);
         }
+
+        document.getElementById('iconMyComputer').addEventListener(appEventType, openMyComputer);
+        document.getElementById('iconRecycleBin').addEventListener(appEventType, openRecycleBin);
         document.getElementById('qlIE').addEventListener('click', openInternetExplorer);
 
         // Experiment app icons
@@ -1661,13 +2841,14 @@
             if (el) el.addEventListener(appEventType, () => openApp(title, url));
         });
 
-        // Minimize / close
+        // Minimize / close IE
         minimizeBtn.addEventListener('click', () => {
             ieWindow.classList.add('hidden');
         });
         taskButton.addEventListener('click', () => {
             if (ieWindow.classList.contains('hidden')) {
                 ieWindow.classList.remove('hidden');
+                bringToFront(ieWindow);
             } else {
                 ieWindow.classList.add('hidden');
             }
@@ -1689,31 +2870,196 @@
             }
         });
 
-        // Start menu
+        // ══════════════════════════════════════════════
+        // Start Menu & Submenus
+        // ══════════════════════════════════════════════
+        const programsSubmenu = document.getElementById('programsSubmenu');
+
         startButton.addEventListener('click', (e) => {
             e.stopPropagation();
             startMenu.classList.toggle('open');
             startButton.classList.toggle('pressed', startMenu.classList.contains('open'));
+            if (!startMenu.classList.contains('open')) {
+                closeProgramsSubmenu();
+            }
+            playClickSound();
         });
 
         document.addEventListener('click', (e) => {
-            if (!startButton.contains(e.target) && !startMenu.contains(e.target)) {
+            if (!startButton.contains(e.target) && !startMenu.contains(e.target) && !programsSubmenu.contains(e.target)) {
                 startMenu.classList.remove('open');
                 startButton.classList.remove('pressed');
+                closeProgramsSubmenu();
             }
         });
 
-        // Shut Down menu item
-        document.querySelector('.menu-shutdown').addEventListener('click', () => {
+        // Programs submenu
+        const menuPrograms = document.getElementById('menuPrograms');
+        menuPrograms.addEventListener('mouseenter', () => {
+            const rect = menuPrograms.getBoundingClientRect();
+            programsSubmenu.style.bottom = (window.innerHeight - rect.top - rect.height) + 'px';
+            programsSubmenu.classList.add('open');
+        });
+
+        function closeProgramsSubmenu() {
+            programsSubmenu.classList.remove('open');
+        }
+
+        // Close submenu when leaving the Programs area
+        startMenu.addEventListener('mouseleave', (e) => {
+            if (!programsSubmenu.contains(e.relatedTarget)) {
+                closeProgramsSubmenu();
+            }
+        });
+
+        programsSubmenu.addEventListener('mouseleave', (e) => {
+            if (!startMenu.contains(e.relatedTarget)) {
+                closeProgramsSubmenu();
+            }
+        });
+
+        // Submenu items
+        document.getElementById('subIE').addEventListener('click', () => {
+            openInternetExplorer();
+            closeProgramsSubmenu();
+        });
+
+        document.getElementById('subNotepad').addEventListener('click', () => {
+            openNotepad();
+            closeProgramsSubmenu();
+        });
+
+        document.getElementById('subOutlook').addEventListener('click', () => {
+            showErrorDialog({ title: 'Outlook Express', text: 'Outlook Express could not be started. MSOE.DLL could not be loaded.', icon: 'error' });
+            closeProgramsSubmenu();
+            startMenu.classList.remove('open');
+            startButton.classList.remove('pressed');
+        });
+
+        document.getElementById('subWMP').addEventListener('click', () => {
+            showErrorDialog({ title: 'Windows Media Player', text: 'Windows Media Player encountered a problem while playing the file.\nError code: C00D11B1', icon: 'error' });
+            closeProgramsSubmenu();
+            startMenu.classList.remove('open');
+            startButton.classList.remove('pressed');
+        });
+
+        document.getElementById('subAccessories').addEventListener('click', () => {
+            openNotepad();
+        });
+
+        document.getElementById('subGames').addEventListener('click', () => {
+            showErrorDialog({ title: 'Games', text: 'Solitaire has encountered an error and needs to close.\n\nWould you like to send an error report?', icon: 'error' });
+            closeProgramsSubmenu();
+            startMenu.classList.remove('open');
+            startButton.classList.remove('pressed');
+        });
+
+        // Help menu item
+        document.getElementById('menuHelp').addEventListener('click', () => {
+            showErrorDialog({ title: 'Windows Help', text: 'Help is not available for this program.\n\nTry searching online at microsoft.com for help topics.', icon: 'info' });
+            startMenu.classList.remove('open');
+            startButton.classList.remove('pressed');
+        });
+
+        // ══════════════════════════════════════════════
+        // Run Dialog
+        // ══════════════════════════════════════════════
+        const runDialog = document.getElementById('runDialog');
+        const runInput = document.getElementById('runInput');
+
+        document.getElementById('menuRun').addEventListener('click', () => {
+            startMenu.classList.remove('open');
+            startButton.classList.remove('pressed');
+            runDialog.classList.add('active');
+            runInput.value = '';
+            runInput.focus();
+            playClickSound();
+        });
+
+        document.getElementById('runCancelBtn').addEventListener('click', () => {
+            runDialog.classList.remove('active');
+        });
+        document.getElementById('runCloseBtn').addEventListener('click', () => {
+            runDialog.classList.remove('active');
+        });
+
+        document.getElementById('runOkBtn').addEventListener('click', () => {
+            const cmd = runInput.value.trim().toLowerCase();
+            runDialog.classList.remove('active');
+
+            if (!cmd) return;
+
+            if (cmd === 'notepad' || cmd === 'notepad.exe') {
+                openNotepad();
+            } else if (cmd === 'explorer' || cmd === 'explorer.exe') {
+                openMyComputer();
+            } else if (cmd === 'iexplore' || cmd === 'iexplore.exe') {
+                openInternetExplorer();
+            } else if (cmd === 'calc' || cmd === 'calc.exe') {
+                showErrorDialog({ title: 'Calculator', text: 'Windows cannot find \'calc.exe\'. Make sure you typed the name correctly, and then try again.', icon: 'error' });
+            } else if (cmd.startsWith('http://') || cmd.startsWith('https://') || cmd.startsWith('www.')) {
+                openInternetExplorer();
+                navigate(cmd);
+            } else {
+                showErrorDialog({ title: 'Run', text: 'Windows cannot find \'' + runInput.value + '\'. Make sure you typed the name correctly, and then try again. To search for a file, click the Start button, and then click Search.', icon: 'error' });
+            }
+        });
+
+        runInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') document.getElementById('runOkBtn').click();
+            if (e.key === 'Escape') runDialog.classList.remove('active');
+        });
+
+        // ══════════════════════════════════════════════
+        // Right-click Context Menu
+        // ══════════════════════════════════════════════
+        const contextMenu = document.getElementById('contextMenu');
+
+        document.getElementById('theDesktop').addEventListener('contextmenu', (e) => {
+            if (e.target.closest('.window') || e.target.closest('.icon')) return;
+            e.preventDefault();
+            contextMenu.style.left = e.clientX + 'px';
+            contextMenu.style.top = e.clientY + 'px';
+            contextMenu.classList.add('open');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!contextMenu.contains(e.target)) {
+                contextMenu.classList.remove('open');
+            }
+        });
+
+        contextMenu.addEventListener('click', (e) => {
+            const action = e.target.dataset.action;
+            contextMenu.classList.remove('open');
+            if (action === 'refresh') {
+                body_loading(true);
+            } else if (action === 'properties') {
+                showErrorDialog({
+                    title: 'Display Properties',
+                    text: 'Windows Me\nMillennium Edition\n\nVersion 4.90.3000\n\nCopyright \u00A9 Microsoft Corp. 1981-2000\n\nRegistered to: User\nProduct ID: 55274-OEM-0011903-00102',
+                    icon: 'info'
+                });
+            } else if (action === 'new') {
+                openNotepad();
+            } else if (action === 'arrange') {
+                playClickSound();
+            }
+        });
+
+        // ══════════════════════════════════════════════
+        // Shutdown
+        // ══════════════════════════════════════════════
+        document.getElementById('menuShutdown').addEventListener('click', () => {
             startMenu.classList.remove('open');
             startButton.classList.remove('pressed');
             document.body.style.background = '#000';
-            document.querySelector('.desktop').style.display = 'none';
-            document.querySelector('.taskbar').style.display = 'none';
-            document.querySelector('.start-menu').style.display = 'none';
+            theDesktop.style.display = 'none';
+            theTaskbar.style.display = 'none';
+            startMenu.style.display = 'none';
 
             const shutdownMsg = document.createElement('div');
-            shutdownMsg.style.cssText = 'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:#FF8000;font-size:24px;font-family:"MS Sans Serif",sans-serif;background:#000;';
+            shutdownMsg.style.cssText = 'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:#FF8000;font-size:24px;font-family:"MS Sans Serif",sans-serif;background:#000;z-index:99998;';
             shutdownMsg.innerHTML = 'It\'s now safe to turn off<br>your computer.';
             shutdownMsg.style.textAlign = 'center';
             document.body.appendChild(shutdownMsg);
@@ -1721,19 +3067,40 @@
             shutdownMsg.addEventListener('click', () => {
                 shutdownMsg.remove();
                 document.body.style.background = '#008080';
-                document.querySelector('.desktop').style.display = '';
-                document.querySelector('.taskbar').style.display = '';
+                theDesktop.style.display = '';
+                theTaskbar.style.display = '';
             });
         });
 
-        // Show Desktop quick launch button
+        // ══════════════════════════════════════════════
+        // Show Desktop quick launch
+        // ══════════════════════════════════════════════
         document.querySelector('.ql-desktop').addEventListener('click', () => {
-            if (!ieWindow.classList.contains('hidden')) {
-                ieWindow.classList.add('hidden');
-            }
-            if (!appWindow.classList.contains('hidden')) {
-                appWindow.classList.add('hidden');
-            }
+            document.querySelectorAll('.window:not(.hidden)').forEach(w => w.classList.add('hidden'));
+        });
+
+        // ══════════════════════════════════════════════
+        // Clock + Tooltip
+        // ══════════════════════════════════════════════
+        const clockEl = document.getElementById('clock');
+        const clockTooltip = document.getElementById('clockTooltip');
+
+        clockEl.addEventListener('mouseenter', (e) => {
+            const now = new Date();
+            clockTooltip.textContent = now.toLocaleDateString(undefined, {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            });
+            clockTooltip.style.display = 'block';
+            clockTooltip.style.left = (e.clientX - 80) + 'px';
+            clockTooltip.style.top = (e.clientY - 24) + 'px';
+        });
+        clockEl.addEventListener('mouseleave', () => {
+            clockTooltip.style.display = 'none';
+        });
+
+        // Volume icon click
+        document.getElementById('trayVolume').addEventListener('click', () => {
+            showErrorDialog({ title: 'Volume Control', text: 'There are no active mixer devices available. To install mixer devices, go to Control Panel, click Printers and Other Hardware, and then click Add Hardware.\n\nThis program will now close.', icon: 'error' });
         });
 
         setInterval(updateClock, 1000);
