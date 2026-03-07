@@ -1,0 +1,1830 @@
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            min-height: 100vh;
+            font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif;
+            background: #008080;
+            overflow: hidden;
+            color: #000;
+            font-size: 11px;
+        }
+
+        /* ── Boot Screen ── */
+        .boot-screen {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .boot-screen.hidden { display: none; }
+
+        .boot-bios {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            color: #AAAAAA;
+            font-family: "Courier New", monospace;
+            font-size: 14px;
+            padding: 20px;
+            white-space: pre-line;
+            z-index: 10000;
+        }
+        .boot-bios.hidden { display: none; }
+
+        .boot-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .boot-clouds {
+            width: 400px;
+            height: 200px;
+            background: linear-gradient(180deg, #000033 0%, #000066 20%, #003399 40%, #0066CC 55%, #3399FF 70%, #66CCFF 85%, #99DDFF 100%);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        .boot-clouds::before {
+            content: "";
+            position: absolute;
+            bottom: 30px;
+            left: 20px;
+            width: 100px;
+            height: 40px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 20px;
+            box-shadow: 150px -20px 0 10px rgba(255,255,255,0.2), 80px 10px 0 5px rgba(255,255,255,0.25);
+        }
+
+        .boot-title {
+            color: #fff;
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+        .boot-title span {
+            color: #FFD700;
+            font-style: italic;
+        }
+
+        .boot-subtitle {
+            color: #C0C0C0;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .boot-progress-container {
+            width: 300px;
+            height: 20px;
+            background: #000;
+            border: 2px solid #333;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        .boot-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #0040A0, #0070D0, #0040A0);
+            transition: width 0.3s;
+        }
+
+        .boot-status {
+            color: #808080;
+            font-size: 11px;
+            margin-top: 8px;
+        }
+
+        /* ── BSOD ── */
+        .bsod {
+            position: fixed;
+            inset: 0;
+            background: #0000AA;
+            color: #fff;
+            font-family: "Lucida Console", "Courier New", monospace;
+            font-size: 14px;
+            padding: 40px;
+            z-index: 99999;
+            display: none;
+            cursor: default;
+            line-height: 1.6;
+        }
+        .bsod.active { display: block; }
+        .bsod-header {
+            background: #AAAAAA;
+            color: #0000AA;
+            display: inline;
+            padding: 0 8px;
+            font-weight: bold;
+        }
+        .bsod pre {
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-family: inherit;
+        }
+
+        /* ── Loading cursor ── */
+        body.loading, body.loading * {
+            cursor: wait !important;
+        }
+
+        /* ── Desktop ── */
+        .desktop {
+            position: fixed;
+            inset: 0;
+            padding: 4px;
+            padding-bottom: 32px;
+        }
+
+        .desktop-icons {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            gap: 4px;
+            height: calc(100vh - 36px);
+            align-content: flex-start;
+            padding: 2px;
+        }
+
+        .icon {
+            width: 75px;
+            text-align: center;
+            color: #fff;
+            font-size: 11px;
+            text-shadow: 1px 1px 2px #000, 1px 1px #000;
+            user-select: none;
+            cursor: default;
+            padding: 4px 2px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .icon:hover .icon-label {
+            background: #000080;
+            color: #fff;
+            outline: 1px dotted #fff;
+        }
+
+        .icon.selected .icon-label {
+            background: #000080;
+            color: #fff;
+            outline: 1px dotted #fff;
+        }
+
+        .icon-label {
+            padding: 1px 2px;
+            line-height: 1.2;
+            max-width: 72px;
+            word-wrap: break-word;
+        }
+
+        .icon-graphic {
+            width: 32px;
+            height: 32px;
+            image-rendering: pixelated;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        /* ── Icon Styles (CSS pixel art) ── */
+
+        /* My Computer - monitor */
+        .icon-my-computer .icon-graphic {
+            background: #C0C0C0;
+            border: 2px solid #000;
+            box-shadow: inset -1px -1px #808080, inset 1px 1px #fff;
+        }
+        .icon-my-computer .icon-graphic::before {
+            content: "";
+            position: absolute;
+            top: 3px; left: 4px; right: 4px;
+            height: 14px;
+            background: #000080;
+        }
+        .icon-my-computer .icon-graphic::after {
+            content: "";
+            position: absolute;
+            bottom: 2px; left: 8px;
+            width: 16px; height: 3px;
+            background: #808080;
+        }
+
+        /* Recycle Bin */
+        .icon-recycle .icon-graphic {
+            background: transparent;
+            border: none;
+        }
+        .icon-recycle .icon-graphic::before {
+            content: "";
+            position: absolute;
+            top: 6px; left: 5px;
+            width: 22px; height: 22px;
+            background: #C0C0C0;
+            border: 2px solid #000;
+            border-top: none;
+        }
+        .icon-recycle .icon-graphic::after {
+            content: "";
+            position: absolute;
+            top: 2px; left: 3px;
+            width: 26px; height: 6px;
+            background: #C0C0C0;
+            border: 2px solid #000;
+        }
+
+        /* Internet Explorer */
+        .icon-ie .icon-graphic {
+            background: #fff;
+            border: 2px solid #0060C0;
+            border-radius: 2px;
+        }
+        .icon-ie .icon-graphic::before {
+            content: "e";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 22px;
+            font-weight: bold;
+            font-style: italic;
+            font-family: "Times New Roman", serif;
+            color: #0060C0;
+            line-height: 1;
+        }
+
+        /* ── Experiment App Icons ── */
+
+        /* ASCII Art Palette - paint palette */
+        .icon-ascii-palette .icon-graphic {
+            background: #F0E8D0;
+            border: 2px solid #806040;
+            border-radius: 50% 50% 50% 10%;
+        }
+        .icon-ascii-palette .icon-graphic::before {
+            content: "";
+            position: absolute;
+            top: 4px; left: 4px;
+            width: 8px; height: 8px;
+            background: #FF4040;
+            border-radius: 50%;
+            box-shadow: 12px 0 0 0 #4040FF, 6px 11px 0 0 #40C040;
+        }
+        .icon-ascii-palette .icon-graphic::after {
+            content: "";
+            position: absolute;
+            bottom: 2px; right: 2px;
+            width: 5px; height: 12px;
+            background: #804020;
+            border-radius: 1px 1px 3px 3px;
+            transform: rotate(-25deg);
+        }
+
+        /* ASCII Runner - terminal/game */
+        .icon-ascii-runner .icon-graphic {
+            background: #000;
+            border: 2px solid #404040;
+            border-radius: 2px;
+        }
+        .icon-ascii-runner .icon-graphic::before {
+            content: ">";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -55%);
+            font-size: 18px;
+            color: #00FF00;
+            font-weight: bold;
+            font-family: "Courier New", monospace;
+        }
+        .icon-ascii-runner .icon-graphic::after {
+            content: "";
+            position: absolute;
+            bottom: 3px; left: 3px; right: 3px;
+            height: 2px;
+            background: #00FF00;
+        }
+
+        /* Hello World - speech bubble */
+        .icon-hello-world .icon-graphic {
+            background: #FFFFCC;
+            border: 2px solid #808000;
+            border-radius: 4px;
+        }
+        .icon-hello-world .icon-graphic::before {
+            content: "Hi!";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -60%);
+            font-size: 11px;
+            color: #000080;
+            font-weight: bold;
+            font-family: "MS Sans Serif", Arial, sans-serif;
+        }
+        .icon-hello-world .icon-graphic::after {
+            content: "";
+            position: absolute;
+            bottom: -5px; left: 6px;
+            width: 0; height: 0;
+            border-left: 5px solid #808000;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #808000;
+        }
+
+        /* Local Weather - sun over sky */
+        .icon-local-weather .icon-graphic {
+            background: #87CEEB;
+            border: 2px solid #4080FF;
+            border-radius: 2px;
+        }
+        .icon-local-weather .icon-graphic::before {
+            content: "";
+            position: absolute;
+            top: 3px; left: 8px;
+            width: 12px; height: 12px;
+            background: #FFCC00;
+            border-radius: 50%;
+            border: 2px solid #FF8000;
+        }
+        .icon-local-weather .icon-graphic::after {
+            content: "";
+            position: absolute;
+            bottom: 3px; left: 1px; right: 1px;
+            height: 9px;
+            background: #fff;
+            border-radius: 8px 8px 0 0;
+        }
+
+        /* Location Scene Generator - map pin */
+        .icon-location-scene .icon-graphic {
+            background: transparent;
+            border: none;
+        }
+        .icon-location-scene .icon-graphic::before {
+            content: "";
+            position: absolute;
+            top: 1px; left: 7px;
+            width: 16px; height: 16px;
+            background: #FF4040;
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            border: 2px solid #CC0000;
+        }
+        .icon-location-scene .icon-graphic::after {
+            content: "";
+            position: absolute;
+            top: 19px; left: 13px;
+            width: 4px; height: 10px;
+            background: #CC0000;
+            border-radius: 0 0 3px 3px;
+        }
+
+        /* AI Image Generation - dark canvas with star */
+        .icon-ai-image .icon-graphic {
+            background: #1A1A2E;
+            border: 2px solid #444;
+            border-radius: 3px;
+        }
+        .icon-ai-image .icon-graphic::before {
+            content: "\2726";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+            color: #FFD700;
+        }
+        .icon-ai-image .icon-graphic::after {
+            content: "";
+            position: absolute;
+            bottom: 3px; right: 3px;
+            width: 8px; height: 8px;
+            background: #FF6060;
+            border-radius: 50%;
+        }
+
+        /* Platformer - game controller */
+        .icon-platformer .icon-graphic {
+            background: #404040;
+            border: 2px solid #000;
+            border-radius: 6px;
+        }
+        .icon-platformer .icon-graphic::before {
+            content: "";
+            position: absolute;
+            top: 8px; left: 5px;
+            width: 6px; height: 10px;
+            border: 2px solid #C0C0C0;
+            border-radius: 1px;
+        }
+        .icon-platformer .icon-graphic::after {
+            content: "";
+            position: absolute;
+            top: 11px; right: 5px;
+            width: 6px; height: 6px;
+            background: #CC2020;
+            border-radius: 50%;
+            box-shadow: -8px 0 0 0 #2060CC;
+        }
+
+        /* Valentine's Card - heart */
+        .icon-valentines .icon-graphic {
+            background: #FFF0F5;
+            border: 2px solid #CC0044;
+            border-radius: 2px;
+        }
+        .icon-valentines .icon-graphic::before {
+            content: "\2665";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            color: #CC0044;
+        }
+
+        /* Weather Image (Netlify) - cloud with rain */
+        .icon-weather-netlify .icon-graphic {
+            background: #87CEEB;
+            border: 2px solid #4080FF;
+            border-radius: 2px;
+        }
+        .icon-weather-netlify .icon-graphic::before {
+            content: "";
+            position: absolute;
+            top: 4px; left: 1px; right: 1px;
+            height: 12px;
+            background: #fff;
+            border-radius: 10px;
+            border: 1px solid #A0A0A0;
+        }
+        .icon-weather-netlify .icon-graphic::after {
+            content: "";
+            position: absolute;
+            bottom: 3px; left: 6px;
+            width: 3px; height: 7px;
+            background: #4080FF;
+            border-radius: 0 0 2px 2px;
+            box-shadow: 6px 0 0 0 #4080FF, 12px 0 0 0 #4080FF;
+        }
+
+        /* Weather to Image - cloud above image frame */
+        .icon-weather-to-image .icon-graphic {
+            background: #E8F4FF;
+            border: 2px solid #4080FF;
+            border-radius: 2px;
+        }
+        .icon-weather-to-image .icon-graphic::before {
+            content: "";
+            position: absolute;
+            top: 2px; left: 2px; right: 2px;
+            height: 10px;
+            background: #C8E0F8;
+            border-radius: 8px;
+            border: 1px solid #6090C0;
+        }
+        .icon-weather-to-image .icon-graphic::after {
+            content: "";
+            position: absolute;
+            bottom: 2px; left: 3px; right: 3px;
+            height: 12px;
+            background: #fff;
+            border: 2px solid #808080;
+        }
+
+        /* ── App Window (no address bar) ── */
+        .app-title-logo {
+            width: 16px;
+            height: 16px;
+            background: #FFFF80;
+            border: 1px solid #808040;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .app-title-logo::before {
+            content: "";
+            position: absolute;
+            top: -3px; left: 0;
+            width: 8px; height: 3px;
+            background: #FFFF80;
+            border: 1px solid #808040;
+            border-bottom: none;
+        }
+
+        /* ── IE Window ── */
+        .window {
+            width: min(820px, calc(100vw - 100px));
+            height: min(560px, calc(100vh - 60px));
+            min-width: 420px;
+            min-height: 320px;
+            background: #C0C0C0;
+            border-top: 2px solid #fff;
+            border-left: 2px solid #fff;
+            border-bottom: 2px solid #000;
+            border-right: 2px solid #000;
+            box-shadow: inset 1px 1px 0 #DFDFDF, inset -1px -1px 0 #808080;
+            position: absolute;
+            left: clamp(90px, 12vw, 160px);
+            top: 16px;
+            display: flex;
+            flex-direction: column;
+            padding: 3px;
+            z-index: 10;
+        }
+
+        .window.hidden { display: none; }
+
+        /* Title bar - blue gradient like Win ME */
+        .titlebar {
+            height: 22px;
+            background: linear-gradient(to right, #0A246A, #3A6EA5);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 3px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: default;
+        }
+
+        .titlebar.inactive {
+            background: linear-gradient(to right, #808080, #B0B0B0);
+        }
+
+        .title-left {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .title-logo {
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border: 1px solid #000;
+            position: relative;
+            flex-shrink: 0;
+            border-radius: 1px;
+        }
+        .title-logo::before {
+            content: "e";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 11px;
+            font-style: italic;
+            font-family: "Times New Roman", serif;
+            color: #0060C0;
+            line-height: 1;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 2px;
+            flex-shrink: 0;
+        }
+
+        .ctrl-btn {
+            width: 16px;
+            height: 14px;
+            background: #C0C0C0;
+            border-top: 1px solid #fff;
+            border-left: 1px solid #fff;
+            border-bottom: 1px solid #000;
+            border-right: 1px solid #000;
+            color: #000;
+            line-height: 1;
+            text-align: center;
+            font-weight: bold;
+            font-size: 10px;
+            cursor: default;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .ctrl-btn:active {
+            border-top: 1px solid #000;
+            border-left: 1px solid #000;
+            border-bottom: 1px solid #fff;
+            border-right: 1px solid #fff;
+        }
+
+        /* Menu bar */
+        .menubar {
+            height: 20px;
+            display: flex;
+            align-items: center;
+            padding: 0;
+            font-size: 11px;
+            background: #C0C0C0;
+            border-bottom: 1px solid #808080;
+        }
+        .menubar span {
+            padding: 2px 6px;
+            cursor: default;
+        }
+        .menubar span:hover {
+            background: #000080;
+            color: #fff;
+        }
+
+        /* Toolbar - IE 5.5 style with icons above text */
+        .toolbar {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            padding: 1px 2px;
+            background: #C0C0C0;
+            border-top: 1px solid #fff;
+            border-bottom: 1px solid #808080;
+        }
+
+        .toolbar-grip {
+            width: 4px;
+            height: 28px;
+            margin-right: 2px;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent, transparent 1px,
+                #808080 1px, #808080 2px,
+                #fff 2px, #fff 3px
+            );
+        }
+
+        .tb-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: 1px solid transparent;
+            min-width: 40px;
+            height: 36px;
+            padding: 1px 4px;
+            cursor: default;
+            font-size: 10px;
+            font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif;
+            color: #000;
+            gap: 0;
+        }
+        .tb-btn:hover {
+            border-top: 1px solid #fff;
+            border-left: 1px solid #fff;
+            border-bottom: 1px solid #808080;
+            border-right: 1px solid #808080;
+        }
+        .tb-btn:active {
+            border-top: 1px solid #808080;
+            border-left: 1px solid #808080;
+            border-bottom: 1px solid #fff;
+            border-right: 1px solid #fff;
+        }
+
+        .tb-icon {
+            width: 20px;
+            height: 20px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .tb-sep {
+            width: 2px;
+            height: 32px;
+            border-left: 1px solid #808080;
+            border-right: 1px solid #fff;
+            margin: 0 2px;
+        }
+
+        /* Toolbar icon drawings */
+        .tb-icon-back { position: relative; }
+        .tb-icon-back::before {
+            content: "";
+            position: absolute;
+            top: 6px; left: 3px;
+            width: 0; height: 0;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-right: 7px solid #008000;
+        }
+        .tb-icon-back::after {
+            content: "";
+            position: absolute;
+            top: 8px; left: 9px;
+            width: 8px; height: 4px;
+            background: #008000;
+        }
+
+        .tb-icon-forward { position: relative; }
+        .tb-icon-forward::before {
+            content: "";
+            position: absolute;
+            top: 6px; right: 3px;
+            width: 0; height: 0;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-left: 7px solid #008000;
+        }
+        .tb-icon-forward::after {
+            content: "";
+            position: absolute;
+            top: 8px; left: 3px;
+            width: 8px; height: 4px;
+            background: #008000;
+        }
+
+        .tb-icon-stop::before {
+            content: "\00d7";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            color: #CC0000;
+            font-weight: bold;
+        }
+
+        .tb-icon-refresh::before {
+            content: "";
+            position: absolute;
+            top: 3px; left: 3px;
+            width: 12px; height: 12px;
+            border: 3px solid #008000;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+        }
+        .tb-icon-refresh::after {
+            content: "";
+            position: absolute;
+            top: 2px; right: 2px;
+            width: 0; height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-bottom: 5px solid #008000;
+        }
+
+        .tb-icon-home::before {
+            content: "";
+            position: absolute;
+            top: 2px; left: 3px;
+            width: 0; height: 0;
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+            border-bottom: 7px solid #804000;
+        }
+        .tb-icon-home::after {
+            content: "";
+            position: absolute;
+            bottom: 1px; left: 5px;
+            width: 10px; height: 8px;
+            background: #FFCC00;
+            border: 1px solid #804000;
+        }
+
+        .tb-icon-search::before {
+            content: "";
+            position: absolute;
+            top: 2px; left: 3px;
+            width: 10px; height: 10px;
+            border: 2px solid #0060C0;
+            border-radius: 50%;
+        }
+        .tb-icon-search::after {
+            content: "";
+            position: absolute;
+            bottom: 2px; right: 3px;
+            width: 6px; height: 2px;
+            background: #0060C0;
+            transform: rotate(45deg);
+        }
+
+        .tb-icon-favorites::before {
+            content: "\2605";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            color: #FFD700;
+            text-shadow: 0 0 1px #000;
+        }
+
+        .tb-icon-history::before {
+            content: "";
+            position: absolute;
+            top: 2px; left: 3px;
+            width: 14px; height: 14px;
+            border: 2px solid #0060C0;
+            border-radius: 50%;
+        }
+        .tb-icon-history::after {
+            content: "";
+            position: absolute;
+            top: 4px; left: 9px;
+            width: 2px; height: 7px;
+            background: #0060C0;
+            transform-origin: bottom center;
+            box-shadow: -3px 2px 0 0 #0060C0;
+        }
+
+        /* Address bar */
+        .address-row {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 4px;
+            background: #C0C0C0;
+            font-size: 11px;
+            border-top: 1px solid #fff;
+            border-bottom: 1px solid #808080;
+        }
+
+        .address-row .toolbar-grip {
+            height: 18px;
+        }
+
+        .address-row label {
+            white-space: nowrap;
+        }
+
+        .address-row input {
+            flex: 1;
+            height: 20px;
+            border: 1px solid #808080;
+            box-shadow: inset 1px 1px 0 #404040;
+            padding: 0 4px 0 20px;
+            font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif;
+            font-size: 11px;
+            background: #fff;
+            outline: none;
+        }
+
+        .address-input-wrap {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .address-icon {
+            position: absolute;
+            left: 3px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 14px;
+            height: 14px;
+            z-index: 1;
+        }
+        .address-icon::before {
+            content: "e";
+            font-size: 10px;
+            font-style: italic;
+            font-family: "Times New Roman", serif;
+            color: #0060C0;
+            font-weight: bold;
+        }
+
+        .address-row .go-btn {
+            background: #C0C0C0;
+            border-top: 1px solid #fff;
+            border-left: 1px solid #fff;
+            border-bottom: 1px solid #808080;
+            border-right: 1px solid #808080;
+            height: 20px;
+            min-width: 36px;
+            font-size: 11px;
+            font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif;
+            cursor: default;
+            padding: 0 6px;
+        }
+        .address-row .go-btn:active {
+            border-top: 1px solid #808080;
+            border-left: 1px solid #808080;
+            border-bottom: 1px solid #fff;
+            border-right: 1px solid #fff;
+        }
+
+        /* Content area */
+        .view {
+            flex: 1;
+            border: 2px inset #C0C0C0;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            background: #fff;
+        }
+
+        /* Status bar */
+        .status {
+            height: 20px;
+            display: flex;
+            align-items: center;
+            padding: 0 2px;
+            gap: 2px;
+            font-size: 11px;
+            background: #C0C0C0;
+        }
+
+        .status-left {
+            flex: 1;
+            border: 1px inset #C0C0C0;
+            padding: 1px 4px;
+            overflow: hidden;
+            white-space: nowrap;
+            height: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .status-right {
+            width: 80px;
+            border: 1px inset #C0C0C0;
+            padding: 1px 4px;
+            text-align: center;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .status-icon {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            background: #4080FF;
+            border-radius: 50%;
+            margin-right: 4px;
+            flex-shrink: 0;
+            position: relative;
+        }
+        .status-icon::before {
+            content: "";
+            position: absolute;
+            top: 2px; left: 5px;
+            width: 4px; height: 4px;
+            background: #FFFF00;
+            border-radius: 50%;
+        }
+
+        /* ── Taskbar ── */
+        .taskbar {
+            position: fixed;
+            left: 0; right: 0; bottom: 0;
+            height: 30px;
+            background: #C0C0C0;
+            border-top: 2px solid #fff;
+            display: flex;
+            align-items: center;
+            gap: 0;
+            padding: 2px;
+            z-index: 20;
+        }
+
+        .start-btn {
+            height: 24px;
+            background: #C0C0C0;
+            border-top: 2px solid #fff;
+            border-left: 2px solid #fff;
+            border-bottom: 2px solid #808080;
+            border-right: 2px solid #808080;
+            color: #000;
+            font-size: 11px;
+            font-weight: bold;
+            font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif;
+            padding: 0 6px;
+            cursor: default;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            flex-shrink: 0;
+        }
+        .start-btn:active, .start-btn.pressed {
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-bottom: 2px solid #fff;
+            border-right: 2px solid #fff;
+        }
+
+        /* Windows flag */
+        .start-flag {
+            width: 16px;
+            height: 16px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 1px;
+            flex-shrink: 0;
+            transform: perspective(20px) rotateY(-5deg);
+        }
+        .start-flag .f1 { background: #FF0000; }
+        .start-flag .f2 { background: #00B200; }
+        .start-flag .f3 { background: #0000FF; }
+        .start-flag .f4 { background: #FFFF00; }
+
+        /* Quick Launch */
+        .quick-launch {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            padding: 0 4px;
+            height: 24px;
+            border-left: 2px groove #C0C0C0;
+            margin-left: 2px;
+        }
+
+        .ql-btn {
+            width: 20px;
+            height: 20px;
+            background: transparent;
+            border: 1px solid transparent;
+            cursor: default;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .ql-btn:hover {
+            border-top: 1px solid #fff;
+            border-left: 1px solid #fff;
+            border-bottom: 1px solid #808080;
+            border-right: 1px solid #808080;
+        }
+
+        .ql-ie::before {
+            content: "e";
+            font-size: 13px;
+            font-style: italic;
+            font-weight: bold;
+            font-family: "Times New Roman", serif;
+            color: #0060C0;
+        }
+
+        .ql-outlook::before {
+            content: "";
+            position: absolute;
+            top: 3px; left: 3px;
+            width: 12px; height: 8px;
+            background: #FFFFCC;
+            border: 1px solid #808000;
+        }
+        .ql-outlook::after {
+            content: "";
+            position: absolute;
+            top: 3px; left: 3px;
+            width: 0; height: 0;
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+            border-top: 5px solid #808000;
+        }
+
+        .ql-desktop::before {
+            content: "";
+            position: absolute;
+            top: 3px; left: 3px;
+            width: 13px; height: 10px;
+            background: #008080;
+            border: 1px solid #404040;
+        }
+        .ql-desktop::after {
+            content: "";
+            position: absolute;
+            bottom: 3px; left: 5px;
+            width: 10px; height: 2px;
+            background: #404040;
+        }
+
+        .task-divider {
+            width: 2px;
+            height: 22px;
+            border-left: 2px groove #C0C0C0;
+            margin: 0 2px;
+        }
+
+        .task-area {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            overflow: hidden;
+        }
+
+        .task-button {
+            height: 22px;
+            background: #C0C0C0;
+            border-top: 1px solid #808080;
+            border-left: 1px solid #808080;
+            border-bottom: 1px solid #fff;
+            border-right: 1px solid #fff;
+            min-width: 140px;
+            max-width: 180px;
+            text-align: left;
+            padding: 0 6px;
+            font-size: 11px;
+            font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif;
+            color: #000;
+            font-weight: bold;
+            cursor: default;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .task-button .task-icon {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+            position: relative;
+        }
+        .task-button .task-icon::before {
+            content: "e";
+            font-size: 10px;
+            font-style: italic;
+            font-weight: bold;
+            font-family: "Times New Roman", serif;
+            color: #0060C0;
+        }
+
+        .tray {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            height: 24px;
+            padding: 0 8px;
+            border: 1px inset #C0C0C0;
+            font-size: 11px;
+            color: #000;
+            flex-shrink: 0;
+        }
+
+        .tray-volume {
+            width: 14px;
+            height: 14px;
+            position: relative;
+            cursor: default;
+        }
+        .tray-volume::before {
+            content: "";
+            position: absolute;
+            left: 0; top: 4px;
+            width: 5px; height: 6px;
+            background: #000;
+        }
+        .tray-volume::after {
+            content: "";
+            position: absolute;
+            left: 3px; top: 2px;
+            width: 0; height: 0;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-left: 6px solid #000;
+        }
+
+        /* ── Start Menu ── */
+        .start-menu {
+            position: fixed;
+            left: 2px;
+            bottom: 30px;
+            width: 220px;
+            background: #C0C0C0;
+            border-top: 2px solid #fff;
+            border-left: 2px solid #fff;
+            border-bottom: 2px solid #808080;
+            border-right: 2px solid #808080;
+            display: none;
+            z-index: 25;
+        }
+
+        .start-menu.open {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .start-rail {
+            width: 22px;
+            background: linear-gradient(to top, #0A246A, #3A6EA5);
+            color: #C0C0C0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 6px;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .start-rail strong { color: #fff; }
+
+        .menu-list {
+            flex: 1;
+            padding: 2px 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 16px 5px 8px;
+            font-size: 11px;
+            cursor: default;
+            white-space: nowrap;
+            position: relative;
+        }
+        .menu-item:hover {
+            background: #000080;
+            color: #fff;
+        }
+
+        .menu-icon {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .menu-icon-programs { background: #C0C0C0; border: 1px solid #000; }
+        .menu-icon-programs::before { content: ""; display: block; width: 6px; height: 4px; background: #000080; margin: 2px; }
+
+        .menu-icon-docs { background: #FFFF80; border: 1px solid #808080; }
+
+        .menu-icon-settings { background: #C0C0C0; border: 1px solid #808080; }
+        .menu-icon-settings::before { content: ""; display: block; width: 10px; height: 3px; background: #808080; margin: 3px 2px; }
+
+        .menu-icon-find { background: #fff; border: 1px solid #000; position: relative; }
+        .menu-icon-find::after { content: ""; position: absolute; bottom: 1px; right: 1px; width: 6px; height: 6px; border: 2px solid #000; border-radius: 50%; }
+
+        .menu-icon-help { background: #FFFF00; border: 1px solid #808080; text-align: center; font-weight: bold; font-size: 11px; line-height: 14px; color: #000; }
+
+        .menu-icon-run { background: #C0C0C0; border: 1px solid #808080; }
+
+        .menu-separator {
+            border-top: 1px solid #808080;
+            border-bottom: 1px solid #fff;
+            margin: 3px 4px;
+        }
+
+        .menu-item-arrow::after {
+            content: "\25b6";
+            font-size: 8px;
+            margin-left: auto;
+        }
+
+        .menu-shutdown {
+            border-top: 2px solid #808080;
+            padding-top: 4px;
+            margin-top: 2px;
+        }
+
+        /* ── Programs Submenu ── */
+        .programs-submenu {
+            position: fixed;
+            left: 222px;
+            width: 200px;
+            background: #C0C0C0;
+            border-top: 2px solid #fff;
+            border-left: 2px solid #fff;
+            border-bottom: 2px solid #808080;
+            border-right: 2px solid #808080;
+            display: none;
+            z-index: 26;
+            padding: 2px 0;
+        }
+        .programs-submenu.open { display: block; }
+
+        .submenu-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 16px 5px 8px;
+            font-size: 11px;
+            cursor: default;
+            white-space: nowrap;
+        }
+        .submenu-item:hover {
+            background: #000080;
+            color: #fff;
+        }
+
+        .submenu-icon {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        /* ── Right-click context menu ── */
+        .context-menu {
+            position: fixed;
+            background: #C0C0C0;
+            border-top: 2px solid #fff;
+            border-left: 2px solid #fff;
+            border-bottom: 2px solid #808080;
+            border-right: 2px solid #808080;
+            min-width: 160px;
+            padding: 2px 0;
+            z-index: 30;
+            display: none;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        }
+        .context-menu.open { display: block; }
+        .context-menu-item {
+            padding: 4px 24px 4px 24px;
+            font-size: 11px;
+            cursor: default;
+            white-space: nowrap;
+        }
+        .context-menu-item:hover {
+            background: #000080;
+            color: #fff;
+        }
+        .context-menu-item.disabled {
+            color: #808080;
+        }
+        .context-menu-item.disabled:hover {
+            background: transparent;
+            color: #808080;
+        }
+        .context-menu-sep {
+            border-top: 1px solid #808080;
+            border-bottom: 1px solid #fff;
+            margin: 3px 2px;
+        }
+        .context-menu-item .check-mark {
+            margin-left: -16px;
+            margin-right: 4px;
+        }
+
+        /* ── Dialog Box (Win32 style) ── */
+        .dialog-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: none;
+        }
+        .dialog-overlay.active { display: flex; align-items: center; justify-content: center; }
+
+        .dialog-box {
+            background: #C0C0C0;
+            border-top: 2px solid #fff;
+            border-left: 2px solid #fff;
+            border-bottom: 2px solid #000;
+            border-right: 2px solid #000;
+            box-shadow: inset 1px 1px 0 #DFDFDF, inset -1px -1px 0 #808080;
+            min-width: 340px;
+            max-width: 480px;
+            padding: 3px;
+        }
+
+        .dialog-titlebar {
+            height: 22px;
+            background: linear-gradient(to right, #0A246A, #3A6EA5);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 3px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .dialog-body {
+            padding: 12px 16px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .dialog-icon {
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .dialog-icon-error {
+            background: #FF0000;
+            border-radius: 50%;
+            border: 2px solid #CC0000;
+        }
+        .dialog-icon-error::before {
+            content: "\00d7";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .dialog-icon-warning {
+            width: 0;
+            height: 0;
+            border-left: 16px solid transparent;
+            border-right: 16px solid transparent;
+            border-bottom: 28px solid #FFFF00;
+        }
+        .dialog-icon-warning::before {
+            content: "!";
+            position: absolute;
+            bottom: -26px; left: 50%;
+            transform: translateX(-50%);
+            color: #000;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .dialog-icon-info {
+            background: #fff;
+            border: 2px solid #0060C0;
+            border-radius: 50%;
+        }
+        .dialog-icon-info::before {
+            content: "i";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: #0060C0;
+            font-size: 18px;
+            font-weight: bold;
+            font-family: "Times New Roman", serif;
+            font-style: italic;
+        }
+
+        .dialog-text {
+            font-size: 11px;
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        .dialog-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 16px 12px;
+        }
+
+        .dialog-btn {
+            min-width: 75px;
+            height: 23px;
+            background: #C0C0C0;
+            border-top: 2px solid #fff;
+            border-left: 2px solid #fff;
+            border-bottom: 2px solid #808080;
+            border-right: 2px solid #808080;
+            font-size: 11px;
+            font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif;
+            cursor: default;
+            padding: 0 8px;
+        }
+        .dialog-btn:active {
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-bottom: 2px solid #fff;
+            border-right: 2px solid #fff;
+        }
+        .dialog-btn:focus {
+            outline: 1px dotted #000;
+            outline-offset: -4px;
+        }
+
+        /* ── Run Dialog ── */
+        .run-dialog .dialog-body {
+            flex-direction: column;
+            gap: 8px;
+        }
+        .run-dialog .run-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .run-dialog .run-icon-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .run-dialog input {
+            flex: 1;
+            height: 22px;
+            border: 2px inset #C0C0C0;
+            padding: 0 4px;
+            font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif;
+            font-size: 11px;
+            background: #fff;
+            outline: none;
+        }
+
+        /* ── Notepad Window ── */
+        .notepad-window {
+            min-width: 380px;
+            min-height: 280px;
+        }
+        .notepad-textarea {
+            width: 100%;
+            height: 100%;
+            border: none;
+            resize: none;
+            font-family: "Courier New", "Lucida Console", monospace;
+            font-size: 13px;
+            padding: 2px 4px;
+            outline: none;
+            background: #fff;
+            color: #000;
+        }
+
+        /* ── My Computer / Folder View ── */
+        .folder-view {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 12px;
+            align-content: flex-start;
+            overflow-y: auto;
+            height: 100%;
+            background: #fff;
+        }
+        .folder-item {
+            width: 70px;
+            text-align: center;
+            padding: 4px;
+            cursor: default;
+            font-size: 11px;
+        }
+        .folder-item:hover {
+            background: #000080;
+            color: #fff;
+        }
+        .folder-item-icon {
+            width: 32px;
+            height: 32px;
+            margin: 0 auto 4px;
+            position: relative;
+        }
+
+        /* Drive icons */
+        .drive-icon-floppy {
+            background: #404040;
+            border: 2px solid #000;
+            border-radius: 2px 2px 0 0;
+        }
+        .drive-icon-floppy::before {
+            content: "";
+            position: absolute;
+            top: 2px; left: 6px;
+            width: 14px; height: 8px;
+            background: #C0C0C0;
+            border: 1px solid #808080;
+        }
+        .drive-icon-floppy::after {
+            content: "";
+            position: absolute;
+            bottom: 2px; left: 4px;
+            width: 20px; height: 10px;
+            background: #808080;
+            border-radius: 2px;
+        }
+
+        .drive-icon-hdd {
+            background: #C0C0C0;
+            border: 2px solid #808080;
+        }
+        .drive-icon-hdd::before {
+            content: "";
+            position: absolute;
+            top: 4px; left: 4px; right: 4px;
+            height: 10px;
+            background: #E0E0E0;
+            border: 1px solid #808080;
+        }
+        .drive-icon-hdd::after {
+            content: "";
+            position: absolute;
+            bottom: 6px; right: 6px;
+            width: 6px; height: 6px;
+            background: #00CC00;
+            border-radius: 50%;
+        }
+
+        .drive-icon-cdrom {
+            background: #E0E0E0;
+            border: 2px solid #808080;
+            border-radius: 50%;
+        }
+        .drive-icon-cdrom::before {
+            content: "";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px; height: 8px;
+            background: #C0C0C0;
+            border: 2px solid #A0A0A0;
+            border-radius: 50%;
+        }
+
+        .folder-icon-cp {
+            background: #C0C0C0;
+            border: 2px solid #808080;
+        }
+        .folder-icon-cp::before {
+            content: "";
+            position: absolute;
+            top: 4px; left: 4px;
+            width: 10px; height: 10px;
+            background: #808080;
+            border-radius: 50%;
+        }
+        .folder-icon-cp::after {
+            content: "";
+            position: absolute;
+            bottom: 4px; right: 4px;
+            width: 8px; height: 4px;
+            background: #808080;
+        }
+
+        .folder-icon-folder {
+            background: #FFCC00;
+            border: 2px solid #CC9900;
+            border-radius: 0 2px 2px 2px;
+        }
+        .folder-icon-folder::before {
+            content: "";
+            position: absolute;
+            top: -5px; left: 0;
+            width: 12px; height: 5px;
+            background: #FFCC00;
+            border: 2px solid #CC9900;
+            border-bottom: none;
+            border-radius: 2px 2px 0 0;
+        }
+
+        /* ── Hint ── */
+        .quick-note {
+            position: absolute;
+            right: 12px;
+            bottom: 38px;
+            color: #fff;
+            text-shadow: 1px 1px 2px #000, 1px 1px #000;
+            font-size: 11px;
+            max-width: 260px;
+            text-align: right;
+        }
+
+        /* ── Clock tooltip ── */
+        .clock-tooltip {
+            position: fixed;
+            background: #FFFFCC;
+            border: 1px solid #000;
+            padding: 2px 6px;
+            font-size: 11px;
+            z-index: 50;
+            display: none;
+            white-space: nowrap;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 700px) {
+            .desktop {
+                padding-bottom: 48px;
+            }
+
+            .desktop-icons {
+                flex-direction: row;
+                flex-wrap: wrap;
+                height: auto;
+                max-height: calc(100vh - 50px);
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                gap: 2px;
+                padding: 4px;
+                align-content: flex-start;
+            }
+
+            .icon {
+                width: 72px;
+                padding: 6px 2px;
+            }
+
+            .window {
+                left: 0 !important;
+                top: 0 !important;
+                width: 100vw !important;
+                height: calc(100vh - 44px) !important;
+                min-width: 0;
+                min-height: 0;
+            }
+
+            .titlebar {
+                height: 30px;
+            }
+
+            .ctrl-btn {
+                width: 26px;
+                height: 24px;
+                font-size: 14px;
+            }
+
+            .menubar {
+                display: none;
+            }
+
+            .toolbar {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                flex-wrap: nowrap;
+            }
+            .toolbar::-webkit-scrollbar { display: none; }
+
+            .tb-btn {
+                min-width: 52px;
+                height: 44px;
+                flex-shrink: 0;
+            }
+
+            .address-row label {
+                display: none;
+            }
+            .address-row .toolbar-grip {
+                display: none;
+            }
+            .address-row input {
+                height: 34px;
+                font-size: 16px;
+                padding: 0 4px 0 22px;
+            }
+            .address-row .go-btn {
+                height: 34px;
+                min-width: 48px;
+                padding: 0 8px;
+            }
+
+            .taskbar {
+                height: 44px;
+            }
+
+            .start-btn {
+                height: 38px;
+                font-size: 13px;
+                padding: 0 8px;
+            }
+
+            .quick-launch {
+                display: flex;
+            }
+            .ql-btn {
+                width: 32px;
+                height: 32px;
+            }
+
+            .task-button {
+                height: 36px;
+                min-width: 80px;
+                max-width: 150px;
+                font-size: 11px;
+            }
+
+            .tray {
+                height: 38px;
+                font-size: 12px;
+                padding: 0 6px;
+                gap: 4px;
+            }
+
+            .start-menu {
+                width: calc(100vw - 4px);
+                bottom: 44px;
+            }
+
+            .menu-item {
+                padding: 10px 16px 10px 8px;
+                font-size: 14px;
+            }
+            .menu-icon {
+                width: 20px;
+                height: 20px;
+            }
+
+            .quick-note {
+                bottom: 52px;
+                font-size: 11px;
+                max-width: 200px;
+            }
+
+            .programs-submenu {
+                left: 0 !important;
+                width: calc(100vw - 4px);
+            }
+        }
+    
