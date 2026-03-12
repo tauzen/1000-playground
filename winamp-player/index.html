@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Winamp Player Clone</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #008080;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+            user-select: none;
+            overflow: hidden;
+        }
+
+        /* Windows ME desktop background pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                linear-gradient(135deg, #007070 25%, transparent 25%) -10px 0,
+                linear-gradient(225deg, #007070 25%, transparent 25%) -10px 0,
+                linear-gradient(315deg, #007070 25%, transparent 25%),
+                linear-gradient(45deg, #007070 25%, transparent 25%);
+            background-size: 20px 20px;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        /* ===== WINAMP MAIN WINDOW ===== */
+        #winamp {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .winamp-main {
+            width: 275px;
+            background: #232323;
+            border: 2px solid #444;
+            border-radius: 3px;
+            overflow: hidden;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+        }
+
+        /* Title bar */
+        .title-bar {
+            background: linear-gradient(180deg, #4a6984 0%, #2c4158 50%, #1a2f43 100%);
+            height: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2px;
+            cursor: move;
+        }
+
+        .title-bar-text {
+            font-size: 8px;
+            color: #fff;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 0 #000;
+            flex: 1;
+            text-align: center;
+        }
+
+        .title-btn {
+            width: 9px;
+            height: 9px;
+            border: 1px solid #888;
+            background: #3a3a3a;
+            font-size: 6px;
+            color: #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .title-btn:hover { background: #555; }
+        .title-buttons { display: flex; gap: 1px; }
+
+        /* Visualization / display area */
+        .display-area {
+            background: #000;
+            margin: 3px;
+            border: 2px inset #333;
+            padding: 0;
+            position: relative;
+            height: 40px;
+            overflow: hidden;
+        }
+
+        .display-inner {
+            display: flex;
+            height: 100%;
+        }
+
+        /* Visualization canvas */
+        #visualizer {
+            width: 76px;
+            height: 36px;
+            image-rendering: pixelated;
+        }
+
+        .display-info {
+            flex: 1;
+            padding: 2px 4px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .display-bitrate {
+            font-size: 7px;
+            color: #00cc00;
+            font-family: 'Courier New', monospace;
+        }
+
+        .display-time {
+            font-size: 16px;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            text-align: right;
+            text-shadow: 0 0 5px #00ff00;
+            letter-spacing: 1px;
+        }
+
+        /* Scrolling track title */
+        .display-title-bar {
+            background: #000;
+            margin: 0 3px;
+            border-left: 2px inset #333;
+            border-right: 2px inset #333;
+            height: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .scrolling-title {
+            font-size: 8px;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            white-space: nowrap;
+            position: absolute;
+            animation: scroll-title 10s linear infinite;
+            text-shadow: 0 0 3px #00ff00;
+        }
+
+        @keyframes scroll-title {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Volume & Balance area */
+        .controls-row-top {
+            display: flex;
+            align-items: center;
+            padding: 2px 5px;
+            gap: 4px;
+        }
+
+        .slider-label {
+            font-size: 7px;
+            color: #999;
+            width: 20px;
+        }
+
+        .slider-container {
+            flex: 1;
+            height: 10px;
+            position: relative;
+        }
+
+        .slider-track {
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(180deg, #333, #555);
+            border: 1px inset #222;
+            position: absolute;
+            top: 3px;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 10px;
+            background: transparent;
+            position: relative;
+            z-index: 2;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            height: 4px;
+            background: linear-gradient(180deg, #555, #333);
+            border: 1px solid #222;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 10px;
+            background: linear-gradient(180deg, #aaa, #666);
+            border: 1px solid #888;
+            border-radius: 1px;
+            margin-top: -3px;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-track {
+            height: 4px;
+            background: linear-gradient(180deg, #555, #333);
+            border: 1px solid #222;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 14px;
+            height: 10px;
+            background: linear-gradient(180deg, #aaa, #666);
+            border: 1px solid #888;
+            border-radius: 1px;
+            cursor: pointer;
+        }
+
+        /* Seek bar */
+        .seek-container {
+            padding: 1px 5px;
+        }
+
+        #seek-bar {
+            width: 100%;
+        }
+
+        /* Transport controls */
+        .transport-controls {
+            display: flex;
+            justify-content: center;
+            gap: 2px;
+            padding: 3px 5px 5px;
+        }
+
+        .transport-btn {
+            width: 23px;
+            height: 18px;
+            background: linear-gradient(180deg, #4a4a4a 0%, #333 50%, #2a2a2a 100%);
+            border: 1px outset #555;
+            color: #ccc;
+            font-size: 9px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 1px;
+        }
+
+        .transport-btn:hover {
+            background: linear-gradient(180deg, #5a5a5a 0%, #444 50%, #3a3a3a 100%);
+            color: #fff;
+        }
+
+        .transport-btn:active {
+            border-style: inset;
+            background: linear-gradient(180deg, #2a2a2a 0%, #333 50%, #4a4a4a 100%);
+        }
+
+        .transport-btn.active {
+            background: linear-gradient(180deg, #2a4a2a 0%, #1a3a1a 50%, #0a2a0a 100%);
+            color: #0f0;
+            border-style: inset;
+        }
+
+        /* EQ & Shuffle/Repeat buttons */
+        .bottom-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 5px 3px;
+        }
+
+        .toggle-btn {
+            font-size: 7px;
+            color: #888;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            padding: 1px 4px;
+            cursor: pointer;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+        }
+
+        .toggle-btn.active {
+            color: #0f0;
+            text-shadow: 0 0 3px #0f0;
+        }
+
+        .toggle-btn:hover { color: #aaa; }
+
+        /* ===== EQUALIZER WINDOW ===== */
+        .winamp-eq {
+            width: 275px;
+            background: #232323;
+            border: 2px solid #444;
+            border-top: none;
+            border-radius: 0 0 3px 3px;
+            overflow: hidden;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            display: none;
+        }
+
+        .winamp-eq.visible { display: block; }
+
+        .eq-title {
+            background: linear-gradient(180deg, #4a6984 0%, #2c4158 100%);
+            height: 12px;
+            display: flex;
+            align-items: center;
+            padding: 0 4px;
+        }
+
+        .eq-title span {
+            font-size: 7px;
+            color: #fff;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .eq-controls {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            padding: 6px 8px 8px;
+            gap: 2px;
+        }
+
+        .eq-band {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .eq-band label {
+            font-size: 6px;
+            color: #888;
+        }
+
+        .eq-slider {
+            writing-mode: vertical-lr;
+            direction: rtl;
+            height: 50px;
+            width: 12px;
+        }
+
+        .eq-slider::-webkit-slider-thumb {
+            width: 12px !important;
+            height: 6px !important;
+        }
+
+        .eq-slider::-moz-range-thumb {
+            width: 12px !important;
+            height: 6px !important;
+        }
+
+        .eq-preamp {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px 0;
+        }
+
+        .eq-preamp label {
+            font-size: 7px;
+            color: #888;
+        }
+
+        .eq-preamp input {
+            flex: 1;
+        }
+
+        /* Toggle row in EQ */
+        .eq-toggle-row {
+            display: flex;
+            gap: 4px;
+            padding: 3px 8px;
+        }
+
+        /* ===== PLAYLIST WINDOW ===== */
+        .winamp-playlist {
+            width: 275px;
+            background: #232323;
+            border: 2px solid #444;
+            border-top: none;
+            overflow: hidden;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+        }
+
+        .playlist-title {
+            background: linear-gradient(180deg, #4a6984 0%, #2c4158 100%);
+            height: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 4px;
+        }
+
+        .playlist-title span {
+            font-size: 7px;
+            color: #fff;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .playlist-tracks {
+            background: #000;
+            margin: 3px;
+            border: 2px inset #333;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .playlist-tracks::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .playlist-tracks::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        .playlist-tracks::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #4a4a4a, #333);
+            border: 1px solid #555;
+        }
+
+        .track-item {
+            padding: 2px 4px;
+            font-size: 8px;
+            font-family: 'Courier New', monospace;
+            color: #00cc00;
+            cursor: pointer;
+            display: flex;
+            gap: 4px;
+        }
+
+        .track-item:hover {
+            background: #0a2a0a;
+        }
+
+        .track-item.active {
+            color: #fff;
+            background: #1a3a5a;
+        }
+
+        .track-item.playing {
+            color: #fff;
+        }
+
+        .track-num {
+            color: #009900;
+            min-width: 16px;
+        }
+
+        .track-name {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .track-duration {
+            color: #009900;
+        }
+
+        .playlist-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2px 5px 4px;
+        }
+
+        .playlist-info {
+            font-size: 7px;
+            color: #888;
+        }
+
+        .playlist-buttons {
+            display: flex;
+            gap: 2px;
+        }
+
+        .pl-btn {
+            font-size: 7px;
+            color: #aaa;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            padding: 1px 5px;
+            cursor: pointer;
+        }
+
+        .pl-btn:hover { color: #fff; background: #3a3a3a; }
+
+        /* File input hidden */
+        #file-input {
+            display: none;
+        }
+
+        /* ===== DRAG SUPPORT ===== */
+        #winamp.dragging {
+            cursor: move;
+        }
+
+        /* ===== ABOUT OVERLAY ===== */
+        .about-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .about-overlay.visible {
+            display: flex;
+        }
+
+        .about-window {
+            background: #c0c0c0;
+            border: 2px outset #dfdfdf;
+            width: 300px;
+            box-shadow: 3px 3px 0 #000;
+        }
+
+        .about-titlebar {
+            background: linear-gradient(90deg, #000080, #1084d0);
+            padding: 2px 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .about-titlebar span {
+            color: #fff;
+            font-size: 11px;
+            font-weight: bold;
+            font-family: 'Tahoma', sans-serif;
+        }
+
+        .about-close {
+            width: 16px;
+            height: 14px;
+            background: #c0c0c0;
+            border: 2px outset #dfdfdf;
+            font-size: 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-family: 'Tahoma', sans-serif;
+        }
+
+        .about-close:active {
+            border-style: inset;
+        }
+
+        .about-body {
+            padding: 16px;
+            text-align: center;
+            font-family: 'Tahoma', 'MS Sans Serif', sans-serif;
+            font-size: 11px;
+        }
+
+        .about-body h3 {
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #000;
+        }
+
+        .about-body p {
+            color: #333;
+            margin: 4px 0;
+        }
+
+        .about-ok {
+            margin-top: 12px;
+            padding: 2px 20px;
+            font-size: 11px;
+            font-family: 'Tahoma', sans-serif;
+            background: #c0c0c0;
+            border: 2px outset #dfdfdf;
+            cursor: pointer;
+        }
+
+        .about-ok:active {
+            border-style: inset;
+        }
+
+        /* ===== DROP ZONE OVERLAY ===== */
+        .drop-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 255, 0, 0.1);
+            border: 3px dashed #00ff00;
+            z-index: 50;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .drop-overlay.visible {
+            display: flex;
+        }
+
+        .drop-text {
+            font-size: 18px;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 10px #00ff00;
+            background: rgba(0,0,0,0.7);
+            padding: 16px 32px;
+            border: 1px solid #00ff00;
+        }
+    </style>
+</head>
+<body>
+    <!-- Drop overlay -->
+    <div class="drop-overlay" id="drop-overlay">
+        <div class="drop-text">Drop MP3 files here</div>
+    </div>
+
+    <!-- About dialog -->
+    <div class="about-overlay" id="about-overlay">
+        <div class="about-window">
+            <div class="about-titlebar">
+                <span>About Winamp</span>
+                <div class="about-close" onclick="closeAbout()">×</div>
+            </div>
+            <div class="about-body">
+                <h3>Winamp Clone v1.0</h3>
+                <p>A nostalgic recreation of the classic</p>
+                <p>Winamp media player with Windows ME styling.</p>
+                <p style="margin-top:8px; color:#888; font-size:9px;">Built with HTML, CSS & JavaScript</p>
+                <p style="color:#888; font-size:9px;">Audio API: Web Audio + HTML5 Audio</p>
+                <button class="about-ok" onclick="closeAbout()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="winamp">
+        <!-- Main Player Window -->
+        <div class="winamp-main" id="main-window">
+            <div class="title-bar" id="title-bar">
+                <div class="title-buttons">
+                    <div class="title-btn" onclick="showAbout()" title="About">?</div>
+                </div>
+                <span class="title-bar-text">WINAMP</span>
+                <div class="title-buttons">
+                    <div class="title-btn" title="Minimize">_</div>
+                    <div class="title-btn" title="Window shade">□</div>
+                </div>
+            </div>
+
+            <!-- Display -->
+            <div class="display-area">
+                <div class="display-inner">
+                    <canvas id="visualizer" width="76" height="36"></canvas>
+                    <div class="display-info">
+                        <div class="display-bitrate">
+                            <span id="bitrate-info">128kbps 44kHz</span>
+                        </div>
+                        <div class="display-time" id="time-display">00:00</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scrolling title -->
+            <div class="display-title-bar">
+                <span class="scrolling-title" id="scrolling-title">*** WINAMP CLONE - Drop MP3 files or use the playlist ***</span>
+            </div>
+
+            <!-- Volume / Balance -->
+            <div class="controls-row-top">
+                <span class="slider-label">Vol</span>
+                <input type="range" id="volume-slider" min="0" max="100" value="75" title="Volume">
+                <span class="slider-label">Bal</span>
+                <input type="range" id="balance-slider" min="-100" max="100" value="0" title="Balance">
+            </div>
+
+            <!-- Seek bar -->
+            <div class="seek-container">
+                <input type="range" id="seek-bar" min="0" max="100" value="0" title="Seek">
+            </div>
+
+            <!-- Transport buttons -->
+            <div class="transport-controls">
+                <button class="transport-btn" id="btn-prev" title="Previous">⏮</button>
+                <button class="transport-btn" id="btn-play" title="Play">▶</button>
+                <button class="transport-btn" id="btn-pause" title="Pause">⏸</button>
+                <button class="transport-btn" id="btn-stop" title="Stop">⏹</button>
+                <button class="transport-btn" id="btn-next" title="Next">⏭</button>
+                <button class="transport-btn" id="btn-open" title="Open file">📂</button>
+            </div>
+
+            <!-- Bottom toggles -->
+            <div class="bottom-buttons">
+                <div style="display:flex;gap:2px;">
+                    <button class="toggle-btn" id="btn-eq" title="Equalizer">EQ</button>
+                    <button class="toggle-btn active" id="btn-pl" title="Playlist">PL</button>
+                </div>
+                <div style="display:flex;gap:2px;">
+                    <button class="toggle-btn" id="btn-shuffle" title="Shuffle">SHUF</button>
+                    <button class="toggle-btn" id="btn-repeat" title="Repeat">REP</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Equalizer Window -->
+        <div class="winamp-eq" id="eq-window">
+            <div class="eq-title"><span>WINAMP EQUALIZER</span></div>
+            <div class="eq-toggle-row">
+                <button class="toggle-btn active" id="eq-on-btn">ON</button>
+                <button class="toggle-btn" id="eq-auto-btn">AUTO</button>
+            </div>
+            <div class="eq-preamp">
+                <label>PRE</label>
+                <input type="range" id="eq-preamp" min="-12" max="12" value="0">
+            </div>
+            <div class="eq-controls" id="eq-bands">
+                <!-- Bands generated by JS -->
+            </div>
+        </div>
+
+        <!-- Playlist Window -->
+        <div class="winamp-playlist" id="playlist-window">
+            <div class="playlist-title">
+                <span>WINAMP PLAYLIST</span>
+                <span id="playlist-count">0 tracks</span>
+            </div>
+            <div class="playlist-tracks" id="playlist-tracks">
+                <!-- Tracks added dynamically -->
+            </div>
+            <div class="playlist-bottom">
+                <span class="playlist-info" id="playlist-total-time">0:00 / 0 tracks</span>
+                <div class="playlist-buttons">
+                    <button class="pl-btn" id="pl-add-btn" title="Add files">+ ADD</button>
+                    <button class="pl-btn" id="pl-rem-btn" title="Remove selected">- REM</button>
+                    <button class="pl-btn" id="pl-clear-btn" title="Clear playlist">CLR</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="file-input" accept="audio/*" multiple>
+
+    <script>
+    (function() {
+        'use strict';
+
+        // ===== STATE =====
+        const state = {
+            playlist: [],
+            currentTrack: -1,
+            isPlaying: false,
+            isPaused: false,
+            shuffle: false,
+            repeat: false,
+            eqEnabled: true,
+            volume: 0.75,
+            seekDragging: false
+        };
+
+        // ===== AUDIO ENGINE =====
+        let audioContext = null;
+        let audioElement = null;
+        let sourceNode = null;
+        let gainNode = null;
+        let analyserNode = null;
+        let pannerNode = null;
+        let eqFilters = [];
+        let audioConnected = false;
+
+        const EQ_FREQUENCIES = [60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000];
+        const EQ_LABELS = ['60', '170', '310', '600', '1K', '3K', '6K', '12K', '14K', '16K'];
+
+        function initAudio() {
+            if (audioContext) return;
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            audioElement = new Audio();
+            audioElement.crossOrigin = 'anonymous';
+
+            gainNode = audioContext.createGain();
+            gainNode.gain.value = state.volume;
+
+            analyserNode = audioContext.createAnalyser();
+            analyserNode.fftSize = 256;
+
+            pannerNode = audioContext.createStereoPanner();
+
+            // Create EQ filters
+            EQ_FREQUENCIES.forEach((freq, i) => {
+                const filter = audioContext.createBiquadFilter();
+                filter.type = i === 0 ? 'lowshelf' : i === EQ_FREQUENCIES.length - 1 ? 'highshelf' : 'peaking';
+                filter.frequency.value = freq;
+                filter.gain.value = 0;
+                filter.Q.value = 1;
+                eqFilters.push(filter);
+            });
+
+            audioElement.addEventListener('timeupdate', onTimeUpdate);
+            audioElement.addEventListener('ended', onTrackEnded);
+            audioElement.addEventListener('loadedmetadata', onMetadataLoaded);
+            audioElement.addEventListener('error', onAudioError);
+        }
+
+        function connectAudioGraph() {
+            if (audioConnected) return;
+            try {
+                sourceNode = audioContext.createMediaElementSource(audioElement);
+            } catch (e) {
+                // Source already created
+                return;
+            }
+
+            let chain = sourceNode;
+
+            // Connect EQ chain
+            if (state.eqEnabled) {
+                eqFilters.forEach(filter => {
+                    chain.connect(filter);
+                    chain = filter;
+                });
+            }
+
+            chain.connect(gainNode);
+            gainNode.connect(pannerNode);
+            pannerNode.connect(analyserNode);
+            analyserNode.connect(audioContext.destination);
+
+            audioConnected = true;
+        }
+
+        // ===== PLAYBACK =====
+        function playTrack(index) {
+            if (index < 0 || index >= state.playlist.length) return;
+
+            initAudio();
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+
+            state.currentTrack = index;
+            const track = state.playlist[index];
+
+            audioElement.src = track.url;
+            audioElement.load();
+
+            connectAudioGraph();
+
+            audioElement.play().then(() => {
+                state.isPlaying = true;
+                state.isPaused = false;
+                updateUI();
+            }).catch(err => {
+                console.error('Playback error:', err);
+            });
+
+            updateScrollingTitle(track.name);
+            highlightTrack(index);
+        }
+
+        function togglePlay() {
+            if (state.playlist.length === 0) return;
+
+            initAudio();
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+
+            if (!state.isPlaying && !state.isPaused) {
+                playTrack(state.currentTrack >= 0 ? state.currentTrack : 0);
+            } else if (state.isPaused) {
+                audioElement.play();
+                state.isPlaying = true;
+                state.isPaused = false;
+                updateUI();
+            }
+        }
+
+        function pause() {
+            if (!state.isPlaying) return;
+            audioElement.pause();
+            state.isPaused = true;
+            state.isPlaying = false;
+            updateUI();
+        }
+
+        function stop() {
+            if (!audioElement) return;
+            audioElement.pause();
+            audioElement.currentTime = 0;
+            state.isPlaying = false;
+            state.isPaused = false;
+            updateUI();
+        }
+
+        function prevTrack() {
+            if (state.playlist.length === 0) return;
+            let idx = state.currentTrack - 1;
+            if (idx < 0) idx = state.playlist.length - 1;
+            playTrack(idx);
+        }
+
+        function nextTrack() {
+            if (state.playlist.length === 0) return;
+            let idx;
+            if (state.shuffle) {
+                idx = Math.floor(Math.random() * state.playlist.length);
+            } else {
+                idx = state.currentTrack + 1;
+                if (idx >= state.playlist.length) {
+                    if (state.repeat) {
+                        idx = 0;
+                    } else {
+                        stop();
+                        return;
+                    }
+                }
+            }
+            playTrack(idx);
+        }
+
+        // ===== EVENT HANDLERS =====
+        function onTimeUpdate() {
+            if (state.seekDragging) return;
+            const current = audioElement.currentTime;
+            const duration = audioElement.duration || 0;
+
+            document.getElementById('time-display').textContent = formatTime(current);
+            if (duration > 0) {
+                document.getElementById('seek-bar').value = (current / duration) * 100;
+            }
+        }
+
+        function onTrackEnded() {
+            nextTrack();
+        }
+
+        function onMetadataLoaded() {
+            const duration = audioElement.duration;
+            if (state.currentTrack >= 0 && state.playlist[state.currentTrack]) {
+                state.playlist[state.currentTrack].duration = duration;
+                renderPlaylist();
+            }
+        }
+
+        function onAudioError(e) {
+            console.error('Audio error:', e);
+            document.getElementById('scrolling-title').textContent =
+                '*** Error loading track ***';
+        }
+
+        // ===== PLAYLIST MANAGEMENT =====
+        function addTrack(name, url) {
+            state.playlist.push({ name, url, duration: 0 });
+            renderPlaylist();
+            if (state.playlist.length === 1) {
+                state.currentTrack = 0;
+                highlightTrack(0);
+            }
+        }
+
+        function removeTrack(index) {
+            state.playlist.splice(index, 1);
+            if (state.currentTrack === index) {
+                stop();
+                state.currentTrack = Math.min(index, state.playlist.length - 1);
+            } else if (state.currentTrack > index) {
+                state.currentTrack--;
+            }
+            renderPlaylist();
+        }
+
+        function clearPlaylist() {
+            stop();
+            state.playlist = [];
+            state.currentTrack = -1;
+            renderPlaylist();
+            document.getElementById('scrolling-title').textContent =
+                '*** WINAMP CLONE - Drop MP3 files or use the playlist ***';
+            document.getElementById('time-display').textContent = '00:00';
+        }
+
+        function handleFiles(files) {
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith('audio/') || file.name.match(/\.(mp3|wav|ogg|flac|m4a|aac|wma)$/i)) {
+                    const url = URL.createObjectURL(file);
+                    const name = file.name.replace(/\.[^.]+$/, '');
+                    addTrack(name, url);
+                }
+            });
+        }
+
+        // ===== RENDERING =====
+        function renderPlaylist() {
+            const container = document.getElementById('playlist-tracks');
+            container.innerHTML = '';
+
+            state.playlist.forEach((track, i) => {
+                const el = document.createElement('div');
+                el.className = 'track-item' + (i === state.currentTrack ? ' active' : '');
+                el.innerHTML = `
+                    <span class="track-num">${(i + 1).toString().padStart(2, '0')}.</span>
+                    <span class="track-name">${escapeHtml(track.name)}</span>
+                    <span class="track-duration">${track.duration ? formatTime(track.duration) : '--:--'}</span>
+                `;
+                el.addEventListener('dblclick', () => playTrack(i));
+                el.addEventListener('click', () => {
+                    document.querySelectorAll('.track-item').forEach(t => t.classList.remove('active'));
+                    el.classList.add('active');
+                });
+                container.appendChild(el);
+            });
+
+            document.getElementById('playlist-count').textContent = state.playlist.length + ' tracks';
+            updatePlaylistInfo();
+        }
+
+        function highlightTrack(index) {
+            document.querySelectorAll('.track-item').forEach((el, i) => {
+                el.classList.toggle('active', i === index);
+                el.classList.toggle('playing', i === index && state.isPlaying);
+            });
+        }
+
+        function updateUI() {
+            document.getElementById('btn-play').classList.toggle('active', state.isPlaying);
+            document.getElementById('btn-pause').classList.toggle('active', state.isPaused);
+            highlightTrack(state.currentTrack);
+
+            if (!state.isPlaying && !state.isPaused) {
+                document.getElementById('time-display').textContent = '00:00';
+                document.getElementById('seek-bar').value = 0;
+            }
+        }
+
+        function updateScrollingTitle(name) {
+            const el = document.getElementById('scrolling-title');
+            el.textContent = `${state.currentTrack + 1}. ${name}  ***  `;
+        }
+
+        function updatePlaylistInfo() {
+            const total = state.playlist.reduce((sum, t) => sum + (t.duration || 0), 0);
+            document.getElementById('playlist-total-time').textContent =
+                `${formatTime(total)} / ${state.playlist.length} tracks`;
+        }
+
+        // ===== EQUALIZER =====
+        function buildEQ() {
+            const container = document.getElementById('eq-bands');
+            container.innerHTML = '';
+
+            EQ_LABELS.forEach((label, i) => {
+                const band = document.createElement('div');
+                band.className = 'eq-band';
+                band.innerHTML = `
+                    <input type="range" class="eq-slider" min="-12" max="12" value="0"
+                           data-band="${i}" title="${label}Hz">
+                    <label>${label}</label>
+                `;
+                band.querySelector('input').addEventListener('input', (e) => {
+                    if (eqFilters[i]) {
+                        eqFilters[i].gain.value = parseFloat(e.target.value);
+                    }
+                });
+                container.appendChild(band);
+            });
+        }
+
+        // ===== VISUALIZER =====
+        const visCanvas = document.getElementById('visualizer');
+        const visCtx = visCanvas.getContext('2d');
+        let visMode = 0; // 0 = bars, 1 = oscilloscope
+
+        function drawVisualizer() {
+            requestAnimationFrame(drawVisualizer);
+
+            if (!analyserNode || !state.isPlaying) {
+                // Draw idle visualization
+                visCtx.fillStyle = '#000';
+                visCtx.fillRect(0, 0, visCanvas.width, visCanvas.height);
+                if (!state.isPlaying) return;
+            }
+
+            const bufferLength = analyserNode.frequencyBinCount;
+
+            if (visMode === 0) {
+                // Spectrum bars
+                const dataArray = new Uint8Array(bufferLength);
+                analyserNode.getByteFrequencyData(dataArray);
+
+                visCtx.fillStyle = '#000';
+                visCtx.fillRect(0, 0, visCanvas.width, visCanvas.height);
+
+                const barCount = 20;
+                const barWidth = Math.floor(visCanvas.width / barCount);
+
+                for (let i = 0; i < barCount; i++) {
+                    const dataIndex = Math.floor(i * bufferLength / barCount);
+                    const value = dataArray[dataIndex];
+                    const barHeight = (value / 255) * visCanvas.height;
+
+                    // Gradient color: green -> yellow -> red
+                    const ratio = barHeight / visCanvas.height;
+                    let r, g;
+                    if (ratio < 0.5) {
+                        r = Math.floor(ratio * 2 * 255);
+                        g = 255;
+                    } else {
+                        r = 255;
+                        g = Math.floor((1 - ratio) * 2 * 255);
+                    }
+
+                    visCtx.fillStyle = `rgb(${r}, ${g}, 0)`;
+                    visCtx.fillRect(
+                        i * barWidth,
+                        visCanvas.height - barHeight,
+                        barWidth - 1,
+                        barHeight
+                    );
+                }
+            } else {
+                // Oscilloscope
+                const dataArray = new Uint8Array(bufferLength);
+                analyserNode.getByteTimeDomainData(dataArray);
+
+                visCtx.fillStyle = '#000';
+                visCtx.fillRect(0, 0, visCanvas.width, visCanvas.height);
+
+                visCtx.lineWidth = 1;
+                visCtx.strokeStyle = '#00ff00';
+                visCtx.beginPath();
+
+                const sliceWidth = visCanvas.width / bufferLength;
+                let x = 0;
+
+                for (let i = 0; i < bufferLength; i++) {
+                    const v = dataArray[i] / 128.0;
+                    const y = (v * visCanvas.height) / 2;
+
+                    if (i === 0) {
+                        visCtx.moveTo(x, y);
+                    } else {
+                        visCtx.lineTo(x, y);
+                    }
+                    x += sliceWidth;
+                }
+
+                visCtx.stroke();
+            }
+        }
+
+        // ===== DRAG WINDOW =====
+        let dragOffset = { x: 0, y: 0 };
+        let isDragging = false;
+
+        document.getElementById('title-bar').addEventListener('mousedown', (e) => {
+            isDragging = true;
+            const rect = document.getElementById('winamp').getBoundingClientRect();
+            dragOffset.x = e.clientX - rect.left;
+            dragOffset.y = e.clientY - rect.top;
+            document.getElementById('winamp').classList.add('dragging');
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const winamp = document.getElementById('winamp');
+            winamp.style.position = 'fixed';
+            winamp.style.left = (e.clientX - dragOffset.x) + 'px';
+            winamp.style.top = (e.clientY - dragOffset.y) + 'px';
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            document.getElementById('winamp').classList.remove('dragging');
+        });
+
+        // ===== FILE DROP =====
+        document.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            document.getElementById('drop-overlay').classList.add('visible');
+        });
+
+        document.addEventListener('dragleave', (e) => {
+            if (e.relatedTarget === null) {
+                document.getElementById('drop-overlay').classList.remove('visible');
+            }
+        });
+
+        document.addEventListener('drop', (e) => {
+            e.preventDefault();
+            document.getElementById('drop-overlay').classList.remove('visible');
+            if (e.dataTransfer.files.length) {
+                handleFiles(e.dataTransfer.files);
+            }
+        });
+
+        // ===== WIRE UP CONTROLS =====
+
+        // Transport
+        document.getElementById('btn-play').addEventListener('click', togglePlay);
+        document.getElementById('btn-pause').addEventListener('click', pause);
+        document.getElementById('btn-stop').addEventListener('click', stop);
+        document.getElementById('btn-prev').addEventListener('click', prevTrack);
+        document.getElementById('btn-next').addEventListener('click', nextTrack);
+        document.getElementById('btn-open').addEventListener('click', () => {
+            document.getElementById('file-input').click();
+        });
+
+        document.getElementById('file-input').addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+            e.target.value = '';
+        });
+
+        // Volume
+        document.getElementById('volume-slider').addEventListener('input', (e) => {
+            state.volume = e.target.value / 100;
+            if (gainNode) gainNode.gain.value = state.volume;
+        });
+
+        // Balance
+        document.getElementById('balance-slider').addEventListener('input', (e) => {
+            if (pannerNode) pannerNode.pan.value = e.target.value / 100;
+        });
+
+        // Seek
+        const seekBar = document.getElementById('seek-bar');
+        seekBar.addEventListener('mousedown', () => { state.seekDragging = true; });
+        seekBar.addEventListener('input', (e) => {
+            if (audioElement && audioElement.duration) {
+                audioElement.currentTime = (e.target.value / 100) * audioElement.duration;
+            }
+        });
+        seekBar.addEventListener('mouseup', () => { state.seekDragging = false; });
+        seekBar.addEventListener('touchstart', () => { state.seekDragging = true; });
+        seekBar.addEventListener('touchend', () => { state.seekDragging = false; });
+
+        // Shuffle / Repeat
+        document.getElementById('btn-shuffle').addEventListener('click', function() {
+            state.shuffle = !state.shuffle;
+            this.classList.toggle('active', state.shuffle);
+        });
+
+        document.getElementById('btn-repeat').addEventListener('click', function() {
+            state.repeat = !state.repeat;
+            this.classList.toggle('active', state.repeat);
+        });
+
+        // EQ toggle
+        document.getElementById('btn-eq').addEventListener('click', function() {
+            const eq = document.getElementById('eq-window');
+            eq.classList.toggle('visible');
+            this.classList.toggle('active', eq.classList.contains('visible'));
+        });
+
+        // PL toggle
+        document.getElementById('btn-pl').addEventListener('click', function() {
+            const pl = document.getElementById('playlist-window');
+            const isVisible = pl.style.display !== 'none';
+            pl.style.display = isVisible ? 'none' : 'block';
+            this.classList.toggle('active', !isVisible);
+        });
+
+        // EQ on/off
+        document.getElementById('eq-on-btn').addEventListener('click', function() {
+            state.eqEnabled = !state.eqEnabled;
+            this.classList.toggle('active', state.eqEnabled);
+        });
+
+        // EQ preamp
+        document.getElementById('eq-preamp').addEventListener('input', (e) => {
+            if (gainNode) {
+                const preampGain = Math.pow(10, parseFloat(e.target.value) / 20);
+                gainNode.gain.value = state.volume * preampGain;
+            }
+        });
+
+        // Playlist buttons
+        document.getElementById('pl-add-btn').addEventListener('click', () => {
+            document.getElementById('file-input').click();
+        });
+        document.getElementById('pl-rem-btn').addEventListener('click', () => {
+            const active = document.querySelector('.track-item.active');
+            if (active) {
+                const idx = Array.from(active.parentNode.children).indexOf(active);
+                removeTrack(idx);
+            }
+        });
+        document.getElementById('pl-clear-btn').addEventListener('click', clearPlaylist);
+
+        // Visualizer click to toggle mode
+        visCanvas.addEventListener('click', () => {
+            visMode = (visMode + 1) % 2;
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            switch (e.key) {
+                case ' ':
+                    e.preventDefault();
+                    state.isPlaying ? pause() : togglePlay();
+                    break;
+                case 'ArrowRight':
+                    if (audioElement) audioElement.currentTime += 5;
+                    break;
+                case 'ArrowLeft':
+                    if (audioElement) audioElement.currentTime -= 5;
+                    break;
+                case 'ArrowUp':
+                    state.volume = Math.min(1, state.volume + 0.05);
+                    if (gainNode) gainNode.gain.value = state.volume;
+                    document.getElementById('volume-slider').value = state.volume * 100;
+                    break;
+                case 'ArrowDown':
+                    state.volume = Math.max(0, state.volume - 0.05);
+                    if (gainNode) gainNode.gain.value = state.volume;
+                    document.getElementById('volume-slider').value = state.volume * 100;
+                    break;
+            }
+        });
+
+        // ===== ABOUT =====
+        window.showAbout = function() {
+            document.getElementById('about-overlay').classList.add('visible');
+        };
+        window.closeAbout = function() {
+            document.getElementById('about-overlay').classList.remove('visible');
+        };
+
+        // ===== UTILITIES =====
+        function formatTime(seconds) {
+            if (!seconds || isNaN(seconds)) return '00:00';
+            const m = Math.floor(seconds / 60);
+            const s = Math.floor(seconds % 60);
+            return m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ===== INIT =====
+        buildEQ();
+        drawVisualizer();
+
+        // Load bundled demo tracks
+        const demoTracks = [
+            { name: 'Chiptune Dreams', file: '01 - Chiptune Dreams.mp3' },
+            { name: 'Ambient Waves', file: '02 - Ambient Waves.mp3' }
+        ];
+
+        demoTracks.forEach(track => {
+            addTrack(track.name, track.file);
+        });
+
+        updateScrollingTitle('WINAMP CLONE - Press Play or double-click a track');
+
+    })();
+    </script>
+</body>
+</html>
