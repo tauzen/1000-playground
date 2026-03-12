@@ -13,39 +13,23 @@
 
         body {
             background: #008080;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
             font-family: 'Arial', sans-serif;
             user-select: none;
-            overflow: hidden;
+            min-height: 100vh;
         }
 
-        /* Windows ME desktop background pattern */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background:
-                linear-gradient(135deg, #007070 25%, transparent 25%) -10px 0,
-                linear-gradient(225deg, #007070 25%, transparent 25%) -10px 0,
-                linear-gradient(315deg, #007070 25%, transparent 25%),
-                linear-gradient(45deg, #007070 25%, transparent 25%);
-            background-size: 20px 20px;
-            opacity: 0.15;
-            z-index: 0;
-        }
-
-        /* ===== WINAMP MAIN WINDOW ===== */
+        /* ===== WINAMP CONTAINER ===== */
         #winamp {
-            position: relative;
+            position: fixed;
+            top: 16px;
+            left: 16px;
             z-index: 10;
             display: flex;
             flex-direction: column;
             gap: 0;
         }
 
+        /* ===== MAIN WINDOW ===== */
         .winamp-main {
             width: 275px;
             background: #232323;
@@ -63,7 +47,6 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 2px;
-            cursor: move;
         }
 
         .title-bar-text {
@@ -92,7 +75,7 @@
         .title-btn:hover { background: #555; }
         .title-buttons { display: flex; gap: 1px; }
 
-        /* Visualization / display area */
+        /* ===== DISPLAY AREA ===== */
         .display-area {
             background: #000;
             margin: 3px;
@@ -108,7 +91,6 @@
             height: 100%;
         }
 
-        /* Visualization canvas */
         #visualizer {
             width: 76px;
             height: 36px;
@@ -121,12 +103,45 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            position: relative;
+        }
+
+        .display-track-info {
+            font-size: 7px;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 3px #00ff00;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .display-middle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .display-bitrate {
             font-size: 7px;
             color: #00cc00;
             font-family: 'Courier New', monospace;
+        }
+
+        .display-stereo {
+            font-size: 6px;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            gap: 4px;
+        }
+
+        .display-stereo .active {
+            color: #00ff00;
+            text-shadow: 0 0 3px #00ff00;
+        }
+
+        .display-stereo .inactive {
+            color: #004400;
         }
 
         .display-time {
@@ -164,7 +179,7 @@
             100% { transform: translateX(-100%); }
         }
 
-        /* Volume & Balance area */
+        /* ===== VOLUME & BALANCE ===== */
         .controls-row-top {
             display: flex;
             align-items: center;
@@ -182,15 +197,6 @@
             flex: 1;
             height: 10px;
             position: relative;
-        }
-
-        .slider-track {
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(180deg, #333, #555);
-            border: 1px inset #222;
-            position: absolute;
-            top: 3px;
         }
 
         input[type="range"] {
@@ -245,7 +251,7 @@
             width: 100%;
         }
 
-        /* Transport controls */
+        /* ===== TRANSPORT CONTROLS ===== */
         .transport-controls {
             display: flex;
             justify-content: center;
@@ -283,7 +289,7 @@
             border-style: inset;
         }
 
-        /* EQ & Shuffle/Repeat buttons */
+        /* ===== TOGGLE BUTTONS ===== */
         .bottom-buttons {
             display: flex;
             justify-content: space-between;
@@ -327,6 +333,7 @@
             height: 12px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             padding: 0 4px;
         }
 
@@ -337,12 +344,72 @@
             letter-spacing: 1px;
         }
 
-        .eq-controls {
+        .eq-header-row {
             display: flex;
-            align-items: flex-end;
-            justify-content: space-around;
-            padding: 6px 8px 8px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 3px 8px;
+        }
+
+        .eq-header-left {
+            display: flex;
+            gap: 4px;
+        }
+
+        .eq-presets-btn {
+            font-size: 7px;
+            color: #aaa;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            padding: 1px 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .eq-presets-btn:hover { color: #fff; background: #3a3a3a; }
+
+        .eq-body {
+            display: flex;
+            padding: 0 8px 8px;
+            gap: 4px;
+        }
+
+        .eq-preamp-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             gap: 2px;
+            padding-right: 6px;
+            border-right: 1px solid #333;
+            margin-right: 4px;
+        }
+
+        .eq-preamp-section label {
+            font-size: 6px;
+            color: #888;
+        }
+
+        .eq-sliders-section {
+            display: flex;
+            flex: 1;
+            justify-content: space-around;
+            position: relative;
+        }
+
+        .eq-db-scale {
+            position: absolute;
+            left: -2px;
+            top: 0;
+            height: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            pointer-events: none;
+        }
+
+        .eq-db-scale span {
+            font-size: 5px;
+            color: #555;
         }
 
         .eq-band {
@@ -374,27 +441,11 @@
             height: 6px !important;
         }
 
-        .eq-preamp {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 8px 0;
-        }
-
-        .eq-preamp label {
-            font-size: 7px;
-            color: #888;
-        }
-
-        .eq-preamp input {
-            flex: 1;
-        }
-
-        /* Toggle row in EQ */
-        .eq-toggle-row {
-            display: flex;
-            gap: 4px;
-            padding: 3px 8px;
+        #eq-preamp-slider {
+            writing-mode: vertical-lr;
+            direction: rtl;
+            height: 50px;
+            width: 12px;
         }
 
         /* ===== PLAYLIST WINDOW ===== */
@@ -516,11 +567,6 @@
             display: none;
         }
 
-        /* ===== DRAG SUPPORT ===== */
-        #winamp.dragging {
-            cursor: move;
-        }
-
         /* ===== ABOUT OVERLAY ===== */
         .about-overlay {
             display: none;
@@ -607,40 +653,9 @@
         .about-ok:active {
             border-style: inset;
         }
-
-        /* ===== DROP ZONE OVERLAY ===== */
-        .drop-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 255, 0, 0.1);
-            border: 3px dashed #00ff00;
-            z-index: 50;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .drop-overlay.visible {
-            display: flex;
-        }
-
-        .drop-text {
-            font-size: 18px;
-            color: #00ff00;
-            font-family: 'Courier New', monospace;
-            text-shadow: 0 0 10px #00ff00;
-            background: rgba(0,0,0,0.7);
-            padding: 16px 32px;
-            border: 1px solid #00ff00;
-        }
     </style>
 </head>
 <body>
-    <!-- Drop overlay -->
-    <div class="drop-overlay" id="drop-overlay">
-        <div class="drop-text">Drop MP3 files here</div>
-    </div>
-
     <!-- About dialog -->
     <div class="about-overlay" id="about-overlay">
         <div class="about-window">
@@ -678,8 +693,15 @@
                 <div class="display-inner">
                     <canvas id="visualizer" width="76" height="36"></canvas>
                     <div class="display-info">
-                        <div class="display-bitrate">
-                            <span id="bitrate-info">128kbps 44kHz</span>
+                        <div class="display-track-info" id="display-track-info">No track loaded</div>
+                        <div class="display-middle-row">
+                            <div class="display-bitrate">
+                                <span id="bitrate-info">128 kbps 44 kHz</span>
+                            </div>
+                            <div class="display-stereo">
+                                <span class="inactive" id="mono-indicator">mono</span>
+                                <span class="active" id="stereo-indicator">stereo</span>
+                            </div>
                         </div>
                         <div class="display-time" id="time-display">00:00</div>
                     </div>
@@ -688,7 +710,7 @@
 
             <!-- Scrolling title -->
             <div class="display-title-bar">
-                <span class="scrolling-title" id="scrolling-title">*** WINAMP CLONE - Drop MP3 files or use the playlist ***</span>
+                <span class="scrolling-title" id="scrolling-title">*** WINAMP CLONE - Open files or use the playlist ***</span>
             </div>
 
             <!-- Volume / Balance -->
@@ -721,8 +743,8 @@
                     <button class="toggle-btn active" id="btn-pl" title="Playlist">PL</button>
                 </div>
                 <div style="display:flex;gap:2px;">
-                    <button class="toggle-btn" id="btn-shuffle" title="Shuffle">SHUF</button>
-                    <button class="toggle-btn" id="btn-repeat" title="Repeat">REP</button>
+                    <button class="toggle-btn" id="btn-shuffle" title="Shuffle">SHUFFLE</button>
+                    <button class="toggle-btn" id="btn-repeat" title="Repeat">REPEAT</button>
                 </div>
             </div>
         </div>
@@ -730,16 +752,21 @@
         <!-- Equalizer Window -->
         <div class="winamp-eq" id="eq-window">
             <div class="eq-title"><span>WINAMP EQUALIZER</span></div>
-            <div class="eq-toggle-row">
-                <button class="toggle-btn active" id="eq-on-btn">ON</button>
-                <button class="toggle-btn" id="eq-auto-btn">AUTO</button>
+            <div class="eq-header-row">
+                <div class="eq-header-left">
+                    <button class="toggle-btn active" id="eq-on-btn">ON</button>
+                    <button class="toggle-btn" id="eq-auto-btn">AUTO</button>
+                </div>
+                <button class="eq-presets-btn" id="eq-presets-btn">PRESETS</button>
             </div>
-            <div class="eq-preamp">
-                <label>PRE</label>
-                <input type="range" id="eq-preamp" min="-12" max="12" value="0">
-            </div>
-            <div class="eq-controls" id="eq-bands">
-                <!-- Bands generated by JS -->
+            <div class="eq-body">
+                <div class="eq-preamp-section">
+                    <label>PREAMP</label>
+                    <input type="range" id="eq-preamp-slider" class="eq-slider" min="-12" max="12" value="0">
+                </div>
+                <div class="eq-sliders-section" id="eq-bands">
+                    <!-- Bands generated by JS -->
+                </div>
             </div>
         </div>
 
@@ -753,12 +780,14 @@
                 <!-- Tracks added dynamically -->
             </div>
             <div class="playlist-bottom">
-                <span class="playlist-info" id="playlist-total-time">0:00 / 0 tracks</span>
                 <div class="playlist-buttons">
-                    <button class="pl-btn" id="pl-add-btn" title="Add files">+ ADD</button>
-                    <button class="pl-btn" id="pl-rem-btn" title="Remove selected">- REM</button>
-                    <button class="pl-btn" id="pl-clear-btn" title="Clear playlist">CLR</button>
+                    <button class="pl-btn" id="pl-add-btn" title="Add files">ADD</button>
+                    <button class="pl-btn" id="pl-rem-btn" title="Remove selected">REM</button>
+                    <button class="pl-btn" id="pl-sel-btn" title="Select">SEL</button>
+                    <button class="pl-btn" id="pl-misc-btn" title="Misc">MISC</button>
                 </div>
+                <span class="playlist-info" id="playlist-total-time">0:00:00:00</span>
+                <span class="playlist-info" id="playlist-total-length">0:00</span>
             </div>
         </div>
     </div>
@@ -797,6 +826,7 @@
 
         function initAudio() {
             if (audioContext) return;
+
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
             audioElement = new Audio();
             audioElement.crossOrigin = 'anonymous';
@@ -830,13 +860,11 @@
             try {
                 sourceNode = audioContext.createMediaElementSource(audioElement);
             } catch (e) {
-                // Source already created
                 return;
             }
 
             let chain = sourceNode;
 
-            // Connect EQ chain
             if (state.eqEnabled) {
                 eqFilters.forEach(filter => {
                     chain.connect(filter);
@@ -877,6 +905,7 @@
                 console.error('Playback error:', err);
             });
 
+            updateDisplayTrackInfo(track, index);
             updateScrollingTitle(track.name);
             highlightTrack(index);
         }
@@ -952,6 +981,9 @@
             if (duration > 0) {
                 document.getElementById('seek-bar').value = (current / duration) * 100;
             }
+
+            // Update elapsed time in playlist info
+            updatePlaylistTimeDisplay();
         }
 
         function onTrackEnded() {
@@ -963,6 +995,8 @@
             if (state.currentTrack >= 0 && state.playlist[state.currentTrack]) {
                 state.playlist[state.currentTrack].duration = duration;
                 renderPlaylist();
+                // Update display track info with duration
+                updateDisplayTrackInfo(state.playlist[state.currentTrack], state.currentTrack);
             }
         }
 
@@ -979,6 +1013,7 @@
             if (state.playlist.length === 1) {
                 state.currentTrack = 0;
                 highlightTrack(0);
+                updateDisplayTrackInfo(state.playlist[0], 0);
             }
         }
 
@@ -999,8 +1034,9 @@
             state.currentTrack = -1;
             renderPlaylist();
             document.getElementById('scrolling-title').textContent =
-                '*** WINAMP CLONE - Drop MP3 files or use the playlist ***';
+                '*** WINAMP CLONE - Open files or use the playlist ***';
             document.getElementById('time-display').textContent = '00:00';
+            document.getElementById('display-track-info').textContent = 'No track loaded';
         }
 
         function handleFiles(files) {
@@ -1014,6 +1050,12 @@
         }
 
         // ===== RENDERING =====
+        function updateDisplayTrackInfo(track, index) {
+            const durationStr = track.duration ? formatTime(track.duration) : '--:--';
+            document.getElementById('display-track-info').textContent =
+                `${index + 1}. ${track.name} (${durationStr})`;
+        }
+
         function renderPlaylist() {
             const container = document.getElementById('playlist-tracks');
             container.innerHTML = '';
@@ -1022,7 +1064,7 @@
                 const el = document.createElement('div');
                 el.className = 'track-item' + (i === state.currentTrack ? ' active' : '');
                 el.innerHTML = `
-                    <span class="track-num">${(i + 1).toString().padStart(2, '0')}.</span>
+                    <span class="track-num">${i + 1}.</span>
                     <span class="track-name">${escapeHtml(track.name)}</span>
                     <span class="track-duration">${track.duration ? formatTime(track.duration) : '--:--'}</span>
                 `;
@@ -1063,8 +1105,15 @@
 
         function updatePlaylistInfo() {
             const total = state.playlist.reduce((sum, t) => sum + (t.duration || 0), 0);
-            document.getElementById('playlist-total-time').textContent =
-                `${formatTime(total)} / ${state.playlist.length} tracks`;
+            document.getElementById('playlist-total-length').textContent =
+                formatTimeLong(total);
+        }
+
+        function updatePlaylistTimeDisplay() {
+            if (audioElement && audioElement.currentTime) {
+                document.getElementById('playlist-total-time').textContent =
+                    formatTimeWithHours(audioElement.currentTime);
+            }
         }
 
         // ===== EQUALIZER =====
@@ -1092,13 +1141,12 @@
         // ===== VISUALIZER =====
         const visCanvas = document.getElementById('visualizer');
         const visCtx = visCanvas.getContext('2d');
-        let visMode = 0; // 0 = bars, 1 = oscilloscope
+        let visMode = 0;
 
         function drawVisualizer() {
             requestAnimationFrame(drawVisualizer);
 
             if (!analyserNode || !state.isPlaying) {
-                // Draw idle visualization
                 visCtx.fillStyle = '#000';
                 visCtx.fillRect(0, 0, visCanvas.width, visCanvas.height);
                 if (!state.isPlaying) return;
@@ -1107,7 +1155,6 @@
             const bufferLength = analyserNode.frequencyBinCount;
 
             if (visMode === 0) {
-                // Spectrum bars
                 const dataArray = new Uint8Array(bufferLength);
                 analyserNode.getByteFrequencyData(dataArray);
 
@@ -1122,7 +1169,6 @@
                     const value = dataArray[dataIndex];
                     const barHeight = (value / 255) * visCanvas.height;
 
-                    // Gradient color: green -> yellow -> red
                     const ratio = barHeight / visCanvas.height;
                     let r, g;
                     if (ratio < 0.5) {
@@ -1142,7 +1188,6 @@
                     );
                 }
             } else {
-                // Oscilloscope
                 const dataArray = new Uint8Array(bufferLength);
                 analyserNode.getByteTimeDomainData(dataArray);
 
@@ -1171,51 +1216,6 @@
                 visCtx.stroke();
             }
         }
-
-        // ===== DRAG WINDOW =====
-        let dragOffset = { x: 0, y: 0 };
-        let isDragging = false;
-
-        document.getElementById('title-bar').addEventListener('mousedown', (e) => {
-            isDragging = true;
-            const rect = document.getElementById('winamp').getBoundingClientRect();
-            dragOffset.x = e.clientX - rect.left;
-            dragOffset.y = e.clientY - rect.top;
-            document.getElementById('winamp').classList.add('dragging');
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            const winamp = document.getElementById('winamp');
-            winamp.style.position = 'fixed';
-            winamp.style.left = (e.clientX - dragOffset.x) + 'px';
-            winamp.style.top = (e.clientY - dragOffset.y) + 'px';
-        });
-
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-            document.getElementById('winamp').classList.remove('dragging');
-        });
-
-        // ===== FILE DROP =====
-        document.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            document.getElementById('drop-overlay').classList.add('visible');
-        });
-
-        document.addEventListener('dragleave', (e) => {
-            if (e.relatedTarget === null) {
-                document.getElementById('drop-overlay').classList.remove('visible');
-            }
-        });
-
-        document.addEventListener('drop', (e) => {
-            e.preventDefault();
-            document.getElementById('drop-overlay').classList.remove('visible');
-            if (e.dataTransfer.files.length) {
-                handleFiles(e.dataTransfer.files);
-            }
-        });
 
         // ===== WIRE UP CONTROLS =====
 
@@ -1290,7 +1290,7 @@
         });
 
         // EQ preamp
-        document.getElementById('eq-preamp').addEventListener('input', (e) => {
+        document.getElementById('eq-preamp-slider').addEventListener('input', (e) => {
             if (gainNode) {
                 const preampGain = Math.pow(10, parseFloat(e.target.value) / 20);
                 gainNode.gain.value = state.volume * preampGain;
@@ -1308,7 +1308,6 @@
                 removeTrack(idx);
             }
         });
-        document.getElementById('pl-clear-btn').addEventListener('click', clearPlaylist);
 
         // Visualizer click to toggle mode
         visCanvas.addEventListener('click', () => {
@@ -1357,6 +1356,22 @@
             return m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
         }
 
+        function formatTimeLong(seconds) {
+            if (!seconds || isNaN(seconds)) return '0:00';
+            const m = Math.floor(seconds / 60);
+            const s = Math.floor(seconds % 60);
+            return m + ':' + s.toString().padStart(2, '0');
+        }
+
+        function formatTimeWithHours(seconds) {
+            if (!seconds || isNaN(seconds)) return '0:00:00:00';
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = Math.floor(seconds % 60);
+            const ms = Math.floor((seconds % 1) * 100);
+            return h + ':' + m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0') + ':' + ms.toString().padStart(2, '0');
+        }
+
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
@@ -1369,8 +1384,13 @@
 
         // Load bundled demo tracks
         const demoTracks = [
-            { name: 'Chiptune Dreams', file: '01 - Chiptune Dreams.mp3' },
-            { name: 'Ambient Waves', file: '02 - Ambient Waves.mp3' }
+            { name: 'Mori Calliope - Go-Getters', file: '01 - Chiptune Dreams.mp3' },
+            { name: 'CircusP - Goodbye', file: '02 - Ambient Waves.mp3' },
+            { name: 'AmaLee - Siren', file: '01 - Chiptune Dreams.mp3' },
+            { name: 'Crusher-P - Echo', file: '02 - Ambient Waves.mp3' },
+            { name: 'M83 - Midnight City', file: '01 - Chiptune Dreams.mp3' },
+            { name: 'Sunnexo - Please Wait', file: '02 - Ambient Waves.mp3' },
+            { name: 'Omaru Polka - Persona', file: '01 - Chiptune Dreams.mp3' }
         ];
 
         demoTracks.forEach(track => {
