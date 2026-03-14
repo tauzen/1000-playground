@@ -1843,6 +1843,19 @@
         document.getElementById('time-display').textContent = '01:15';
 
     })();
+
+    // Iframe mode: remove decorative background and fix positioning
+    if (window.self !== window.top) {
+        document.body.style.background = 'transparent';
+        document.body.style.minHeight = '0';
+        document.body.style.overflow = 'hidden';
+        const winampEl = document.getElementById('winamp');
+        if (winampEl) {
+            winampEl.style.position = 'relative';
+            winampEl.style.top = '0';
+            winampEl.style.left = '0';
+        }
+    }
     </script>
 </body>
 </html>

@@ -141,6 +141,40 @@ Press any key to continue _</pre>
             </div>
         </section>
 
+        <!-- Winamp Window -->
+        <section class="window hidden" id="winampWindow" aria-label="Winamp" style="left: 200px; top: 50px; width: 289px; height: 330px; min-width: unset; min-height: unset;">
+            <div class="titlebar" id="winampTitlebar">
+                <div class="title-left">
+                    <span class="app-title-logo" aria-hidden="true" style="background:#3a3a4e;border-color:#1a1a2a;"></span>
+                    <span>Winamp</span>
+                </div>
+                <div class="window-controls">
+                    <div class="ctrl-btn" id="winampMinBtn">_</div>
+                    <button class="ctrl-btn" id="winampCloseBtn" aria-label="Close">&times;</button>
+                </div>
+            </div>
+            <div class="view">
+                <iframe id="winampFrame" title="Winamp" referrerpolicy="no-referrer" allow="autoplay"></iframe>
+            </div>
+        </section>
+
+        <!-- Minesweeper Window -->
+        <section class="window hidden" id="minesweeperWindow" aria-label="Minesweeper" style="left: 250px; top: 80px; width: 260px; height: 280px; min-width: unset; min-height: unset;">
+            <div class="titlebar" id="minesweeperTitlebar">
+                <div class="title-left">
+                    <span class="app-title-logo" aria-hidden="true" style="background:#C0C0C0;border-color:#808080;"></span>
+                    <span>Minesweeper</span>
+                </div>
+                <div class="window-controls">
+                    <div class="ctrl-btn" id="minesweeperMinBtn">_</div>
+                    <button class="ctrl-btn" id="minesweeperCloseBtn" aria-label="Close">&times;</button>
+                </div>
+            </div>
+            <div class="view">
+                <iframe id="minesweeperFrame" title="Minesweeper" referrerpolicy="no-referrer"></iframe>
+            </div>
+        </section>
+
         <!-- App Window (for experiment apps) -->
         <section class="window app-window hidden" id="appWindow" aria-label="Application window" style="left: clamp(110px, 15vw, 190px); top: 28px;">
             <div class="titlebar" id="appTitlebar">
@@ -356,6 +390,14 @@ Press any key to continue _</pre>
             <button class="task-button" id="taskButton" style="display:none;">
                 <span class="task-icon"></span>
                 <span>about:blank - Microsoft Int...</span>
+            </button>
+            <button class="task-button" id="winampTaskBtn" style="display:none;">
+                <span class="task-icon" style="background:#3a3a4e;border:1px solid #1a1a2a;"></span>
+                <span>Winamp</span>
+            </button>
+            <button class="task-button" id="minesweeperTaskBtn" style="display:none;">
+                <span class="task-icon" style="background:#C0C0C0;border:1px solid #808080;"></span>
+                <span>Minesweeper</span>
             </button>
             <button class="task-button" id="appTaskButton" style="display:none;">
                 <span class="task-icon" style="background:#FFFF80;border:1px solid #808040;"></span>

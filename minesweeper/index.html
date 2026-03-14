@@ -1395,6 +1395,22 @@ document.getElementById('menuMarks').classList.add('checked');
 state.useMarks = true;
 
 initGame(DIFFS.beginner.rows, DIFFS.beginner.cols, DIFFS.beginner.mines, 'beginner');
+
+// Iframe mode: hide the game's own window chrome so only the game content shows
+if (window.self !== window.top) {
+    document.body.style.background = '#C0C0C0';
+    document.body.style.display = 'block';
+    document.body.style.minHeight = '0';
+    document.body.style.overflow = 'hidden';
+    const titleBar = document.querySelector('.title-bar');
+    if (titleBar) titleBar.style.display = 'none';
+    const win = document.querySelector('.window');
+    if (win) {
+        win.style.border = 'none';
+        win.style.boxShadow = 'none';
+        win.style.display = 'block';
+    }
+}
 </script>
 </body>
 </html>
