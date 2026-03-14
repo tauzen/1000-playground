@@ -711,11 +711,19 @@
             if (el) el.addEventListener(appEventType, () => openApp(title, url));
         });
 
-        // Dedicated icon handlers for Winamp and Minesweeper
-        const iconWinamp = document.getElementById('iconWinamp');
-        if (iconWinamp) iconWinamp.addEventListener(appEventType, openWinamp);
-        const iconMinesweeper = document.getElementById('iconMinesweeper');
-        if (iconMinesweeper) iconMinesweeper.addEventListener(appEventType, openMinesweeper);
+        // Dedicated icon handlers for Winamp and Minesweeper.
+        // These icons have their own windows and must never go through openApp(),
+        // so register them after the experimentApps loop and guard against duplicates.
+        const dedicatedIcons = { iconWinamp: openWinamp, iconMinesweeper: openMinesweeper };
+        Object.entries(dedicatedIcons).forEach(([id, handler]) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            // Remove any openApp listener that the experimentApps loop may have added
+            // (defensive: in case config accidentally includes these ids)
+            const clone = el.cloneNode(true);
+            el.parentNode.replaceChild(clone, el);
+            clone.addEventListener(appEventType, handler);
+        });
 
         // Minimize / close IE
         minimizeBtn.addEventListener('click', () => {
