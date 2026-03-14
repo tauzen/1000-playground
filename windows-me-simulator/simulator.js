@@ -1113,12 +1113,6 @@
             shutdownMsg.style.textAlign = 'center';
             document.body.appendChild(shutdownMsg);
 
-            shutdownMsg.addEventListener('click', () => {
-                shutdownMsg.remove();
-                document.body.style.background = '#008080';
-                theDesktop.style.display = '';
-                theTaskbar.style.display = '';
-            });
         });
 
         // ══════════════════════════════════════════════
