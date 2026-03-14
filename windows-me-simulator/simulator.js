@@ -469,13 +469,83 @@
             playClickSound();
         }
 
+        // ══════════════════════════════════════════════
+        // Winamp Window
+        // ══════════════════════════════════════════════
+        const winampWindow = document.getElementById('winampWindow');
+        const winampFrame = document.getElementById('winampFrame');
+        const winampTaskBtn = document.getElementById('winampTaskBtn');
+
         function openWinamp() {
-            openApp('Winamp', '../winamp-player/index.html');
+            if (winampFrame.src === '' || winampFrame.src === 'about:blank') {
+                winampFrame.src = '../winamp-player/index.html';
+            }
+            winampWindow.classList.remove('hidden');
+            winampTaskBtn.style.display = 'flex';
+            startMenu.classList.remove('open');
+            startButton.classList.remove('pressed');
+            closeProgramsSubmenu();
+            bringToFront(winampWindow);
+            playClickSound();
         }
 
-        function openMinesweeper() {
-            openApp('Minesweeper', '../minesweeper/index.html');
+        function closeWinamp() {
+            winampWindow.classList.add('hidden');
+            winampTaskBtn.style.display = 'none';
+            winampFrame.src = '';
         }
+
+        document.getElementById('winampMinBtn').addEventListener('click', () => winampWindow.classList.add('hidden'));
+        document.getElementById('winampCloseBtn').addEventListener('click', closeWinamp);
+        winampTaskBtn.addEventListener('click', () => {
+            if (winampWindow.classList.contains('hidden')) {
+                winampWindow.classList.remove('hidden');
+                bringToFront(winampWindow);
+            } else {
+                winampWindow.classList.add('hidden');
+            }
+        });
+        makeDraggable(document.getElementById('winampTitlebar'), winampWindow);
+        winampWindow.addEventListener('mousedown', () => bringToFront(winampWindow));
+
+        // ══════════════════════════════════════════════
+        // Minesweeper Window
+        // ══════════════════════════════════════════════
+        const minesweeperWindow = document.getElementById('minesweeperWindow');
+        const minesweeperFrame = document.getElementById('minesweeperFrame');
+        const minesweeperTaskBtn = document.getElementById('minesweeperTaskBtn');
+
+        function openMinesweeper() {
+            if (minesweeperFrame.src === '' || minesweeperFrame.src === 'about:blank') {
+                minesweeperFrame.src = '../minesweeper/index.html';
+            }
+            minesweeperWindow.classList.remove('hidden');
+            minesweeperTaskBtn.style.display = 'flex';
+            startMenu.classList.remove('open');
+            startButton.classList.remove('pressed');
+            closeProgramsSubmenu();
+            bringToFront(minesweeperWindow);
+            playClickSound();
+        }
+
+        function closeMinesweeper() {
+            minesweeperWindow.classList.add('hidden');
+            minesweeperTaskBtn.style.display = 'none';
+            minesweeperFrame.src = '';
+        }
+
+        document.getElementById('minesweeperMinBtn').addEventListener('click', () => minesweeperWindow.classList.add('hidden'));
+        document.getElementById('minesweeperCloseBtn').addEventListener('click', closeMinesweeper);
+        minesweeperTaskBtn.addEventListener('click', () => {
+            if (minesweeperWindow.classList.contains('hidden')) {
+                minesweeperWindow.classList.remove('hidden');
+                bringToFront(minesweeperWindow);
+            } else {
+                minesweeperWindow.classList.add('hidden');
+            }
+        });
+        makeDraggable(document.getElementById('minesweeperTitlebar'), minesweeperWindow);
+        minesweeperWindow.addEventListener('mousedown', () => bringToFront(minesweeperWindow));
 
         function closeApp() {
             appWindow.classList.add('hidden');
@@ -631,9 +701,7 @@
             { id: 'iconLocationScene',   title: 'Location Scene Generator', url: '../location-scene-generator/index.html' },
             { id: 'iconAIImage',         title: 'AI Image Generation', url: '../openai-image-generation/index.html' },
             { id: 'iconPlatformer',      title: 'Platformer',        url: '../platformer/index.html' },
-            { id: 'iconWinamp',          title: 'Winamp',            url: '../winamp-player/index.html' },
             { id: 'iconValentines',      title: "Valentine's Card",  url: '../valentines-card/index.html' },
-            { id: 'iconMinesweeper',     title: 'Minesweeper',       url: '../minesweeper/index.html' },
             { id: 'iconWeatherNetlify',  title: 'Weather Image',     url: '../weather-image-netlify/index.html' },
             { id: 'iconWeatherToImage',  title: 'Weather to Image',  url: '../weather-to-image/index.html' },
         ];
@@ -642,6 +710,12 @@
             const el = document.getElementById(id);
             if (el) el.addEventListener(appEventType, () => openApp(title, url));
         });
+
+        // Dedicated icon handlers for Winamp and Minesweeper
+        const iconWinamp = document.getElementById('iconWinamp');
+        if (iconWinamp) iconWinamp.addEventListener(appEventType, openWinamp);
+        const iconMinesweeper = document.getElementById('iconMinesweeper');
+        if (iconMinesweeper) iconMinesweeper.addEventListener(appEventType, openMinesweeper);
 
         // Minimize / close IE
         minimizeBtn.addEventListener('click', () => {
