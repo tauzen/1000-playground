@@ -469,6 +469,14 @@
             playClickSound();
         }
 
+        function openWinamp() {
+            openApp('Winamp', '../winamp-player/index.html');
+        }
+
+        function openMinesweeper() {
+            openApp('Minesweeper', '../minesweeper/index.html');
+        }
+
         function closeApp() {
             appWindow.classList.add('hidden');
             appTaskButton.style.display = 'none';
@@ -623,7 +631,9 @@
             { id: 'iconLocationScene',   title: 'Location Scene Generator', url: '../location-scene-generator/index.html' },
             { id: 'iconAIImage',         title: 'AI Image Generation', url: '../openai-image-generation/index.html' },
             { id: 'iconPlatformer',      title: 'Platformer',        url: '../platformer/index.html' },
+            { id: 'iconWinamp',          title: 'Winamp',            url: '../winamp-player/index.html' },
             { id: 'iconValentines',      title: "Valentine's Card",  url: '../valentines-card/index.html' },
+            { id: 'iconMinesweeper',     title: 'Minesweeper',       url: '../minesweeper/index.html' },
             { id: 'iconWeatherNetlify',  title: 'Weather Image',     url: '../weather-image-netlify/index.html' },
             { id: 'iconWeatherToImage',  title: 'Weather to Image',  url: '../weather-to-image/index.html' },
         ];
@@ -735,6 +745,16 @@
             startButton.classList.remove('pressed');
         });
 
+        document.getElementById('subWinamp').addEventListener('click', () => {
+            openWinamp();
+            closeProgramsSubmenu();
+        });
+
+        document.getElementById('subMinesweeper').addEventListener('click', () => {
+            openMinesweeper();
+            closeProgramsSubmenu();
+        });
+
         document.getElementById('subAccessories').addEventListener('click', () => {
             openNotepad();
         });
@@ -778,7 +798,9 @@
         const runActionHandlers = {
             openNotepad,
             openMyComputer,
-            openInternetExplorer
+            openInternetExplorer,
+            openWinamp,
+            openMinesweeper
         };
 
         document.getElementById('runOkBtn').addEventListener('click', () => {
