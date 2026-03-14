@@ -432,6 +432,54 @@
             box-shadow: -8px 0 0 0 #2060CC;
         }
 
+
+        /* Winamp - dark audio player */
+        .icon-winamp .icon-graphic {
+            background: #3A3A4E;
+            border: 2px solid #1A1A2A;
+            border-radius: 2px;
+        }
+        .icon-winamp .icon-graphic::before {
+            content: "";
+            position: absolute;
+            top: 4px; left: 4px; right: 4px;
+            height: 8px;
+            background: #0A0A0A;
+            border: 1px solid #00AA00;
+        }
+        .icon-winamp .icon-graphic::after {
+            content: "";
+            position: absolute;
+            bottom: 4px; left: 4px;
+            width: 4px; height: 4px;
+            background: #D8A820;
+            box-shadow: 6px 0 0 0 #C0C0C0, 12px 0 0 0 #808080;
+        }
+
+        /* Minesweeper - tile with mine */
+        .icon-minesweeper .icon-graphic {
+            background: #C0C0C0;
+            border: 2px solid #808080;
+            border-radius: 2px;
+        }
+        .icon-minesweeper .icon-graphic::before {
+            content: "";
+            position: absolute;
+            top: 4px; left: 4px;
+            width: 10px; height: 10px;
+            background: #E0E0E0;
+            border: 1px solid #FFFFFF;
+            box-shadow: inset -1px -1px 0 #808080;
+        }
+        .icon-minesweeper .icon-graphic::after {
+            content: "";
+            position: absolute;
+            bottom: 5px; right: 5px;
+            width: 7px; height: 7px;
+            background: #000;
+            border-radius: 50%;
+            box-shadow: 0 0 0 1px #404040;
+        }
         /* Valentine's Card - heart */
         .icon-valentines .icon-graphic {
             background: #FFF0F5;
