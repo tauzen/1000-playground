@@ -32,18 +32,24 @@
         /* ===== MAIN WINDOW ===== */
         .winamp-main {
             width: 275px;
-            background: #232323;
-            border-top: 1px solid #4a4a4a;
-            border-left: 1px solid #4a4a4a;
-            border-right: 1px solid #0a0a0a;
-            border-bottom: 1px solid #0a0a0a;
+            background: #3a3a4e;
+            border-top: 1px solid #5a5a6e;
+            border-left: 1px solid #5a5a6e;
+            border-right: 1px solid #1a1a2a;
+            border-bottom: 1px solid #1a1a2a;
             overflow: hidden;
+        }
+
+        /* Gold accent line at top */
+        .title-accent {
+            height: 2px;
+            background: linear-gradient(90deg, #8a7a30, #c8b840, #e0d050, #c8b840, #8a7a30);
         }
 
         /* Title bar */
         .title-bar {
-            background: linear-gradient(180deg, #4a6a8a 0%, #3a5a7a 20%, #2a4a6a 50%, #1a3a5a 80%, #0a2a4a 100%);
-            height: 14px;
+            background: linear-gradient(180deg, #5a6a7a 0%, #4a5a6a 20%, #3a4a5e 50%, #2a3a50 80%, #1a2a40 100%);
+            height: 15px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -52,10 +58,10 @@
         }
 
         .title-bar-text {
-            font-size: 8px;
+            font-size: 9px;
             color: #fff;
             font-weight: bold;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             text-shadow: 1px 1px 0 #000;
             flex: 1;
             text-align: center;
@@ -65,7 +71,7 @@
             width: 9px;
             height: 9px;
             border: 1px solid #666;
-            background: linear-gradient(180deg, #4a4a4a, #2a2a2a);
+            background: linear-gradient(180deg, #5a5a5a, #3a3a3a);
             font-size: 6px;
             color: #ccc;
             display: flex;
@@ -74,50 +80,93 @@
             cursor: pointer;
             line-height: 1;
         }
-        .title-btn:hover { background: linear-gradient(180deg, #5a5a5a, #3a3a3a); }
+        .title-btn:hover { background: linear-gradient(180deg, #6a6a6a, #4a4a4a); }
         .title-buttons { display: flex; gap: 1px; }
 
         /* ===== DISPLAY AREA ===== */
         .display-area {
             background: #000;
-            margin: 3px 3px 0 3px;
-            border-top: 1px solid #111;
-            border-left: 1px solid #111;
-            border-right: 1px solid #333;
-            border-bottom: 1px solid #333;
+            margin: 3px 4px 0 4px;
+            border: 2px solid;
+            border-color: #1a1a2a #4a4a5e #4a4a5e #1a1a2a;
             padding: 3px;
-            height: 58px;
+            height: 62px;
             overflow: hidden;
             position: relative;
         }
 
-        .display-top-row {
+        .display-content {
             display: flex;
-            height: 32px;
-            gap: 4px;
+            height: 100%;
+            gap: 0;
+        }
+
+        /* Left column: visualizer + time */
+        .display-left {
+            display: flex;
+            flex-direction: column;
+            width: 100px;
+            flex-shrink: 0;
+            padding-right: 4px;
+            border-right: 1px solid #1a3a1a;
         }
 
         #visualizer {
             width: 76px;
-            height: 32px;
+            height: 30px;
             image-rendering: pixelated;
             flex-shrink: 0;
         }
 
-        .display-title-area {
+        .display-time-section {
+            display: flex;
+            align-items: center;
+            gap: 1px;
+            margin-top: 2px;
+        }
+
+        .play-indicator {
+            font-size: 8px;
+            color: #00ff00;
+            text-shadow: 0 0 3px rgba(0, 255, 0, 0.5);
+            width: 10px;
+            flex-shrink: 0;
+        }
+
+        .display-time {
+            font-size: 22px;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 8px rgba(0, 255, 0, 0.35);
+            letter-spacing: 2px;
+            line-height: 1;
+            font-weight: bold;
+        }
+
+        /* Right column: title + bitrate + stereo */
+        .display-right {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+
+        .display-title-area {
+            flex: 0 0 auto;
             overflow: hidden;
             position: relative;
-            height: 14px;
+            height: 16px;
         }
 
         .scrolling-title {
-            font-size: 8px;
+            font-size: 10px;
             color: #00ff00;
             font-family: 'Courier New', monospace;
             white-space: nowrap;
             position: absolute;
-            top: 1px;
+            top: 2px;
             text-shadow: 0 0 4px rgba(0, 255, 0, 0.4);
             animation: scroll-title 12s linear infinite;
         }
@@ -127,84 +176,63 @@
             100% { transform: translateX(-100%); }
         }
 
-        .display-meta-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            gap: 0;
-        }
-
         .display-meta-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 2px;
         }
 
         .display-bitrate {
-            font-size: 7.5px;
-            color: #00cc00;
+            font-size: 7px;
+            color: #00aa00;
             font-family: 'Courier New', monospace;
-            text-shadow: 0 0 2px rgba(0, 200, 0, 0.3);
             display: flex;
-            gap: 6px;
+            gap: 4px;
+            align-items: center;
         }
 
-        .display-bitrate .value {
-            color: #00ee00;
+        .bitrate-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            border: 1px solid #1a4a1a;
+            padding: 0 3px;
+            height: 12px;
+        }
+
+        .bitrate-box .value {
+            color: #00ff00;
             font-weight: bold;
+            font-size: 8px;
+            text-shadow: 0 0 3px rgba(0, 255, 0, 0.3);
+        }
+
+        .bitrate-box .unit {
+            color: #008800;
+            font-size: 7px;
         }
 
         .display-stereo {
-            font-size: 7px;
+            font-size: 8px;
             font-family: 'Courier New', monospace;
             display: flex;
-            gap: 5px;
+            gap: 6px;
         }
 
         .display-stereo .active {
             color: #00ff00;
             text-shadow: 0 0 4px rgba(0, 255, 0, 0.5);
+            font-weight: bold;
         }
 
         .display-stereo .inactive {
             color: #003300;
         }
 
-        .display-bottom-row {
-            display: flex;
-            align-items: flex-end;
-            margin-top: 1px;
-            height: 18px;
-        }
-
-        .display-time-section {
-            display: flex;
-            align-items: center;
-            gap: 2px;
-            width: 80px;
-        }
-
-        .play-indicator {
-            font-size: 7px;
-            color: #00ff00;
-            text-shadow: 0 0 3px rgba(0, 255, 0, 0.5);
-            width: 8px;
-        }
-
-        .display-time {
-            font-size: 18px;
-            color: #00ff00;
-            font-family: 'Courier New', monospace;
-            text-shadow: 0 0 6px rgba(0, 255, 0, 0.4);
-            letter-spacing: 1px;
-            line-height: 1;
-        }
-
         /* ===== SEEK BAR ===== */
         .seek-container {
             padding: 3px 5px 2px;
+            position: relative;
         }
 
         /* Shared slider styles */
@@ -218,54 +246,72 @@
         }
 
         input[type="range"]::-webkit-slider-runnable-track {
-            height: 3px;
-            background: linear-gradient(180deg, #222, #333, #222);
-            border-top: 1px solid #111;
-            border-bottom: 1px solid #444;
+            height: 4px;
+            background: linear-gradient(180deg, #1a1a2a, #2a2a3a, #1a1a2a);
+            border-top: 1px solid #0a0a1a;
+            border-bottom: 1px solid #4a4a5a;
+            border-radius: 0;
         }
 
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 28px;
-            height: 10px;
-            background: linear-gradient(180deg, #888 0%, #666 30%, #555 60%, #444 100%);
-            border-top: 1px solid #999;
-            border-left: 1px solid #999;
-            border-right: 1px solid #222;
-            border-bottom: 1px solid #222;
+            height: 11px;
+            background: linear-gradient(180deg, #9a9aaa 0%, #7a7a8a 30%, #5a5a6a 60%, #4a4a5a 100%);
+            border-top: 1px solid #b0b0c0;
+            border-left: 1px solid #b0b0c0;
+            border-right: 1px solid #2a2a3a;
+            border-bottom: 1px solid #2a2a3a;
             margin-top: -4px;
             cursor: pointer;
         }
 
         input[type="range"]::-moz-range-track {
-            height: 3px;
-            background: linear-gradient(180deg, #222, #333, #222);
-            border-top: 1px solid #111;
-            border-bottom: 1px solid #444;
+            height: 4px;
+            background: linear-gradient(180deg, #1a1a2a, #2a2a3a, #1a1a2a);
+            border-top: 1px solid #0a0a1a;
+            border-bottom: 1px solid #4a4a5a;
         }
 
         input[type="range"]::-moz-range-thumb {
             width: 28px;
-            height: 10px;
-            background: linear-gradient(180deg, #888 0%, #666 30%, #555 60%, #444 100%);
-            border-top: 1px solid #999;
-            border-left: 1px solid #999;
-            border-right: 1px solid #222;
-            border-bottom: 1px solid #222;
+            height: 11px;
+            background: linear-gradient(180deg, #9a9aaa 0%, #7a7a8a 30%, #5a5a6a 60%, #4a4a5a 100%);
+            border-top: 1px solid #b0b0c0;
+            border-left: 1px solid #b0b0c0;
+            border-right: 1px solid #2a2a3a;
+            border-bottom: 1px solid #2a2a3a;
             cursor: pointer;
         }
 
-        /* Seek bar specific */
-        #seek-bar::-webkit-slider-thumb {
-            width: 20px;
-            height: 9px;
-        }
-        #seek-bar::-moz-range-thumb {
-            width: 20px;
-            height: 9px;
+        /* Seek bar - orange/amber progress track */
+        #seek-bar::-webkit-slider-runnable-track {
+            background: linear-gradient(90deg, #b08030 0%, #c89840 var(--seek-pct, 0%), #1a1a2a var(--seek-pct, 0%), #2a2a3a 100%);
+            border-top: 1px solid #0a0a1a;
+            border-bottom: 1px solid #4a4a5a;
         }
 
-        /* ===== VOLUME & BALANCE ===== */
+        #seek-bar::-webkit-slider-thumb {
+            width: 16px;
+            height: 10px;
+            background: linear-gradient(180deg, #c0a050 0%, #a08040 40%, #806830 100%);
+            border-top: 1px solid #d0b860;
+            border-left: 1px solid #d0b860;
+            border-right: 1px solid #504020;
+            border-bottom: 1px solid #504020;
+        }
+
+        #seek-bar::-moz-range-thumb {
+            width: 16px;
+            height: 10px;
+            background: linear-gradient(180deg, #c0a050 0%, #a08040 40%, #806830 100%);
+            border-top: 1px solid #d0b860;
+            border-left: 1px solid #d0b860;
+            border-right: 1px solid #504020;
+            border-bottom: 1px solid #504020;
+        }
+
+        /* ===== VOLUME & BALANCE + EQ/PL ===== */
         .controls-row-top {
             display: flex;
             align-items: center;
@@ -284,7 +330,7 @@
         }
 
         .slider-group.balance {
-            flex: 1;
+            flex: 0.8;
         }
 
         .slider-label {
@@ -303,24 +349,30 @@
             height: 10px;
         }
 
+        .controls-toggles {
+            display: flex;
+            gap: 2px;
+            margin-left: 3px;
+        }
+
         /* ===== TRANSPORT CONTROLS ===== */
         .transport-controls {
             display: flex;
             justify-content: center;
-            gap: 1px;
+            gap: 0px;
             padding: 2px 5px 3px;
         }
 
         .transport-btn {
-            width: 23px;
-            height: 18px;
-            background: linear-gradient(180deg, #4a4a4a 0%, #3a3a3a 30%, #2a2a2a 60%, #222 100%);
-            border-top: 1px solid #666;
-            border-left: 1px solid #666;
-            border-right: 1px solid #111;
-            border-bottom: 1px solid #111;
-            color: #bbb;
-            font-size: 9px;
+            width: 28px;
+            height: 20px;
+            background: linear-gradient(180deg, #6a6a7a 0%, #5a5a6a 20%, #4a4a5a 50%, #3a3a4a 80%, #2a2a3a 100%);
+            border-top: 1px solid #8a8a9a;
+            border-left: 1px solid #8a8a9a;
+            border-right: 1px solid #1a1a2a;
+            border-bottom: 1px solid #1a1a2a;
+            color: #ccc;
+            font-size: 10px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -328,43 +380,49 @@
         }
 
         .transport-btn:hover {
-            background: linear-gradient(180deg, #5a5a5a 0%, #4a4a4a 30%, #3a3a3a 60%, #333 100%);
+            background: linear-gradient(180deg, #7a7a8a 0%, #6a6a7a 20%, #5a5a6a 50%, #4a4a5a 80%, #3a3a4a 100%);
             color: #fff;
         }
 
         .transport-btn:active {
-            border-top: 1px solid #111;
-            border-left: 1px solid #111;
-            border-right: 1px solid #666;
-            border-bottom: 1px solid #666;
-            background: linear-gradient(180deg, #222 0%, #2a2a2a 30%, #3a3a3a 60%, #4a4a4a 100%);
+            border-top: 1px solid #1a1a2a;
+            border-left: 1px solid #1a1a2a;
+            border-right: 1px solid #8a8a9a;
+            border-bottom: 1px solid #8a8a9a;
+            background: linear-gradient(180deg, #2a2a3a 0%, #3a3a4a 50%, #5a5a6a 100%);
         }
 
         .transport-btn.active {
             background: linear-gradient(180deg, #1a3a1a 0%, #0a2a0a 50%, #0a200a 100%);
             color: #0f0;
-            border-top: 1px solid #111;
-            border-left: 1px solid #111;
-            border-right: 1px solid #444;
-            border-bottom: 1px solid #444;
+            border-top: 1px solid #1a1a2a;
+            border-left: 1px solid #1a1a2a;
+            border-right: 1px solid #5a5a6a;
+            border-bottom: 1px solid #5a5a6a;
         }
 
-        /* ===== TOGGLE BUTTONS ===== */
+        .transport-btn.eject-btn {
+            margin-left: 6px;
+        }
+
+        /* ===== BOTTOM TOGGLE BUTTONS ===== */
         .bottom-buttons {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
+            align-items: center;
             padding: 0 5px 4px;
+            gap: 4px;
         }
 
         .toggle-btn {
             font-size: 7px;
             color: #666;
-            background: linear-gradient(180deg, #3a3a3a, #2a2a2a);
-            border-top: 1px solid #555;
-            border-left: 1px solid #555;
-            border-right: 1px solid #111;
-            border-bottom: 1px solid #111;
-            padding: 1px 4px;
+            background: linear-gradient(180deg, #5a5a6a, #3a3a4a);
+            border-top: 1px solid #7a7a8a;
+            border-left: 1px solid #7a7a8a;
+            border-right: 1px solid #1a1a2a;
+            border-bottom: 1px solid #1a1a2a;
+            padding: 1px 5px;
             cursor: pointer;
             font-family: 'Arial', sans-serif;
             font-weight: bold;
@@ -379,13 +437,34 @@
         .toggle-btn:hover { color: #aaa; }
         .toggle-btn.active:hover { color: #00ff00; }
 
+        .shuffle-indicator {
+            width: 8px;
+            height: 8px;
+            border: 1px solid #5a5a6a;
+            background: #2a2a3a;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 2px;
+            position: relative;
+        }
+
+        .shuffle-indicator.checked::after {
+            content: '\2713';
+            color: #00ff00;
+            font-size: 7px;
+            position: absolute;
+            top: -2px;
+            left: 0px;
+            text-shadow: 0 0 3px rgba(0, 255, 0, 0.5);
+        }
+
         /* ===== EQUALIZER WINDOW ===== */
         .winamp-eq {
             width: 275px;
-            background: #232323;
-            border-left: 1px solid #4a4a4a;
-            border-right: 1px solid #0a0a0a;
-            border-bottom: 1px solid #0a0a0a;
+            background: #3a3a4e;
+            border-left: 1px solid #5a5a6e;
+            border-right: 1px solid #1a1a2a;
+            border-bottom: 1px solid #1a1a2a;
             overflow: hidden;
             display: none;
         }
@@ -423,11 +502,11 @@
         .eq-presets-btn {
             font-size: 7px;
             color: #aaa;
-            background: linear-gradient(180deg, #3a3a3a, #2a2a2a);
-            border-top: 1px solid #555;
-            border-left: 1px solid #555;
-            border-right: 1px solid #111;
-            border-bottom: 1px solid #111;
+            background: linear-gradient(180deg, #5a5a6a, #3a3a4a);
+            border-top: 1px solid #7a7a8a;
+            border-left: 1px solid #7a7a8a;
+            border-right: 1px solid #1a1a2a;
+            border-bottom: 1px solid #1a1a2a;
             padding: 1px 6px;
             cursor: pointer;
             font-weight: bold;
@@ -624,10 +703,10 @@
         /* ===== PLAYLIST WINDOW ===== */
         .winamp-playlist {
             width: 275px;
-            background: #232323;
-            border-left: 1px solid #4a4a4a;
-            border-right: 1px solid #0a0a0a;
-            border-bottom: 1px solid #0a0a0a;
+            background: #3a3a4e;
+            border-left: 1px solid #5a5a6e;
+            border-right: 1px solid #1a1a2a;
+            border-bottom: 1px solid #1a1a2a;
             overflow: hidden;
         }
 
@@ -736,11 +815,11 @@
         .pl-btn {
             font-size: 7px;
             color: #aaa;
-            background: linear-gradient(180deg, #3a3a3a, #2a2a2a);
-            border-top: 1px solid #555;
-            border-left: 1px solid #555;
-            border-right: 1px solid #111;
-            border-bottom: 1px solid #111;
+            background: linear-gradient(180deg, #5a5a6a, #3a3a4a);
+            border-top: 1px solid #7a7a8a;
+            border-left: 1px solid #7a7a8a;
+            border-right: 1px solid #1a1a2a;
+            border-bottom: 1px solid #1a1a2a;
             padding: 1px 5px;
             cursor: pointer;
             font-weight: bold;
@@ -871,6 +950,7 @@
     <div id="winamp">
         <!-- Main Player Window -->
         <div class="winamp-main" id="main-window">
+            <div class="title-accent"></div>
             <div class="title-bar" id="title-bar">
                 <div class="title-buttons">
                     <div class="title-btn" onclick="showAbout()" title="About">?</div>
@@ -879,33 +959,36 @@
                 <div class="title-buttons">
                     <div class="title-btn" title="Minimize">_</div>
                     <div class="title-btn" title="Window shade">□</div>
+                    <div class="title-btn" title="Close">×</div>
                 </div>
             </div>
 
             <!-- Display -->
             <div class="display-area">
-                <div class="display-top-row">
-                    <canvas id="visualizer" width="76" height="32"></canvas>
-                    <div class="display-meta-area">
+                <div class="display-content">
+                    <!-- Left column: visualizer + time -->
+                    <div class="display-left">
+                        <canvas id="visualizer" width="76" height="30"></canvas>
+                        <div class="display-time-section">
+                            <span class="play-indicator" id="play-indicator">▶</span>
+                            <span class="display-time" id="time-display">01:51</span>
+                        </div>
+                    </div>
+                    <!-- Right column: title + bitrate + stereo -->
+                    <div class="display-right">
                         <div class="display-title-area">
                             <span class="scrolling-title" id="scrolling-title">4. Crusher-P - Echo (3:50)</span>
                         </div>
                         <div class="display-meta-row">
                             <div class="display-bitrate">
-                                <span><span class="value" id="bitrate-val">128</span> kbps</span>
-                                <span><span class="value" id="freq-val">48</span> kHz</span>
+                                <span class="bitrate-box"><span class="value" id="bitrate-val">128</span> <span class="unit">kbps</span></span>
+                                <span class="bitrate-box"><span class="value" id="freq-val">48</span> <span class="unit">kHz</span></span>
                             </div>
                             <div class="display-stereo">
                                 <span class="inactive" id="mono-indicator">mono</span>
                                 <span class="active" id="stereo-indicator">stereo</span>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="display-bottom-row">
-                    <div class="display-time-section">
-                        <span class="play-indicator" id="play-indicator"></span>
-                        <span class="display-time" id="time-display">00:00</span>
                     </div>
                 </div>
             </div>
@@ -915,13 +998,17 @@
                 <input type="range" id="seek-bar" min="0" max="100" value="0" title="Seek">
             </div>
 
-            <!-- Volume / Balance -->
+            <!-- Volume / Balance / EQ / PL -->
             <div class="controls-row-top">
                 <div class="slider-group volume">
                     <input type="range" id="volume-slider" min="0" max="100" value="75" title="Volume">
                 </div>
                 <div class="slider-group balance">
                     <input type="range" id="balance-slider" min="-100" max="100" value="0" title="Balance">
+                </div>
+                <div class="controls-toggles">
+                    <button class="toggle-btn" id="btn-eq" title="Equalizer">EQ</button>
+                    <button class="toggle-btn active" id="btn-pl" title="Playlist">PL</button>
                 </div>
             </div>
 
@@ -932,18 +1019,18 @@
                 <button class="transport-btn" id="btn-pause" title="Pause">⏸</button>
                 <button class="transport-btn" id="btn-stop" title="Stop">⏹</button>
                 <button class="transport-btn" id="btn-next" title="Next">⏭</button>
-                <button class="transport-btn" id="btn-open" title="Open file">📂</button>
+                <button class="transport-btn eject-btn" id="btn-open" title="Open file">⏏</button>
             </div>
 
-            <!-- Bottom toggles -->
+            <!-- Bottom toggles: Shuffle / Repeat -->
             <div class="bottom-buttons">
-                <div style="display:flex;gap:2px;">
-                    <button class="toggle-btn" id="btn-eq" title="Equalizer">EQ</button>
-                    <button class="toggle-btn active" id="btn-pl" title="Playlist">PL</button>
-                </div>
-                <div style="display:flex;gap:2px;">
-                    <button class="toggle-btn" id="btn-shuffle" title="Shuffle">SHUFFLE</button>
-                    <button class="toggle-btn" id="btn-repeat" title="Repeat">REPEAT</button>
+                <div style="display:flex;gap:4px;align-items:center;">
+                    <button class="toggle-btn" id="btn-shuffle" title="Shuffle" style="display:flex;align-items:center;gap:2px;">
+                        <span class="shuffle-indicator" id="shuffle-check"></span>SHUFFLE
+                    </button>
+                    <button class="toggle-btn" id="btn-repeat" title="Repeat" style="display:flex;align-items:center;gap:2px;">
+                        <span class="shuffle-indicator" id="repeat-check"></span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -1182,7 +1269,10 @@
 
             document.getElementById('time-display').textContent = formatTime(current);
             if (duration > 0) {
-                document.getElementById('seek-bar').value = (current / duration) * 100;
+                const pct = (current / duration) * 100;
+                const sb = document.getElementById('seek-bar');
+                sb.value = pct;
+                sb.style.setProperty('--seek-pct', pct + '%');
             }
 
             updatePlaylistTimeDisplay();
@@ -1360,6 +1450,8 @@
 
         // ===== VISUALIZER =====
         const visCanvas = document.getElementById('visualizer');
+        visCanvas.width = 76;
+        visCanvas.height = 30;
         const visCtx = visCanvas.getContext('2d');
         let visMode = 0;
 
@@ -1468,11 +1560,15 @@
 
         // Seek
         const seekBar = document.getElementById('seek-bar');
+        function updateSeekFill() {
+            seekBar.style.setProperty('--seek-pct', seekBar.value + '%');
+        }
         seekBar.addEventListener('mousedown', () => { state.seekDragging = true; });
         seekBar.addEventListener('input', (e) => {
             if (audioElement && audioElement.duration) {
                 audioElement.currentTime = (e.target.value / 100) * audioElement.duration;
             }
+            updateSeekFill();
         });
         seekBar.addEventListener('mouseup', () => { state.seekDragging = false; });
         seekBar.addEventListener('touchstart', () => { state.seekDragging = true; });
@@ -1482,11 +1578,13 @@
         document.getElementById('btn-shuffle').addEventListener('click', function() {
             state.shuffle = !state.shuffle;
             this.classList.toggle('active', state.shuffle);
+            document.getElementById('shuffle-check').classList.toggle('checked', state.shuffle);
         });
 
         document.getElementById('btn-repeat').addEventListener('click', function() {
             state.repeat = !state.repeat;
             this.classList.toggle('active', state.repeat);
+            document.getElementById('repeat-check').classList.toggle('checked', state.repeat);
         });
 
         // EQ toggle
