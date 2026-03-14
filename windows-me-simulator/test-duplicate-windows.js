@@ -104,6 +104,40 @@ async function runTests() {
     assert(bothOpen.includes('winampWindow'), 'winampWindow is open');
     assert(bothOpen.includes('minesweeperWindow'), 'minesweeperWindow is open');
 
+    // ── Test 6: Defensive guard – even if config lists these icons, no duplicate opens ─
+    // Override the config to re-add Winamp/Minesweeper to experimentApps, reload, and
+    // verify only the dedicated window opens (not the generic appWindow too).
+    console.log('\nTest 6: Defensive guard prevents duplicates even when config accidentally lists these icons');
+    const ctx2 = await browser.newContext();
+    const page2 = await ctx2.newPage();
+    // Inject a tampered config before the page loads
+    await page2.addInitScript(() => {
+        window.WIN_ME_SIMULATOR_CONFIG = {
+            experimentApps: [
+                { id: 'iconWinamp',       title: 'Winamp',       url: '../winamp-player/index.html' },
+                { id: 'iconMinesweeper',  title: 'Minesweeper',  url: '../minesweeper/index.html' },
+            ]
+        };
+    });
+    await waitForBoot(page2);
+
+    await page2.dblclick('#iconWinamp');
+    await page2.waitForTimeout(300);
+    const guardedWinamp = await getVisibleWindows(page2);
+    assert(guardedWinamp.length === 1, `Defensive guard: only 1 window opens for Winamp (got ${guardedWinamp.length}: ${guardedWinamp})`);
+    assert(!guardedWinamp.includes('appWindow'), 'Defensive guard: generic appWindow NOT opened for Winamp');
+
+    await page2.evaluate(() => document.getElementById('winampCloseBtn').click());
+    await page2.waitForTimeout(200);
+
+    await page2.dblclick('#iconMinesweeper');
+    await page2.waitForTimeout(300);
+    const guardedMine = await getVisibleWindows(page2);
+    assert(guardedMine.length === 1, `Defensive guard: only 1 window opens for Minesweeper (got ${guardedMine.length}: ${guardedMine})`);
+    assert(!guardedMine.includes('appWindow'), 'Defensive guard: generic appWindow NOT opened for Minesweeper');
+
+    await ctx2.close();
+
     await browser.close();
 
     // ── Summary ───────────────────────────────────────────────────────────────
