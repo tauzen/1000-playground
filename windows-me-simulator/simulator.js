@@ -233,31 +233,204 @@
         }
 
         // ══════════════════════════════════════════════
-        // Window Management & Z-Order
+        // Window Manager
         // ══════════════════════════════════════════════
-        let topZIndex = 10;
+        const WindowManager = {
+            _stack: [],      // ordered bottom→top by z-index
+            _windows: {},    // id → config
+            _baseZ: 10,
 
-        function bringToFront(windowEl) {
-            topZIndex++;
-            windowEl.style.zIndex = topZIndex;
+            /**
+             * Register a window with the manager.
+             * @param {string} id         - unique key
+             * @param {object} config
+             *   .el            - the window section element
+             *   .taskBtn       - taskbar button element (or null)
+             *   .iframe        - iframe element (or null)
+             *   .iframeSrc     - source URL to load when opening (or null)
+             *   .hasChrome     - true if window has menubar/toolbar/status
+             *   .onOpen        - optional callback after opening
+             *   .onClose       - optional callback after closing
+             */
+            register(id, config) {
+                config.id = id;
+                config.isOpen = false;
+                this._windows[id] = config;
 
-            // Update titlebars: active/inactive
-            document.querySelectorAll('.window:not(.hidden)').forEach(w => {
-                const tb = w.querySelector('.titlebar');
-                if (tb) {
-                    if (w === windowEl) {
+                // Click anywhere on window → bring to front
+                config.el.addEventListener('mousedown', () => this.bringToFront(id));
+            },
+
+            /** Get a registered window config by id */
+            get(id) {
+                return this._windows[id];
+            },
+
+            /** Return the ordered stack (bottom→top) of open window ids */
+            getStack() {
+                return this._stack.slice();
+            },
+
+            /** Return the topmost (focused) window id, or null */
+            getFocused() {
+                return this._stack.length ? this._stack[this._stack.length - 1] : null;
+            },
+
+            /**
+             * Bring a window to the top of the stack and update z-indices.
+             */
+            bringToFront(id) {
+                const win = this._windows[id];
+                if (!win) return;
+
+                // Move to top of stack
+                const idx = this._stack.indexOf(id);
+                if (idx !== -1) this._stack.splice(idx, 1);
+                this._stack.push(id);
+
+                // Reassign z-indices based on stack position
+                this._stack.forEach((wid, i) => {
+                    this._windows[wid].el.style.zIndex = this._baseZ + i + 1;
+                });
+
+                // Update titlebars: active/inactive
+                this._updateTitlebars();
+            },
+
+            /**
+             * Open (show) a window. If already open, just brings to front.
+             */
+            open(id) {
+                const win = this._windows[id];
+                if (!win) return;
+
+                // Load iframe if needed (first open or after close cleared it)
+                if (win.iframe && win.iframeSrc) {
+                    const currentSrc = win.iframe.getAttribute('src');
+                    if (!currentSrc || currentSrc === '' || currentSrc === 'about:blank') {
+                        win.iframe.src = win.iframeSrc;
+                    }
+                }
+
+                win.el.classList.remove('hidden');
+                win.isOpen = true;
+
+                if (win.taskBtn) {
+                    win.taskBtn.style.display = 'flex';
+                }
+
+                this.bringToFront(id);
+
+                if (win.onOpen) win.onOpen();
+            },
+
+            /**
+             * Close a window fully (hide + clear iframe + hide taskbar button).
+             */
+            close(id) {
+                const win = this._windows[id];
+                if (!win) return;
+
+                win.el.classList.add('hidden');
+                win.isOpen = false;
+
+                if (win.taskBtn) {
+                    win.taskBtn.style.display = 'none';
+                }
+
+                // Clear iframe to stop media/scripts — use removeAttribute
+                // so the src property doesn't resolve to the page URL
+                if (win.iframe) {
+                    win.iframe.removeAttribute('src');
+                    win.iframe.src = 'about:blank';
+                }
+
+                // Remove from stack
+                const idx = this._stack.indexOf(id);
+                if (idx !== -1) this._stack.splice(idx, 1);
+
+                this._updateTitlebars();
+
+                if (win.onClose) win.onClose();
+            },
+
+            /**
+             * Minimize a window (hide it but keep taskbar button visible).
+             */
+            minimize(id) {
+                const win = this._windows[id];
+                if (!win) return;
+
+                win.el.classList.add('hidden');
+
+                // Remove from stack so it doesn't hold focus
+                const idx = this._stack.indexOf(id);
+                if (idx !== -1) this._stack.splice(idx, 1);
+
+                this._updateTitlebars();
+            },
+
+            /**
+             * Restore a minimized window (show + bring to front).
+             */
+            restore(id) {
+                const win = this._windows[id];
+                if (!win) return;
+
+                win.el.classList.remove('hidden');
+                this.bringToFront(id);
+            },
+
+            /**
+             * Toggle from taskbar: if visible → minimize, if hidden → restore.
+             */
+            toggleFromTaskbar(id) {
+                const win = this._windows[id];
+                if (!win) return;
+
+                if (win.el.classList.contains('hidden')) {
+                    this.restore(id);
+                } else {
+                    this.minimize(id);
+                }
+            },
+
+            /**
+             * Minimize all open windows (Show Desktop).
+             */
+            minimizeAll() {
+                // Copy stack since minimize mutates it
+                const openIds = this._stack.slice();
+                openIds.forEach(id => this.minimize(id));
+            },
+
+            /** Update titlebar active/inactive classes */
+            _updateTitlebars() {
+                const focusedId = this.getFocused();
+                Object.values(this._windows).forEach(win => {
+                    const tb = win.el.querySelector('.titlebar');
+                    if (!tb) return;
+                    if (win.id === focusedId && !win.el.classList.contains('hidden')) {
                         tb.classList.remove('inactive');
                     } else {
                         tb.classList.add('inactive');
                     }
-                }
-            });
-        }
+                });
+            }
+        };
 
-        // Click any window to bring to front
-        document.querySelectorAll('.window').forEach(w => {
-            w.addEventListener('mousedown', () => bringToFront(w));
-        });
+        // Legacy helper for any code still calling bringToFront(el)
+        function bringToFront(windowEl) {
+            // Find the registered id for this element
+            const entry = Object.values(WindowManager._windows).find(w => w.el === windowEl);
+            if (entry) {
+                WindowManager.bringToFront(entry.id);
+            } else {
+                // Fallback for unregistered windows (dialogs etc.)
+                const maxZ = WindowManager._baseZ + WindowManager._stack.length + 1;
+                windowEl.style.zIndex = maxZ;
+            }
+        }
 
         // ══════════════════════════════════════════════
         // Window Dragging
@@ -315,6 +488,15 @@
         const taskButton = document.getElementById('taskButton');
         const taskButtonLabel = taskButton.querySelector('span:last-child');
 
+        // Register IE with WindowManager (iframe managed manually — IE keeps its own nav state)
+        WindowManager.register('ie', {
+            el: ieWindow,
+            taskBtn: taskButton,
+            iframe: null,       // IE manages its own iframe/navigation
+            iframeSrc: null,
+            hasChrome: true,
+        });
+
         const historyStack = [];
         let historyIndex = -1;
         const homePage = 'https://example.com';
@@ -367,11 +549,9 @@
         }
 
         function openInternetExplorer() {
-            ieWindow.classList.remove('hidden');
-            taskButton.style.display = 'flex';
+            WindowManager.open('ie');
             startMenu.classList.remove('open');
             startButton.classList.remove('pressed');
-            bringToFront(ieWindow);
             playClickSound();
 
             if (!frame.src || frame.src === 'about:blank' || frame.src === '') {
@@ -382,8 +562,7 @@
         }
 
         function closeInternetExplorer() {
-            ieWindow.classList.add('hidden');
-            taskButton.style.display = 'none';
+            WindowManager.close('ie');
         }
 
         function updateClock() {
@@ -454,17 +633,26 @@
         const appTaskButton = document.getElementById('appTaskButton');
         const appTaskLabel = document.getElementById('appTaskLabel');
 
+        // App window: iframe src is dynamic, managed manually in openApp
+        WindowManager.register('app', {
+            el: appWindow,
+            taskBtn: appTaskButton,
+            iframe: appFrame,
+            iframeSrc: null,  // set dynamically per openApp call
+            hasChrome: true,
+        });
+
         function openApp(title, url) {
             appWindowTitle.textContent = title;
-            appFrame.src = url;
             appStatusText.textContent = 'Opening...';
-            appWindow.classList.remove('hidden');
-            appTaskButton.style.display = 'flex';
             appTaskLabel.textContent = title.length > 22 ? title.substring(0, 20) + '...' : title;
+            // Set dynamic iframe src before opening
+            WindowManager.get('app').iframeSrc = url;
+            appFrame.src = url;
+            WindowManager.open('app');
             startMenu.classList.remove('open');
             startButton.classList.remove('pressed');
             closeProgramsSubmenu();
-            bringToFront(appWindow);
             body_loading(true);
             playClickSound();
         }
@@ -476,37 +664,30 @@
         const winampFrame = document.getElementById('winampFrame');
         const winampTaskBtn = document.getElementById('winampTaskBtn');
 
+        WindowManager.register('winamp', {
+            el: winampWindow,
+            taskBtn: winampTaskBtn,
+            iframe: winampFrame,
+            iframeSrc: '../winamp-player/index.html',
+            hasChrome: false,
+        });
+
         function openWinamp() {
-            if (winampFrame.src === '' || winampFrame.src === 'about:blank') {
-                winampFrame.src = '../winamp-player/index.html';
-            }
-            winampWindow.classList.remove('hidden');
-            winampTaskBtn.style.display = 'flex';
+            WindowManager.open('winamp');
             startMenu.classList.remove('open');
             startButton.classList.remove('pressed');
             closeProgramsSubmenu();
-            bringToFront(winampWindow);
             playClickSound();
         }
 
         function closeWinamp() {
-            winampWindow.classList.add('hidden');
-            winampTaskBtn.style.display = 'none';
-            winampFrame.src = '';
+            WindowManager.close('winamp');
         }
 
-        document.getElementById('winampMinBtn').addEventListener('click', () => winampWindow.classList.add('hidden'));
+        document.getElementById('winampMinBtn').addEventListener('click', () => WindowManager.minimize('winamp'));
         document.getElementById('winampCloseBtn').addEventListener('click', closeWinamp);
-        winampTaskBtn.addEventListener('click', () => {
-            if (winampWindow.classList.contains('hidden')) {
-                winampWindow.classList.remove('hidden');
-                bringToFront(winampWindow);
-            } else {
-                winampWindow.classList.add('hidden');
-            }
-        });
+        winampTaskBtn.addEventListener('click', () => WindowManager.toggleFromTaskbar('winamp'));
         makeDraggable(document.getElementById('winampTitlebar'), winampWindow);
-        winampWindow.addEventListener('mousedown', () => bringToFront(winampWindow));
 
         // ══════════════════════════════════════════════
         // Minesweeper Window
@@ -515,42 +696,33 @@
         const minesweeperFrame = document.getElementById('minesweeperFrame');
         const minesweeperTaskBtn = document.getElementById('minesweeperTaskBtn');
 
+        WindowManager.register('minesweeper', {
+            el: minesweeperWindow,
+            taskBtn: minesweeperTaskBtn,
+            iframe: minesweeperFrame,
+            iframeSrc: '../minesweeper/index.html',
+            hasChrome: false,
+        });
+
         function openMinesweeper() {
-            if (minesweeperFrame.src === '' || minesweeperFrame.src === 'about:blank') {
-                minesweeperFrame.src = '../minesweeper/index.html';
-            }
-            minesweeperWindow.classList.remove('hidden');
-            minesweeperTaskBtn.style.display = 'flex';
+            WindowManager.open('minesweeper');
             startMenu.classList.remove('open');
             startButton.classList.remove('pressed');
             closeProgramsSubmenu();
-            bringToFront(minesweeperWindow);
             playClickSound();
         }
 
         function closeMinesweeper() {
-            minesweeperWindow.classList.add('hidden');
-            minesweeperTaskBtn.style.display = 'none';
-            minesweeperFrame.src = '';
+            WindowManager.close('minesweeper');
         }
 
-        document.getElementById('minesweeperMinBtn').addEventListener('click', () => minesweeperWindow.classList.add('hidden'));
+        document.getElementById('minesweeperMinBtn').addEventListener('click', () => WindowManager.minimize('minesweeper'));
         document.getElementById('minesweeperCloseBtn').addEventListener('click', closeMinesweeper);
-        minesweeperTaskBtn.addEventListener('click', () => {
-            if (minesweeperWindow.classList.contains('hidden')) {
-                minesweeperWindow.classList.remove('hidden');
-                bringToFront(minesweeperWindow);
-            } else {
-                minesweeperWindow.classList.add('hidden');
-            }
-        });
+        minesweeperTaskBtn.addEventListener('click', () => WindowManager.toggleFromTaskbar('minesweeper'));
         makeDraggable(document.getElementById('minesweeperTitlebar'), minesweeperWindow);
-        minesweeperWindow.addEventListener('mousedown', () => bringToFront(minesweeperWindow));
 
         function closeApp() {
-            appWindow.classList.add('hidden');
-            appTaskButton.style.display = 'none';
-            appFrame.src = '';
+            WindowManager.close('app');
         }
 
         appFrame.addEventListener('load', () => {
@@ -558,16 +730,9 @@
             body_loading(false);
         });
 
-        appMinimizeBtn.addEventListener('click', () => { appWindow.classList.add('hidden'); });
+        appMinimizeBtn.addEventListener('click', () => WindowManager.minimize('app'));
         appCloseBtn.addEventListener('click', closeApp);
-        appTaskButton.addEventListener('click', () => {
-            if (appWindow.classList.contains('hidden')) {
-                appWindow.classList.remove('hidden');
-                bringToFront(appWindow);
-            } else {
-                appWindow.classList.add('hidden');
-            }
-        });
+        appTaskButton.addEventListener('click', () => WindowManager.toggleFromTaskbar('app'));
 
         // ══════════════════════════════════════════════
         // My Computer Window
@@ -575,30 +740,28 @@
         const myComputerWindow = document.getElementById('myComputerWindow');
         const myComputerTaskBtn = document.getElementById('myComputerTaskBtn');
 
+        WindowManager.register('myComputer', {
+            el: myComputerWindow,
+            taskBtn: myComputerTaskBtn,
+            iframe: null,
+            iframeSrc: null,
+            hasChrome: true,
+        });
+
         function openMyComputer() {
-            myComputerWindow.classList.remove('hidden');
-            myComputerTaskBtn.style.display = 'flex';
+            WindowManager.open('myComputer');
             startMenu.classList.remove('open');
             startButton.classList.remove('pressed');
-            bringToFront(myComputerWindow);
             playClickSound();
         }
 
         function closeMyComputer() {
-            myComputerWindow.classList.add('hidden');
-            myComputerTaskBtn.style.display = 'none';
+            WindowManager.close('myComputer');
         }
 
         document.getElementById('myComputerCloseBtn').addEventListener('click', closeMyComputer);
-        document.getElementById('myComputerMinBtn').addEventListener('click', () => myComputerWindow.classList.add('hidden'));
-        myComputerTaskBtn.addEventListener('click', () => {
-            if (myComputerWindow.classList.contains('hidden')) {
-                myComputerWindow.classList.remove('hidden');
-                bringToFront(myComputerWindow);
-            } else {
-                myComputerWindow.classList.add('hidden');
-            }
-        });
+        document.getElementById('myComputerMinBtn').addEventListener('click', () => WindowManager.minimize('myComputer'));
+        myComputerTaskBtn.addEventListener('click', () => WindowManager.toggleFromTaskbar('myComputer'));
 
         // Drive click actions
         document.getElementById('driveA').addEventListener('dblclick', () => {
@@ -618,32 +781,30 @@
         const notepadTaskBtn = document.getElementById('notepadTaskBtn');
         const notepadText = document.getElementById('notepadText');
 
+        WindowManager.register('notepad', {
+            el: notepadWindow,
+            taskBtn: notepadTaskBtn,
+            iframe: null,
+            iframeSrc: null,
+            hasChrome: true,
+            onOpen: () => notepadText.focus(),
+        });
+
         function openNotepad() {
-            notepadWindow.classList.remove('hidden');
-            notepadTaskBtn.style.display = 'flex';
+            WindowManager.open('notepad');
             startMenu.classList.remove('open');
             startButton.classList.remove('pressed');
             closeProgramsSubmenu();
-            bringToFront(notepadWindow);
             playClickSound();
-            notepadText.focus();
         }
 
         function closeNotepad() {
-            notepadWindow.classList.add('hidden');
-            notepadTaskBtn.style.display = 'none';
+            WindowManager.close('notepad');
         }
 
         document.getElementById('notepadCloseBtn').addEventListener('click', closeNotepad);
-        document.getElementById('notepadMinBtn').addEventListener('click', () => notepadWindow.classList.add('hidden'));
-        notepadTaskBtn.addEventListener('click', () => {
-            if (notepadWindow.classList.contains('hidden')) {
-                notepadWindow.classList.remove('hidden');
-                bringToFront(notepadWindow);
-            } else {
-                notepadWindow.classList.add('hidden');
-            }
-        });
+        document.getElementById('notepadMinBtn').addEventListener('click', () => WindowManager.minimize('notepad'));
+        notepadTaskBtn.addEventListener('click', () => WindowManager.toggleFromTaskbar('notepad'));
 
         // ══════════════════════════════════════════════
         // Recycle Bin
@@ -651,30 +812,28 @@
         const recycleBinWindow = document.getElementById('recycleBinWindow');
         const recycleBinTaskBtn = document.getElementById('recycleBinTaskBtn');
 
+        WindowManager.register('recycleBin', {
+            el: recycleBinWindow,
+            taskBtn: recycleBinTaskBtn,
+            iframe: null,
+            iframeSrc: null,
+            hasChrome: true,
+        });
+
         function openRecycleBin() {
-            recycleBinWindow.classList.remove('hidden');
-            recycleBinTaskBtn.style.display = 'flex';
+            WindowManager.open('recycleBin');
             startMenu.classList.remove('open');
             startButton.classList.remove('pressed');
-            bringToFront(recycleBinWindow);
             playClickSound();
         }
 
         function closeRecycleBin() {
-            recycleBinWindow.classList.add('hidden');
-            recycleBinTaskBtn.style.display = 'none';
+            WindowManager.close('recycleBin');
         }
 
         document.getElementById('recycleBinCloseBtn').addEventListener('click', closeRecycleBin);
-        document.getElementById('recycleBinMinBtn').addEventListener('click', () => recycleBinWindow.classList.add('hidden'));
-        recycleBinTaskBtn.addEventListener('click', () => {
-            if (recycleBinWindow.classList.contains('hidden')) {
-                recycleBinWindow.classList.remove('hidden');
-                bringToFront(recycleBinWindow);
-            } else {
-                recycleBinWindow.classList.add('hidden');
-            }
-        });
+        document.getElementById('recycleBinMinBtn').addEventListener('click', () => WindowManager.minimize('recycleBin'));
+        recycleBinTaskBtn.addEventListener('click', () => WindowManager.toggleFromTaskbar('recycleBin'));
 
         // ══════════════════════════════════════════════
         // Desktop Icons - open on double-click (or tap)
@@ -726,17 +885,8 @@
         });
 
         // Minimize / close IE
-        minimizeBtn.addEventListener('click', () => {
-            ieWindow.classList.add('hidden');
-        });
-        taskButton.addEventListener('click', () => {
-            if (ieWindow.classList.contains('hidden')) {
-                ieWindow.classList.remove('hidden');
-                bringToFront(ieWindow);
-            } else {
-                ieWindow.classList.add('hidden');
-            }
-        });
+        minimizeBtn.addEventListener('click', () => WindowManager.minimize('ie'));
+        taskButton.addEventListener('click', () => WindowManager.toggleFromTaskbar('ie'));
         closeWindowBtn.addEventListener('click', closeInternetExplorer);
 
         // Desktop icon selection
@@ -975,7 +1125,7 @@
         // Show Desktop quick launch
         // ══════════════════════════════════════════════
         document.querySelector('.ql-desktop').addEventListener('click', () => {
-            document.querySelectorAll('.window:not(.hidden)').forEach(w => w.classList.add('hidden'));
+            WindowManager.minimizeAll();
         });
 
         // ══════════════════════════════════════════════
