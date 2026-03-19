@@ -195,354 +195,165 @@
             flex-shrink: 0;
         }
 
-        /* ── Icon Styles (CSS pixel art) ── */
+        /* ── Icon Styles (Windows ME illustrated SVG icons) ── */
 
-        /* My Computer - monitor */
+        .icon-graphic {
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        /* My Computer - CRT monitor with keyboard */
         .icon-my-computer .icon-graphic {
-            background: #C0C0C0;
-            border: 2px solid #000;
-            box-shadow: inset -1px -1px #808080, inset 1px 1px #fff;
-        }
-        .icon-my-computer .icon-graphic::before {
-            content: "";
-            position: absolute;
-            top: 3px; left: 4px; right: 4px;
-            height: 14px;
-            background: #000080;
-        }
-        .icon-my-computer .icon-graphic::after {
-            content: "";
-            position: absolute;
-            bottom: 2px; left: 8px;
-            width: 16px; height: 3px;
-            background: #808080;
-        }
-
-        /* Recycle Bin */
-        .icon-recycle .icon-graphic {
-            background: transparent;
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><ellipse cx='14' cy='31' rx='12' ry='1.2' fill='%23888' opacity='0.3'/><rect x='0' y='23' width='28' height='7' rx='2' fill='%23D8CEB8' stroke='%23888074' stroke-width='0.6'/><rect x='2' y='24.5' width='24' height='0.9' rx='0.3' fill='%23BEB4A0'/><rect x='2' y='26' width='24' height='0.9' rx='0.3' fill='%23BEB4A0'/><rect x='4' y='27.5' width='16' height='1.2' rx='0.5' fill='%23BEB4A0'/><rect x='6' y='19.5' width='14' height='3.5' rx='1' fill='%23B4AC9C'/><rect x='11' y='16.5' width='4' height='4' fill='%23C8BEB0'/><rect x='1' y='1' width='24' height='17' rx='2' fill='%23D8CEB8' stroke='%23888074' stroke-width='0.7'/><rect x='1' y='1' width='24' height='5' rx='2' fill='white' opacity='0.3'/><rect x='3' y='3' width='20' height='13' rx='1' fill='%23333'/><rect x='4' y='4' width='18' height='11' fill='%231248CC'/><polygon points='4,4 12,4 4,9' fill='white' opacity='0.2'/><rect x='16' y='14.5' width='6' height='1.5' rx='0.5' fill='%23A09070'/><circle cx='14' cy='15.5' r='0.9' fill='%2300CC00'/></svg>");
             border: none;
+            box-shadow: none;
+            background-color: transparent;
         }
-        .icon-recycle .icon-graphic::before {
-            content: "";
-            position: absolute;
-            top: 6px; left: 5px;
-            width: 22px; height: 22px;
-            background: #C0C0C0;
-            border: 2px solid #000;
-            border-top: none;
-        }
-        .icon-recycle .icon-graphic::after {
-            content: "";
-            position: absolute;
-            top: 2px; left: 3px;
-            width: 26px; height: 6px;
-            background: #C0C0C0;
-            border: 2px solid #000;
-        }
+        .icon-my-computer .icon-graphic::before,
+        .icon-my-computer .icon-graphic::after { content: none; }
 
-        /* Internet Explorer */
+        /* Recycle Bin - gray trash can with recycle arrows */
+        .icon-recycle .icon-graphic {
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><ellipse cx='16' cy='31' rx='10' ry='1.2' fill='%23888' opacity='0.3'/><path d='M7,12 L9,30 L23,30 L25,12 Z' fill='%23C8D0D8' stroke='%23708090' stroke-width='0.8'/><path d='M7,12 L8.2,30 L10,30 L8.8,12 Z' fill='white' opacity='0.3'/><rect x='5' y='9' width='22' height='4' rx='1' fill='%23B8C0C8' stroke='%23708090' stroke-width='0.8'/><rect x='12' y='5.5' width='8' height='4' rx='2' fill='%23B0B8C0' stroke='%23708090' stroke-width='0.7'/><g transform='translate(16,21)'><path d='M0,-5 L4.3,2.5 L-4.3,2.5 Z' fill='none' stroke='%2300A030' stroke-width='2' stroke-linejoin='round'/><polygon points='0,-7.5 2,-3.5 -2,-3.5' fill='%2300A030'/><polygon points='6,4.5 3.5,2 6,0.5' fill='%2300A030'/><polygon points='-6,4.5 -3.5,2 -6,0.5' fill='%2300A030'/></g></svg>");
+            border: none;
+            box-shadow: none;
+            background-color: transparent;
+        }
+        .icon-recycle .icon-graphic::before,
+        .icon-recycle .icon-graphic::after { content: none; }
+
+        /* Internet Explorer - blue e with gold orbital ring */
         .icon-ie .icon-graphic {
-            background: #fff;
-            border: 2px solid #0060C0;
-            border-radius: 2px;
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><ellipse cx='16' cy='31' rx='12' ry='1.2' fill='%23888' opacity='0.3'/><text x='15' y='27' text-anchor='middle' font-family='Times New Roman,serif' font-weight='bold' font-style='italic' font-size='29' fill='%231060D8'>e</text><ellipse cx='16' cy='16' rx='14' ry='5' fill='none' stroke='%23FFB000' stroke-width='3' transform='rotate(-30 16 16)'/><circle cx='27' cy='9' r='2.2' fill='%23FFB000'/></svg>");
+            border: none;
+            box-shadow: none;
+            background-color: transparent;
         }
-        .icon-ie .icon-graphic::before {
-            content: "e";
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 22px;
-            font-weight: bold;
-            font-style: italic;
-            font-family: "Times New Roman", serif;
-            color: #0060C0;
-            line-height: 1;
-        }
+        .icon-ie .icon-graphic::before,
+        .icon-ie .icon-graphic::after { content: none; }
 
         /* ── Experiment App Icons ── */
 
         /* ASCII Art Palette - paint palette */
         .icon-ascii-palette .icon-graphic {
-            background: #F0E8D0;
-            border: 2px solid #806040;
-            border-radius: 50% 50% 50% 10%;
-        }
-        .icon-ascii-palette .icon-graphic::before {
-            content: "";
-            position: absolute;
-            top: 4px; left: 4px;
-            width: 8px; height: 8px;
-            background: #FF4040;
-            border-radius: 50%;
-            box-shadow: 12px 0 0 0 #4040FF, 6px 11px 0 0 #40C040;
-        }
-        .icon-ascii-palette .icon-graphic::after {
-            content: "";
-            position: absolute;
-            bottom: 2px; right: 2px;
-            width: 5px; height: 12px;
-            background: #804020;
-            border-radius: 1px 1px 3px 3px;
-            transform: rotate(-25deg);
-        }
-
-        /* ASCII Runner - terminal/game */
-        .icon-ascii-runner .icon-graphic {
-            background: #000;
-            border: 2px solid #404040;
-            border-radius: 2px;
-        }
-        .icon-ascii-runner .icon-graphic::before {
-            content: ">";
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -55%);
-            font-size: 18px;
-            color: #00FF00;
-            font-weight: bold;
-            font-family: "Courier New", monospace;
-        }
-        .icon-ascii-runner .icon-graphic::after {
-            content: "";
-            position: absolute;
-            bottom: 3px; left: 3px; right: 3px;
-            height: 2px;
-            background: #00FF00;
-        }
-
-        /* Hello World - speech bubble */
-        .icon-hello-world .icon-graphic {
-            background: #FFFFCC;
-            border: 2px solid #808000;
-            border-radius: 4px;
-        }
-        .icon-hello-world .icon-graphic::before {
-            content: "Hi!";
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -60%);
-            font-size: 11px;
-            color: #000080;
-            font-weight: bold;
-            font-family: "MS Sans Serif", Arial, sans-serif;
-        }
-        .icon-hello-world .icon-graphic::after {
-            content: "";
-            position: absolute;
-            bottom: -5px; left: 6px;
-            width: 0; height: 0;
-            border-left: 5px solid #808000;
-            border-right: 5px solid transparent;
-            border-top: 5px solid #808000;
-        }
-
-        /* Local Weather - sun over sky */
-        .icon-local-weather .icon-graphic {
-            background: #87CEEB;
-            border: 2px solid #4080FF;
-            border-radius: 2px;
-        }
-        .icon-local-weather .icon-graphic::before {
-            content: "";
-            position: absolute;
-            top: 3px; left: 8px;
-            width: 12px; height: 12px;
-            background: #FFCC00;
-            border-radius: 50%;
-            border: 2px solid #FF8000;
-        }
-        .icon-local-weather .icon-graphic::after {
-            content: "";
-            position: absolute;
-            bottom: 3px; left: 1px; right: 1px;
-            height: 9px;
-            background: #fff;
-            border-radius: 8px 8px 0 0;
-        }
-
-        /* Location Scene Generator - map pin */
-        .icon-location-scene .icon-graphic {
-            background: transparent;
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><ellipse cx='16' cy='31' rx='12' ry='1.2' fill='%23888' opacity='0.3'/><ellipse cx='13' cy='16' rx='12' ry='10' fill='%23E8C840' stroke='%23A07828' stroke-width='1'/><ellipse cx='13' cy='16' rx='12' ry='10' fill='white' opacity='0.15'/><ellipse cx='14' cy='17' rx='3' ry='2' fill='%23D0A820'/><circle cx='7' cy='11' r='2.5' fill='%23CC2020'/><circle cx='13' cy='9' r='2.5' fill='%232070CC'/><circle cx='19' cy='11' r='2.5' fill='%2320A040'/><circle cx='21' cy='18' r='2' fill='%23CC6820'/><circle cx='7' cy='21' r='2' fill='%23A020B0'/><rect x='19' y='22' width='2.5' height='10' rx='1.2' fill='%23804020' transform='rotate(-30 20.25 27)'/><rect x='17.5' y='20' width='3' height='5' rx='0.5' fill='%23C05018' transform='rotate(-30 19 22.5)'/></svg>");
             border: none;
+            box-shadow: none;
+            background-color: transparent;
         }
-        .icon-location-scene .icon-graphic::before {
-            content: "";
-            position: absolute;
-            top: 1px; left: 7px;
-            width: 16px; height: 16px;
-            background: #FF4040;
-            border-radius: 50% 50% 50% 0;
-            transform: rotate(-45deg);
-            border: 2px solid #CC0000;
-        }
-        .icon-location-scene .icon-graphic::after {
-            content: "";
-            position: absolute;
-            top: 19px; left: 13px;
-            width: 4px; height: 10px;
-            background: #CC0000;
-            border-radius: 0 0 3px 3px;
-        }
+        .icon-ascii-palette .icon-graphic::before,
+        .icon-ascii-palette .icon-graphic::after { content: none; }
 
-        /* AI Image Generation - dark canvas with star */
+        /* ASCII Runner - terminal/command prompt */
+        .icon-ascii-runner .icon-graphic {
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='0' y='0' width='32' height='32' rx='3' fill='%23111' stroke='%23404040' stroke-width='1'/><rect x='0' y='0' width='32' height='7' rx='3' fill='%23333'/><circle cx='6' cy='3.5' r='2' fill='%23CC4444'/><circle cx='12' cy='3.5' r='2' fill='%23CCAA00'/><circle cx='18' cy='3.5' r='2' fill='%2344AA44'/><text x='3' y='17' font-family='Courier New,monospace' font-size='8.5' fill='%2300EE00'>C:\></text><text x='3' y='26' font-family='Courier New,monospace' font-size='8.5' fill='%2300EE00'>run_</text></svg>");
+            border: none;
+            box-shadow: none;
+            background-color: transparent;
+        }
+        .icon-ascii-runner .icon-graphic::before,
+        .icon-ascii-runner .icon-graphic::after { content: none; }
+
+        /* Hello World - notepad document */
+        .icon-hello-world .icon-graphic {
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><ellipse cx='17' cy='31' rx='11' ry='1.2' fill='%23888' opacity='0.3'/><rect x='4' y='2' width='24' height='28' rx='1' fill='%23FFFFF0' stroke='%23B0B080' stroke-width='1'/><rect x='4' y='2' width='24' height='7' rx='1' fill='%23E8E8D0'/><rect x='4' y='2' width='24' height='4' rx='1' fill='%23DCDCC0'/><text x='10' y='8' font-family='Arial,sans-serif' font-size='5' fill='%23404040' font-weight='bold'>Hello!</text><line x1='7' y1='13' x2='25' y2='13' stroke='%23B0B080' stroke-width='0.8'/><line x1='7' y1='16.5' x2='25' y2='16.5' stroke='%23B0B080' stroke-width='0.8'/><line x1='7' y1='20' x2='25' y2='20' stroke='%23B0B080' stroke-width='0.8'/><line x1='7' y1='23.5' x2='25' y2='23.5' stroke='%23B0B080' stroke-width='0.8'/><text x='7' y='15.5' font-family='Arial,sans-serif' font-size='3.5' fill='%23808060'>Hello World</text></svg>");
+            border: none;
+            box-shadow: none;
+            background-color: transparent;
+        }
+        .icon-hello-world .icon-graphic::before,
+        .icon-hello-world .icon-graphic::after { content: none; }
+
+        /* Local Weather - sun with clouds */
+        .icon-local-weather .icon-graphic {
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='0' y='0' width='32' height='32' rx='2' fill='%238BC4E8'/><circle cx='24' cy='8' r='7' fill='%23FFD700' stroke='%23FFA000' stroke-width='0.8'/><line x1='24' y1='0' x2='24' y2='2' stroke='%23FFD700' stroke-width='2'/><line x1='30.5' y1='1.5' x2='29' y2='3' stroke='%23FFD700' stroke-width='2'/><line x1='32' y1='8' x2='30' y2='8' stroke='%23FFD700' stroke-width='2'/><line x1='30.5' y1='14.5' x2='29' y2='13' stroke='%23FFD700' stroke-width='2'/><line x1='17.5' y1='1.5' x2='19' y2='3' stroke='%23FFD700' stroke-width='2'/><ellipse cx='9' cy='22' rx='7' ry='5' fill='white'/><ellipse cx='16' cy='19' rx='8' ry='6' fill='white'/><ellipse cx='23' cy='22' rx='6' ry='4.5' fill='white'/><rect x='2' y='22' width='28' height='7' fill='white'/></svg>");
+            border: none;
+            box-shadow: none;
+            background-color: transparent;
+        }
+        .icon-local-weather .icon-graphic::before,
+        .icon-local-weather .icon-graphic::after { content: none; }
+
+        /* Location Scene Generator - globe on stand */
+        .icon-location-scene .icon-graphic {
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><ellipse cx='16' cy='31' rx='10' ry='1.2' fill='%23888' opacity='0.3'/><ellipse cx='16' cy='30' rx='8' ry='2' fill='%23C07828' stroke='%23A06018' stroke-width='0.8'/><rect x='14' y='22' width='4' height='9' rx='1' fill='%23C07828'/><circle cx='16' cy='13' r='12' fill='%231E58CC' stroke='%231440A0' stroke-width='0.8'/><ellipse cx='12' cy='10' rx='4.5' ry='5.5' fill='%2328A040' stroke='%23188030' stroke-width='0.4'/><ellipse cx='20' cy='13' rx='5' ry='4' fill='%2328A040' stroke='%23188030' stroke-width='0.4'/><ellipse cx='10' cy='17' rx='2.5' ry='2' fill='%2328A040' stroke='%23188030' stroke-width='0.4'/><ellipse cx='22' cy='8' rx='2' ry='3' fill='%2328A040' stroke='%23188030' stroke-width='0.4'/><ellipse cx='16' cy='13' rx='12' ry='4' fill='none' stroke='white' stroke-width='0.5' opacity='0.3'/><line x1='16' y1='1' x2='16' y2='25' stroke='white' stroke-width='0.5' opacity='0.3'/><circle cx='11' cy='8' r='4' fill='white' opacity='0.15'/></svg>");
+            border: none;
+            box-shadow: none;
+            background-color: transparent;
+        }
+        .icon-location-scene .icon-graphic::before,
+        .icon-location-scene .icon-graphic::after { content: none; }
+
+        /* AI Image Generation - camera */
         .icon-ai-image .icon-graphic {
-            background: #1A1A2E;
-            border: 2px solid #444;
-            border-radius: 3px;
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><ellipse cx='16' cy='31' rx='12' ry='1.2' fill='%23888' opacity='0.3'/><rect x='2' y='11' width='28' height='17' rx='3' fill='%23888898' stroke='%23606070' stroke-width='1'/><path d='M10,7 L12,11 L20,11 L22,7 Z' fill='%23888898' stroke='%23606070' stroke-width='0.8'/><circle cx='16' cy='19.5' r='6.5' fill='%23404050' stroke='%23505060' stroke-width='1'/><circle cx='16' cy='19.5' r='5' fill='%23333340' stroke='%23555565' stroke-width='0.8'/><circle cx='16' cy='19.5' r='3' fill='%231A1A28'/><circle cx='14' cy='17.5' r='1.5' fill='white' opacity='0.4'/><rect x='22.5' y='13' width='5' height='4' rx='1' fill='%23FFFFA0' stroke='%23C0C040' stroke-width='0.5'/><rect x='4' y='13' width='7' height='5' rx='1' fill='%23555565'/><circle cx='9' cy='8.5' r='2.5' fill='%23A0A0B0' stroke='%23707080' stroke-width='0.7'/></svg>");
+            border: none;
+            box-shadow: none;
+            background-color: transparent;
         }
-        .icon-ai-image .icon-graphic::before {
-            content: "\2726";
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 18px;
-            color: #FFD700;
-        }
-        .icon-ai-image .icon-graphic::after {
-            content: "";
-            position: absolute;
-            bottom: 3px; right: 3px;
-            width: 8px; height: 8px;
-            background: #FF6060;
-            border-radius: 50%;
-        }
+        .icon-ai-image .icon-graphic::before,
+        .icon-ai-image .icon-graphic::after { content: none; }
 
         /* Platformer - game controller */
         .icon-platformer .icon-graphic {
-            background: #404040;
-            border: 2px solid #000;
-            border-radius: 6px;
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><ellipse cx='16' cy='31' rx='12' ry='1.2' fill='%23888' opacity='0.3'/><path d='M3,13 Q3,8 9,8 L23,8 Q29,8 29,13 L28,21 Q26,26 22,25 Q20,27 16,27 Q12,27 10,25 Q6,26 4,21 Z' fill='%23C4C4CC' stroke='%23808090' stroke-width='1'/><ellipse cx='7.5' cy='22' rx='4.5' ry='5.5' fill='%23B8B8C0' stroke='%23808090' stroke-width='0.8'/><ellipse cx='24.5' cy='22' rx='4.5' ry='5.5' fill='%23B8B8C0' stroke='%23808090' stroke-width='0.8'/><rect x='8.5' y='12' width='3' height='9' rx='1' fill='%23484850'/><rect x='6.5' y='14.5' width='7' height='4' rx='1' fill='%23484850'/><circle cx='22' cy='12' r='2.2' fill='%2328A028'/><circle cx='26' cy='16' r='2.2' fill='%23C02020'/><circle cx='22' cy='20' r='2.2' fill='%231840A0'/><circle cx='18' cy='16' r='2.2' fill='%23C0A820'/><ellipse cx='16' cy='15' rx='2.5' ry='2' fill='%23909098'/></svg>");
+            border: none;
+            box-shadow: none;
+            background-color: transparent;
         }
-        .icon-platformer .icon-graphic::before {
-            content: "";
-            position: absolute;
-            top: 8px; left: 5px;
-            width: 6px; height: 10px;
-            border: 2px solid #C0C0C0;
-            border-radius: 1px;
-        }
-        .icon-platformer .icon-graphic::after {
-            content: "";
-            position: absolute;
-            top: 11px; right: 5px;
-            width: 6px; height: 6px;
-            background: #CC2020;
-            border-radius: 50%;
-            box-shadow: -8px 0 0 0 #2060CC;
-        }
+        .icon-platformer .icon-graphic::before,
+        .icon-platformer .icon-graphic::after { content: none; }
 
-
-        /* Winamp - dark audio player */
+        /* Winamp - CD disc with music notes */
         .icon-winamp .icon-graphic {
-            background: #3A3A4E;
-            border: 2px solid #1A1A2A;
-            border-radius: 2px;
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><ellipse cx='16' cy='31' rx='12' ry='1.2' fill='%23888' opacity='0.3'/><circle cx='16' cy='15' r='13' fill='%23D0D8E8' stroke='%23909090' stroke-width='0.8'/><circle cx='16' cy='15' r='12' fill='none' stroke='%23C0A8D0' stroke-width='2.5' opacity='0.5'/><circle cx='16' cy='15' r='9' fill='none' stroke='%23A0C0E0' stroke-width='2' opacity='0.5'/><circle cx='16' cy='15' r='6' fill='none' stroke='%23A0D0A8' stroke-width='2' opacity='0.4'/><circle cx='16' cy='15' r='4' fill='%23E8E8E8' stroke='%23B0B0B0' stroke-width='0.5'/><circle cx='16' cy='15' r='2' fill='%23808090'/><text x='22' y='10' font-family='Arial,sans-serif' font-size='11' fill='%23CC2020'>&#9835;</text><text x='24' y='19' font-family='Arial,sans-serif' font-size='8' fill='%23CC2020'>&#9834;</text></svg>");
+            border: none;
+            box-shadow: none;
+            background-color: transparent;
         }
-        .icon-winamp .icon-graphic::before {
-            content: "";
-            position: absolute;
-            top: 4px; left: 4px; right: 4px;
-            height: 8px;
-            background: #0A0A0A;
-            border: 1px solid #00AA00;
-        }
-        .icon-winamp .icon-graphic::after {
-            content: "";
-            position: absolute;
-            bottom: 4px; left: 4px;
-            width: 4px; height: 4px;
-            background: #D8A820;
-            box-shadow: 6px 0 0 0 #C0C0C0, 12px 0 0 0 #808080;
-        }
+        .icon-winamp .icon-graphic::before,
+        .icon-winamp .icon-graphic::after { content: none; }
 
-        /* Minesweeper - tile with mine */
+        /* Minesweeper - game board with mine */
         .icon-minesweeper .icon-graphic {
-            background: #C0C0C0;
-            border: 2px solid #808080;
-            border-radius: 2px;
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><ellipse cx='16' cy='31' rx='12' ry='1.2' fill='%23888' opacity='0.3'/><rect x='1' y='1' width='30' height='30' rx='2' fill='%23C0C0C0' stroke='%23808080' stroke-width='1'/><rect x='1' y='1' width='30' height='5' rx='2' fill='%23D0D0D0'/><rect x='3' y='7' width='9' height='9' fill='%23D0D0D0' stroke='white' stroke-width='0.5'/><rect x='13' y='7' width='9' height='9' fill='%23CC2020'/><rect x='23' y='7' width='7' height='9' fill='%23D0D0D0' stroke='white' stroke-width='0.5'/><rect x='3' y='17' width='9' height='9' fill='%23D0D0D0' stroke='white' stroke-width='0.5'/><rect x='13' y='17' width='9' height='9' fill='%23D0D0D0' stroke='white' stroke-width='0.5'/><rect x='23' y='17' width='7' height='9' fill='%23D0D0D0' stroke='white' stroke-width='0.5'/><circle cx='17.5' cy='11.5' r='3.5' fill='%23000'/><line x1='17.5' y1='6' x2='17.5' y2='17' stroke='%23000' stroke-width='1.5'/><line x1='12' y1='11.5' x2='23' y2='11.5' stroke='%23000' stroke-width='1.5'/><line x1='13.5' y1='8' x2='21.5' y2='15' stroke='%23000' stroke-width='1.5'/><line x1='21.5' y1='8' x2='13.5' y2='15' stroke='%23000' stroke-width='1.5'/><circle cx='16' cy='10' r='1.5' fill='white' opacity='0.5'/><line x1='9' y1='20' x2='9' y2='25' stroke='%23000' stroke-width='1'/><polygon points='9,20 6.5,22.5 9,24' fill='%23CC2020'/></svg>");
+            border: none;
+            box-shadow: none;
+            background-color: transparent;
         }
-        .icon-minesweeper .icon-graphic::before {
-            content: "";
-            position: absolute;
-            top: 4px; left: 4px;
-            width: 10px; height: 10px;
-            background: #E0E0E0;
-            border: 1px solid #FFFFFF;
-            box-shadow: inset -1px -1px 0 #808080;
-        }
-        .icon-minesweeper .icon-graphic::after {
-            content: "";
-            position: absolute;
-            bottom: 5px; right: 5px;
-            width: 7px; height: 7px;
-            background: #000;
-            border-radius: 50%;
-            box-shadow: 0 0 0 1px #404040;
-        }
-        /* Valentine's Card - heart */
+        .icon-minesweeper .icon-graphic::before,
+        .icon-minesweeper .icon-graphic::after { content: none; }
+
+        /* Valentine's Card - envelope with heart */
         .icon-valentines .icon-graphic {
-            background: #FFF0F5;
-            border: 2px solid #CC0044;
-            border-radius: 2px;
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><ellipse cx='16' cy='31' rx='11' ry='1.2' fill='%23888' opacity='0.3'/><rect x='2' y='8' width='28' height='20' rx='2' fill='%23FFF0F4' stroke='%23CC6090' stroke-width='1'/><polygon points='2,28 16,18 30,28' fill='%23FFE0EC' stroke='%23CC6090' stroke-width='0.8'/><polygon points='2,8 16,18 30,8' fill='%23FFE8F0' stroke='%23CC6090' stroke-width='0.8'/><text x='16' y='22' text-anchor='middle' font-family='Arial,sans-serif' font-size='12' fill='%23CC2050'>&#9829;</text></svg>");
+            border: none;
+            box-shadow: none;
+            background-color: transparent;
         }
-        .icon-valentines .icon-graphic::before {
-            content: "\2665";
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 20px;
-            color: #CC0044;
-        }
+        .icon-valentines .icon-graphic::before,
+        .icon-valentines .icon-graphic::after { content: none; }
 
-        /* Weather Image (Netlify) - cloud with rain */
+        /* Weather Image (Netlify) - camera with cloud overlay */
         .icon-weather-netlify .icon-graphic {
-            background: #87CEEB;
-            border: 2px solid #4080FF;
-            border-radius: 2px;
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><ellipse cx='16' cy='31' rx='12' ry='1.2' fill='%23888' opacity='0.3'/><rect x='2' y='13' width='28' height='16' rx='3' fill='%23888898' stroke='%23606070' stroke-width='1'/><path d='M10,9 L12,13 L20,13 L22,9 Z' fill='%23888898' stroke='%23606070' stroke-width='0.8'/><circle cx='16' cy='21' r='5.5' fill='%23404050' stroke='%23505060' stroke-width='0.8'/><circle cx='16' cy='21' r='3.5' fill='%231A1A28'/><circle cx='14.5' cy='19.5' r='1.2' fill='white' opacity='0.4'/><rect x='22' y='15' width='5' height='3.5' rx='1' fill='%23FFFFA0' stroke='%23C0C040' stroke-width='0.5'/><ellipse cx='8' cy='8' rx='6' ry='4' fill='white' stroke='%23A0B0C0' stroke-width='0.6'/><ellipse cx='13' cy='6' rx='5' ry='3.5' fill='white' stroke='%23A0B0C0' stroke-width='0.6'/><ellipse cx='8' cy='10' rx='7' ry='3' fill='white' stroke='%23A0B0C0' stroke-width='0.6'/></svg>");
+            border: none;
+            box-shadow: none;
+            background-color: transparent;
         }
-        .icon-weather-netlify .icon-graphic::before {
-            content: "";
-            position: absolute;
-            top: 4px; left: 1px; right: 1px;
-            height: 12px;
-            background: #fff;
-            border-radius: 10px;
-            border: 1px solid #A0A0A0;
-        }
-        .icon-weather-netlify .icon-graphic::after {
-            content: "";
-            position: absolute;
-            bottom: 3px; left: 6px;
-            width: 3px; height: 7px;
-            background: #4080FF;
-            border-radius: 0 0 2px 2px;
-            box-shadow: 6px 0 0 0 #4080FF, 12px 0 0 0 #4080FF;
-        }
+        .icon-weather-netlify .icon-graphic::before,
+        .icon-weather-netlify .icon-graphic::after { content: none; }
 
-        /* Weather to Image - cloud above image frame */
+        /* Weather to Image - cloud to image frame */
         .icon-weather-to-image .icon-graphic {
-            background: #E8F4FF;
-            border: 2px solid #4080FF;
-            border-radius: 2px;
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><ellipse cx='16' cy='31' rx='12' ry='1.2' fill='%23888' opacity='0.3'/><ellipse cx='8' cy='9' rx='6' ry='4' fill='white' stroke='%23A0B0C0' stroke-width='0.8'/><ellipse cx='14' cy='7' rx='6' ry='4.5' fill='white' stroke='%23A0B0C0' stroke-width='0.8'/><ellipse cx='20' cy='9' rx='5' ry='3.5' fill='white' stroke='%23A0B0C0' stroke-width='0.8'/><rect x='2' y='9' width='26' height='5' fill='white'/><polygon points='14,15 14,20 12,20 16,24 20,20 18,20 18,15' fill='%234080C0'/><rect x='3' y='24' width='26' height='7' rx='2' fill='%23E8F0F8' stroke='%23608090' stroke-width='1'/><rect x='5' y='26' width='8' height='3' fill='%2387CEEB'/><polygon points='5,29 8,26 10,28 13,25 13,29' fill='%2328A040'/><circle cx='20' cy='27.5' r='1.8' fill='%23FFD700'/></svg>");
+            border: none;
+            box-shadow: none;
+            background-color: transparent;
         }
-        .icon-weather-to-image .icon-graphic::before {
-            content: "";
-            position: absolute;
-            top: 2px; left: 2px; right: 2px;
-            height: 10px;
-            background: #C8E0F8;
-            border-radius: 8px;
-            border: 1px solid #6090C0;
-        }
-        .icon-weather-to-image .icon-graphic::after {
-            content: "";
-            position: absolute;
-            bottom: 2px; left: 3px; right: 3px;
-            height: 12px;
-            background: #fff;
-            border: 2px solid #808080;
-        }
+        .icon-weather-to-image .icon-graphic::before,
+        .icon-weather-to-image .icon-graphic::after { content: none; }
 
         /* ── App Window (no address bar) ── */
         .app-title-logo {
@@ -1621,101 +1432,63 @@
             position: relative;
         }
 
-        /* Drive icons */
+        /* Drive icons - Windows ME illustrated style */
         .drive-icon-floppy {
-            background: #404040;
-            border: 2px solid #000;
-            border-radius: 2px 2px 0 0;
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='2' y='2' width='28' height='28' rx='2' fill='%23202020' stroke='%23404040' stroke-width='1'/><rect x='6' y='2' width='14' height='10' fill='%23C0C0C0' stroke='%23909090' stroke-width='0.5'/><rect x='11' y='3.5' width='4' height='7' rx='0.5' fill='%23909090'/><rect x='3' y='14' width='22' height='15' rx='1' fill='%23E0E0E0' stroke='%23B0B0B0' stroke-width='0.5'/><rect x='5' y='16' width='18' height='1.2' rx='0.3' fill='%23C0C0C0'/><rect x='5' y='18.5' width='18' height='1.2' rx='0.3' fill='%23C0C0C0'/><rect x='5' y='21' width='18' height='1.2' rx='0.3' fill='%23C0C0C0'/><rect x='3' y='24' width='8' height='5' rx='1' fill='%23CC2020'/><rect x='22' y='2' width='5' height='6' rx='1' fill='%23101010'/></svg>");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: transparent;
+            border: none;
         }
-        .drive-icon-floppy::before {
-            content: "";
-            position: absolute;
-            top: 2px; left: 6px;
-            width: 14px; height: 8px;
-            background: #C0C0C0;
-            border: 1px solid #808080;
-        }
-        .drive-icon-floppy::after {
-            content: "";
-            position: absolute;
-            bottom: 2px; left: 4px;
-            width: 20px; height: 10px;
-            background: #808080;
-            border-radius: 2px;
-        }
+        .drive-icon-floppy::before,
+        .drive-icon-floppy::after { content: none; }
 
         .drive-icon-hdd {
-            background: #C0C0C0;
-            border: 2px solid #808080;
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='4' y='2' width='18' height='28' rx='2' fill='%23D8D0C0' stroke='%23908880' stroke-width='0.8'/><rect x='4' y='2' width='18' height='10' rx='2' fill='%231040C0'/><rect x='6' y='5' width='14' height='5' fill='%230830A8'/><rect x='16' y='14' width='4' height='2' rx='0.5' fill='%23A09880'/><rect x='16' y='17.5' width='4' height='2' rx='0.5' fill='%23A09880'/><rect x='16' y='21' width='4' height='2' rx='0.5' fill='%23A09880'/><circle cx='10' cy='20' r='4' fill='none' stroke='%23808890' stroke-width='1.5'/><circle cx='10' cy='20' r='1.5' fill='%23909090'/><rect x='23' y='8' width='6' height='18' rx='1' fill='%23C8C0B0' stroke='%23908880' stroke-width='0.6'/><rect x='24.5' y='10' width='3' height='5' rx='0.5' fill='%23909090'/></svg>");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: transparent;
+            border: none;
         }
-        .drive-icon-hdd::before {
-            content: "";
-            position: absolute;
-            top: 4px; left: 4px; right: 4px;
-            height: 10px;
-            background: #E0E0E0;
-            border: 1px solid #808080;
-        }
-        .drive-icon-hdd::after {
-            content: "";
-            position: absolute;
-            bottom: 6px; right: 6px;
-            width: 6px; height: 6px;
-            background: #00CC00;
-            border-radius: 50%;
-        }
+        .drive-icon-hdd::before,
+        .drive-icon-hdd::after { content: none; }
 
         .drive-icon-cdrom {
-            background: #E0E0E0;
-            border: 2px solid #808080;
-            border-radius: 50%;
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%23D0D8E8' stroke='%23909090' stroke-width='0.8'/><circle cx='16' cy='16' r='13' fill='none' stroke='%23C0A8D0' stroke-width='2.5' opacity='0.5'/><circle cx='16' cy='16' r='10' fill='none' stroke='%23A0C0E0' stroke-width='2' opacity='0.5'/><circle cx='16' cy='16' r='7' fill='none' stroke='%23A0D0A8' stroke-width='1.5' opacity='0.4'/><circle cx='16' cy='16' r='4.5' fill='%23E8E8E8' stroke='%23B0B0B0' stroke-width='0.5'/><circle cx='16' cy='16' r='2' fill='%23808090'/><circle cx='12' cy='11' r='3' fill='white' opacity='0.35'/></svg>");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: transparent;
+            border: none;
+            border-radius: 0;
         }
-        .drive-icon-cdrom::before {
-            content: "";
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 8px; height: 8px;
-            background: #C0C0C0;
-            border: 2px solid #A0A0A0;
-            border-radius: 50%;
-        }
+        .drive-icon-cdrom::before,
+        .drive-icon-cdrom::after { content: none; }
 
         .folder-icon-cp {
-            background: #C0C0C0;
-            border: 2px solid #808080;
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='1' y='2' width='18' height='16' rx='2' fill='%23D8D0C0' stroke='%23888074' stroke-width='0.7'/><rect x='3' y='4' width='14' height='10' fill='%231248CC'/><polygon points='3,4 9,4 3,8' fill='white' opacity='0.2'/><rect x='7' y='18' width='4' height='3' fill='%23C8C0B0'/><rect x='4' y='21' width='10' height='2' rx='1' fill='%23B4AC9C'/><line x1='21' y1='4' x2='28' y2='11' stroke='%23CC2020' stroke-width='3' stroke-linecap='round'/><circle cx='20' cy='3.5' r='3' fill='none' stroke='%23CC2020' stroke-width='2'/><line x1='26' y1='2' x2='22' y2='13' stroke='%2320A040' stroke-width='2.5' stroke-linecap='round'/><rect x='24' y='1' width='4' height='2.5' rx='0.5' fill='%2320A040'/></svg>");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: transparent;
+            border: none;
         }
-        .folder-icon-cp::before {
-            content: "";
-            position: absolute;
-            top: 4px; left: 4px;
-            width: 10px; height: 10px;
-            background: #808080;
-            border-radius: 50%;
-        }
-        .folder-icon-cp::after {
-            content: "";
-            position: absolute;
-            bottom: 4px; right: 4px;
-            width: 8px; height: 4px;
-            background: #808080;
-        }
+        .folder-icon-cp::before,
+        .folder-icon-cp::after { content: none; }
 
         .folder-icon-folder {
-            background: #FFCC00;
-            border: 2px solid #CC9900;
-            border-radius: 0 2px 2px 2px;
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><ellipse cx='16' cy='31' rx='13' ry='1.2' fill='%23888' opacity='0.3'/><path d='M2,8 Q2,5 5,5 L13,5 L15,8 L28,8 Q30,8 30,10 L30,26 Q30,28 28,28 L4,28 Q2,28 2,26 Z' fill='%23F0C038' stroke='%23C09020' stroke-width='1'/><path d='M2,10 L30,10 L30,26 Q30,28 28,28 L4,28 Q2,28 2,26 Z' fill='%23F8D050'/><path d='M2,10 L30,10 L30,14 L2,14 Z' fill='white' opacity='0.2'/></svg>");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: transparent;
+            border: none;
+            border-radius: 0;
         }
-        .folder-icon-folder::before {
-            content: "";
-            position: absolute;
-            top: -5px; left: 0;
-            width: 12px; height: 5px;
-            background: #FFCC00;
-            border: 2px solid #CC9900;
-            border-bottom: none;
-            border-radius: 2px 2px 0 0;
-        }
+        .folder-icon-folder::before,
+        .folder-icon-folder::after { content: none; }
 
         /* ── Hint ── */
         .quick-note {
