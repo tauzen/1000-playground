@@ -721,6 +721,16 @@
         minesweeperTaskBtn.addEventListener('click', () => WindowManager.toggleFromTaskbar('minesweeper'));
         makeDraggable(document.getElementById('minesweeperTitlebar'), minesweeperWindow);
 
+        // Listen for minesweeper resize messages
+        window.addEventListener('message', (e) => {
+            if (e.data && e.data.type === 'minesweeper-resize') {
+                const titlebarHeight = document.getElementById('minesweeperTitlebar').offsetHeight;
+                const viewBorder = 4; // 2px inset border on .view
+                minesweeperWindow.style.width = (e.data.width + viewBorder) + 'px';
+                minesweeperWindow.style.height = (e.data.height + titlebarHeight + viewBorder) + 'px';
+            }
+        });
+
         function closeApp() {
             WindowManager.close('app');
         }
