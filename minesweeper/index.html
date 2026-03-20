@@ -926,6 +926,7 @@ function initGame(rows, cols, mines, diffName) {
     renderLED(document.getElementById('timerCanvas'), 0);
     updateDifficultyCheck();
     drawFace(document.getElementById('faceCanvas'), 'smile');
+    notifyParentSize();
 }
 
 function placeMines(safeR, safeC) {
@@ -1388,6 +1389,26 @@ document.getElementById('closeBtn').addEventListener('click', () => {
 });
 
 // ============================================================
+// NOTIFY PARENT OF SIZE
+// ============================================================
+function notifyParentSize() {
+    if (window.self !== window.top) {
+        requestAnimationFrame(() => {
+            const win = document.querySelector('.window');
+            if (win) {
+                const width = win.scrollWidth;
+                const height = win.scrollHeight;
+                window.parent.postMessage({
+                    type: 'minesweeper-resize',
+                    width: width,
+                    height: height
+                }, '*');
+            }
+        });
+    }
+}
+
+// ============================================================
 // INIT
 // ============================================================
 // Init marks menu state
@@ -1409,6 +1430,7 @@ if (window.self !== window.top) {
         win.style.border = 'none';
         win.style.boxShadow = 'none';
         win.style.display = 'block';
+        win.style.width = 'fit-content';
     }
 }
 </script>
