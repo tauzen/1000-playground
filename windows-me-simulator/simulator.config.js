@@ -26,16 +26,7 @@ window.WIN_ME_SIMULATOR_CONFIG = {
         { title: 'Disk Cleanup', text: 'The disk cleanup utility could not free any space. Your hard drive may be full.', icon: 'info' }
     ],
     experimentApps: [
-        { id: 'iconAsciiArtPalette', title: 'ASCII Art Palette', url: '../ascii-art-palette/index.html' },
-        { id: 'iconAsciiRunner', title: 'ASCII Runner', url: '../ascii-runner/index.html' },
-        { id: 'iconHelloWorld', title: 'Hello World', url: '../hello-world/index.html' },
-        { id: 'iconLocalWeather', title: 'Local Weather', url: '../local-weather/index.html' },
-        { id: 'iconLocationScene', title: 'Location Scene Generator', url: '../location-scene-generator/index.html' },
-        { id: 'iconAIImage', title: 'AI Image Generation', url: '../openai-image-generation/index.html' },
-        { id: 'iconPlatformer', title: 'Platformer', url: '../platformer/index.html' },
-        { id: 'iconValentines', title: "Valentine's Card", url: '../valentines-card/index.html' },
-        { id: 'iconWeatherNetlify', title: 'Weather Image', url: '../weather-image-netlify/index.html' },
-        { id: 'iconWeatherToImage', title: 'Weather to Image', url: '../weather-to-image/index.html' }
+        { id: 'iconAsciiRunner', title: 'ASCII Runner', url: '../ascii-runner/index.html' }
     ],
     runActions: {
         notepad: 'openNotepad',
