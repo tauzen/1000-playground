@@ -973,18 +973,9 @@
             closeProgramsSubmenu();
         });
 
-        document.getElementById('subOutlook').addEventListener('click', () => {
-            showErrorDialog({ title: 'Outlook Express', text: 'Outlook Express could not be started. MSOE.DLL could not be loaded.', icon: 'error' });
+        document.getElementById('subAsciiRunner').addEventListener('click', () => {
+            openApp('ASCII Runner', '../ascii-runner/index.html');
             closeProgramsSubmenu();
-            startMenu.classList.remove('open');
-            startButton.classList.remove('pressed');
-        });
-
-        document.getElementById('subWMP').addEventListener('click', () => {
-            showErrorDialog({ title: 'Windows Media Player', text: 'Windows Media Player encountered a problem while playing the file.\nError code: C00D11B1', icon: 'error' });
-            closeProgramsSubmenu();
-            startMenu.classList.remove('open');
-            startButton.classList.remove('pressed');
         });
 
         document.getElementById('subWinamp').addEventListener('click', () => {
